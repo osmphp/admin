@@ -1,0 +1,19 @@
+name: deploy
+on:
+    push:
+        branches: [ "v0.1" ]
+    pull_request:
+        branches: [ "v0.1" ]
+
+jobs:
+    ubuntu:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Run deploy script on the production server
+                uses: garygrossgarten/github-action-ssh@release
+                with:
+                    command: cd ~/www && bash bin/deploy.sh
+                    host: ${{ secrets.DEPLOY_HOST }}
+                    username: ${{ secrets.DEPLOY_USER }}
+                    passphrase: ${{ secrets.DEPLOY_PASSPHRASE }}
+                    privateKey: ${{ secrets.DEPLOY_PRIVATE_KEY}}

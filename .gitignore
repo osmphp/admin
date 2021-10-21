@@ -1,0 +1,10 @@
+/node_modules
+/vendor
+/.idea
+/.osmscripts
+/.env*
+/.phpunit*
+/generated
+/temp
+/package.json
+/package-lock.json

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace My\Base;
+namespace Osm\Data\Base;
 
 use Osm\App\App;
 use Osm\Core\Attributes\Name;

@@ -1,6 +1,6 @@
 {
-    "name": "osmphp/project",
-    "description": "Osm Framework-based project template",
+    "name": "osmphp/data",
+    "description": "The foundation for data-intensive applications.",
     "license": "GPL-3.0-only",
     "authors": [
         {
@@ -17,13 +17,13 @@
     },
     "autoload": {
         "psr-4": {
-            "My\\": "src/"
+            "Osm\\Data\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "My\\Tests\\": "tests/",
-            "My\\Samples\\": "samples/"
+            "Osm\\Data\\Tests\\": "tests/",
+            "Osm\\Data\\Samples\\": "samples/"
         }
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace My\Welcome\Routes\Front;
+namespace Osm\Data\Welcome\Routes\Front;
 
 use Osm\Core\Attributes\Name;
 use Osm\Framework\Areas\Attributes\Area;

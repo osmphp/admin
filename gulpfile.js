@@ -3,7 +3,6 @@
 global.config = {
     'Osm_Tools': [],
     'Osm_Project': [],
-    'Osm_App': ['_front__tailwind'],
     'Osm_Data_Samples': ['_front__tailwind']
 };
 

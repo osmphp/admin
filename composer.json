@@ -17,7 +17,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Osm\\Data\\": "src/"
+            "Osm\\Data\\": "src/",
+            "Osm\\Data\\Tools\\": "tools/"
         }
     },
     "autoload-dev": {

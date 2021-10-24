@@ -4,13 +4,13 @@ namespace Osm\Data\Tools\Generators;
 
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
-use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
+use Osm\Data\Schema\Schema;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @property Project $project
+ * @property Schema $schema
  * @property OutputInterface $output
  */
 class Generator extends Object_
@@ -25,12 +25,12 @@ class Generator extends Object_
         return new BufferedOutput();
     }
 
-    protected function get_project(): Project {
+    protected function get_schema(): Schema {
         global $osm_app; /* @var App $osm_app */
 
         /* @var Module $module */
         $module = $osm_app->modules[Module::class];
 
-        return $module->project;
+        return $module->schema;
     }
 }

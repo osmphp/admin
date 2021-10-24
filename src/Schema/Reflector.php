@@ -14,15 +14,17 @@ use Osm\Core\Property;
 use Osm\Data\Tables\Table as TableDef;
 use Osm\Data\Schema\Hints;
 use function Osm\__;
-use function Osm\get_descendant_classes;
 use function Osm\get_descendant_classes_by_name;
 use Osm\Data\Tables\Attributes;
 
 /**
  * Extracts schema information in plain object format.
  *
- * Execute an instance of this class in context of `Osm_Project` application,
- * and let it be garbage-collected afterwards.
+ * For the means of code generation, execute it in context
+ * of the `Osm_Project` application, and let it be garbage-collected afterwards.
+ *
+ * For the means of runtime table schema reflection, execute it in the
+ * current application context.
  *
  * @property BaseModule[] $project_modules
  * @property string $project_package_name
@@ -36,31 +38,12 @@ class Reflector extends Object_
     }
 
     /**
-     * @return Hints\Module[]
+     * @return Hints\Table[]
      */
-    protected function reflectModules(): array {
-        $modules = [];
-
-        return array_map(
-            fn(BaseModule $module) => $this->reflectModule($module),
-            $this->project_modules);
-    }
-
-    protected function reflectModule(BaseModule $module): \stdClass|Hints\Module
-    {
-        return (object)[
-            'name' => $module->name,
-            'path' => $module->path,
-            'namespace' => $module->namespace,
-            'tables' => [],
-        ];
-    }
-
-    /**
-     * @param Hints\Module[] $modules
-     */
-    protected function reflectTables(array &$modules): void {
+    protected function reflectTables(): array {
         global $osm_app; /* @var App $osm_app */
+
+        $tables = [];
 
         $tableClassNames = get_descendant_classes_by_name(
             TableDef::class);
@@ -68,58 +51,48 @@ class Reflector extends Object_
         foreach ($tableClassNames as $name => $tableClassName) {
             $recordClassName = $this->getRecordClassName($tableClassName);
 
-            $this->reflectRecordClass($modules, $name,
+            $tables[$name] = $this->reflectRecordClass($name,
                 $osm_app->classes[$recordClassName]);
         }
+
+        return $tables;
     }
 
-    /**
-     * @param Hints\Module[] $modules
-     * @param string $tableName
-     * @param Class_ $recordClass
-     */
-    protected function reflectRecordClass(array &$modules,
-        string $tableName, Class_ $recordClass): void
+    protected function reflectRecordClass(string $tableName,
+        Class_ $recordClass): \stdClass|Hints\Table
     {
         global $osm_app; /* @var App $osm_app */
 
+        $table = (object)[
+            'name' => $tableName,
+            'module_class_name' => $recordClass->module_class_name,
+            'properties' => [],
+        ];
+
         foreach ($recordClass->properties as $property) {
-            $this->reflectRecordProperty($modules, $tableName, $recordClass,
+            $this->reflectRecordProperty($table, $recordClass,
                 $property);
         }
 
         $typeClassNames = get_descendant_classes_by_name($recordClass->name);
 
         foreach ($typeClassNames as $name => $typeClassName) {
-            $this->reflectRecordTypeClass($modules, $tableName, $recordClass,
-                $name, $osm_app->classes[$typeClassName]);
+            $this->reflectRecordTypeClass($table, $recordClass, $name,
+                $osm_app->classes[$typeClassName]);
         }
     }
 
-    /**
-     * @param Hints\Module[] $modules
-     * @param string $tableName
-     * @param Class_ $recordClass
-     * @param string $typeName
-     * @param Class_ $typeClass
-     */
-    protected function reflectRecordTypeClass(array &$modules, string $tableName,
+    protected function reflectRecordTypeClass(\stdClass|Hints\Table $table,
         Class_ $recordClass, string $typeName, Class_ $typeClass): void
     {
         foreach ($typeClass->properties as $property) {
-            $this->reflectRecordTypeProperty($modules, $tableName,
-                $typeName, $typeClass, $property);
+            $this->reflectRecordTypeProperty($table, $typeName,
+                $typeClass, $property);
         }
     }
 
-    /**
-     * @param Hints\Module[] $modules
-     * @param string $tableName
-     * @param Class_ $recordClass
-     * @param Property $property
-     */
-    protected function reflectRecordProperty(array &$modules,
-        string $tableName, Class_ $recordClass, Property $property): void
+    protected function reflectRecordProperty(\stdClass|Hints\Table $table,
+        Class_ $recordClass, Property $property): void
     {
         if (!isset($property->attributes[Serialized::class])) {
             return;
@@ -134,45 +107,17 @@ class Reflector extends Object_
             return;
         }
 
-        $this->addProperty($modules, $tableName, $moduleClassName, $recordClass,
-            $property);
+        $this->addProperty($table, $moduleClassName, $recordClass, $property);
     }
 
-    /**
-     * @param Hints\Module[] $modules
-     * @param string $tableName
-     * @param string $moduleClassName
-     * @param Class_ $recordClass
-     * @param Property $property
-     */
-    protected function addProperty(array $modules, string $tableName,
+    protected function addProperty(\stdClass|Hints\Class_ $class,
         string $moduleClassName, Class_ $recordClass, Property $property): void
     {
-        if (!($module = $modules[$moduleClassName] ?? null)) {
-            throw new NotSupported(__(
-                "Property ':property' not defined in the project, but in ':module'", [
-                    'property' => "{$property->class_name}::\${$property->name}",
-                    'module' => $moduleClassName,
-                ]));
-        }
-
-        if (!isset($module->tables[$tableName])) {
-            $module->tables[$tableName] = (object)[
-                'name' => $tableName,
-                'alters' => $moduleClassName != $recordClass->module_class_name,
-                'properties' => [],
-            ];
-        }
-
-        $table = $module->tables[$tableName];
-
-
         throw new NotImplemented($this);
     }
 
-    protected function reflectRecordTypeProperty(array &$modules,
-        string $tableName, string $typeName, Class_ $typeClass,
-        Property $property): void
+    protected function reflectRecordTypeProperty(\stdClass|Hints\Table $table,
+        string $typeName, Class_ $typeClass, Property $property): void
     {
         if (!isset($property->attributes[Serialized::class])) {
             return;

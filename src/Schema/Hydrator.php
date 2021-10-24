@@ -6,11 +6,11 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 
 /**
- * @property array $tables
+ * @property Hints\Schema $reflection
  */
-class Schema extends Object_
+class Hydrator extends Object_
 {
-    protected function get_tables(): array {
+    public function hydrate(): Schema {
         throw new NotImplemented($this);
     }
 }

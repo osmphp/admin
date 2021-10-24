@@ -3,11 +3,15 @@
 namespace Osm\Data\Tools\Generators;
 
 use Osm\Core\BaseModule;
+use Osm\Core\Exceptions\NotImplemented;
+use Osm\Data\Schema\Hydrator;
+use Osm\Data\Schema\Reflector;
+use Osm\Data\Schema\Schema;
 use Osm\Runtime\Apps;
 use Osm\Tools\App;
 
 /**
- * @property Project $project
+ * @property Schema $schema
  */
 class Module extends BaseModule
 {
@@ -17,12 +21,12 @@ class Module extends BaseModule
         \Osm\Tools\Base\Module::class,
     ];
 
-    protected function get_project(): Project {
+    protected function get_schema(): Schema {
         $reflection = Apps::run(Apps::create(
             \Osm\Project\App::class),
             fn() => Reflector::new()->reflect()
         );
 
-        return Project::fromReflection($reflection);
+        return Hydrator::new(['reflection' => $reflection])->hydrate();
     }
 }

@@ -6,11 +6,11 @@ namespace Osm\Data\Tests;
 
 use Osm\Framework\TestCase;
 
-class test_01_hello extends TestCase
+class test_01_products extends TestCase
 {
     public string $app_class_name = \Osm\Data\Samples\App::class;
 
-    public function test_app_name() {
+    public function test_simple_query() {
         // GIVEN an app
 
         // WHEN you check its name

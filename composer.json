@@ -1,6 +1,6 @@
 {
     "name": "osmphp/data",
-    "description": "The foundation for data-intensive applications.",
+    "description": "\"The Big Red Button\" - a project about defining application data structures and logic in PHP code, pressing *the big red button* (hence the codename), and getting fully functioning Admin Panel and API.",
     "license": "GPL-3.0-only",
     "authors": [
         {

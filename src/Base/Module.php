@@ -8,7 +8,6 @@ use Osm\App\App;
 use Osm\Core\Attributes\Name;
 use Osm\Core\BaseModule;
 
-#[Name('base')]
 class Module extends BaseModule
 {
     public static array $requires = [

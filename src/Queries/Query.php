@@ -18,13 +18,48 @@ class Query extends Object_
 
     public function select(array $select): static {
         foreach ($select as $key => $value) {
-            $this->selectProperty($key, $value);
+            if (!is_int($key)) {
+                $this->selectPropertyWithCallback($key, $value);
+            }
+            elseif ($value = '~') {
+                $this->selectPrimitiveProperties();
+            }
+            elseif ($value = '~~') {
+                $this->selectPrimitivePropertiesRecursively();
+            }
+            else {
+                $this->selectProperty($value);
+            }
         }
 
         return $this;
     }
 
-    protected function selectProperty(int|string $key, mixed $value): void
+    protected function selectProperty(string $property): void
+    {
+        if (($pos = strpos($property, '.')) !== false) {
+            throw new NotImplemented($this);
+        }
+
+        $this->select[$property] = true;
+    }
+
+    protected function selectPropertyWithCallback(string $property,
+        callable $callback): void
+    {
+        throw new NotImplemented($this);
+    }
+
+    protected function selectPrimitiveProperties(): void
+    {
+        foreach ($this->class->properties as $property) {
+            if ($property->primitive) {
+                $this->selectProperty($property->name);
+            }
+        }
+    }
+
+    protected function selectPrimitivePropertiesRecursively(): void
     {
         throw new NotImplemented($this);
     }
@@ -35,7 +70,7 @@ class Query extends Object_
         }
 
         if (empty($this->select)) {
-            $this->select(['*']);
+            $this->select(['~']);
         }
 
         return $this->run();
@@ -55,5 +90,4 @@ class Query extends Object_
     protected function get_class(): Class_ {
         throw new NotImplemented($this);
     }
-
 }

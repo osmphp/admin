@@ -7,7 +7,7 @@ namespace Osm\Data\Tests;
 use Osm\Data\Samples\Products\Products;
 use Osm\Framework\TestCase;
 
-class test_01_products extends TestCase
+class test_02_products extends TestCase
 {
     public string $app_class_name = \Osm\Data\Samples\App::class;
 

@@ -2,15 +2,19 @@
 
 namespace Osm\Data\Queries;
 
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
+use Osm\Data\Queries\Attributes\Of;
 use Osm\Data\Schema\Class_;
 
 /**
  * @property string[] $select
  * @property ?int $limit
  *
- * @property Class_ $class
+ * @property string $object_class_name
+ * @property Class_ $object_class
  */
 class Query extends Object_
 {
@@ -22,10 +26,10 @@ class Query extends Object_
                 $this->selectPropertyWithCallback($key, $value);
             }
             elseif ($value = '~') {
-                $this->selectPrimitiveProperties();
+                $this->selectAllProperties();
             }
             elseif ($value = '~~') {
-                $this->selectPrimitivePropertiesRecursively();
+                $this->selectAllPropertiesRecursively();
             }
             else {
                 $this->selectProperty($value);
@@ -50,16 +54,18 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    protected function selectPrimitiveProperties(): void
+    protected function selectAllProperties(): void
     {
-        foreach ($this->class->properties as $property) {
+        foreach ($this->object_class->properties as $property) {
+            throw new NotImplemented($this);
+
             if ($property->primitive) {
                 $this->selectProperty($property->name);
             }
         }
     }
 
-    protected function selectPrimitivePropertiesRecursively(): void
+    protected function selectAllPropertiesRecursively(): void
     {
         throw new NotImplemented($this);
     }
@@ -87,7 +93,17 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    protected function get_class(): Class_ {
-        throw new NotImplemented($this);
+    protected function get_object_class_name(): string {
+        /* @var Of $of */
+        return ($of = $this->__class->attributes[Of::class] ?? null)
+            ? $of->class_name
+            : throw new Required(__METHOD__);
+    }
+
+    protected function get_object_class(): Class_ {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->schema->classes[$this->object_class_name]
+            ?? throw new Required(__METHOD__);
     }
 }

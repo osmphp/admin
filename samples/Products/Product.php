@@ -2,6 +2,7 @@
 
 namespace Osm\Data\Samples\Products;
 
+use Osm\Data\Base\Traits\Subtypes;
 use Osm\Data\Tables\Record;
 use Osm\Core\Attributes\Serialized;
 
@@ -11,5 +12,5 @@ use Osm\Core\Attributes\Serialized;
  */
 class Product extends Record
 {
-
+    use Subtypes;
 }

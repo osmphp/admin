@@ -2,14 +2,14 @@
 
 namespace Osm\Data\Samples\Configurables;
 
-use Osm\Core\Attributes\Name;
+use Osm\Data\Base\Attributes\Type;
 use Osm\Data\Samples\Products\Product;
 use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string[] $axes #[Serialized]
  */
-#[Name('configurable')]
+#[Type('configurable')]
 class Configurable extends Product
 {
 

@@ -1,16 +1,15 @@
 <?php
 
-namespace Osm\Data\All;
+namespace Osm\Data\Migrations;
 
 use Osm\Core\BaseModule;
 
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Data\Accounts\Module::class,
-        \Osm\Data\Queries\Module::class,
-        \Osm\Data\Migrations\Module::class,
+        \Osm\Data\Base\Module::class,
         \Osm\Data\Schema\Module::class,
         \Osm\Data\Tables\Module::class,
+        \Osm\Data\Scopes\Module::class,
     ];
 }

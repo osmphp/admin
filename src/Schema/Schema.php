@@ -11,6 +11,12 @@ use Osm\Core\Attributes\Serialized;
  */
 class Schema extends Object_
 {
+    /**
+     * @var int
+     */
+    #[Serialized]
+    public int $version = 1;
+
     protected function get_classes(): array {
         return Reflector::new()->getClasses();
     }

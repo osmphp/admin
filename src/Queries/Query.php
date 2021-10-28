@@ -104,11 +104,4 @@ class Query extends Object_
         return $osm_app->schema->classes[$this->object_class_name]
             ?? throw new Required(__METHOD__);
     }
-
-    protected function get_name(): string {
-        /* @var Name $name */
-        return ($name = $this->__class->attributes[Name::class] ?? null)
-            ? $name->name
-            : throw new Required(__METHOD__);
-    }
 }

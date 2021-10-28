@@ -6,20 +6,17 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Data\Schema\Class_;
 use Osm\Data\Schema\Diff;
+use Osm\Data\Scopes\Scope;
 
 /**
  * @property Diff $diff
- * @property ?bool $scoped
+ * @property Scope $scope
  *
  * @property Migration[] $migrations
  */
 class Planner extends Object_
 {
     public function plan(): array {
-        if ($this->scoped) {
-            throw new NotImplemented($this);
-        }
-
         $this->migrations = [];
 
         foreach ($this->diff->classes as $class) {
@@ -50,12 +47,15 @@ class Planner extends Object_
             return;
         }
 
-        if ((bool)$this->scoped !== (bool)$class->scoped) {
+        if ($this->scope && !$class->scoped ||
+            !$this->scope && $class->scoped)
+        {
             return;
         }
 
         $this->migrations[] = Migration\Table\Create::new([
             'class' => $class,
+            'scope' => $this->scope,
         ]);
     }
 

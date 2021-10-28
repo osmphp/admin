@@ -5,9 +5,11 @@ namespace Osm\Data\Migrations;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
+use Osm\Data\Scopes\Scope;
 use Osm\Framework\Db\Db;
 
 /**
+ * @property Scope $scope
  * @property Db $db
  */
 class Migration extends Object_

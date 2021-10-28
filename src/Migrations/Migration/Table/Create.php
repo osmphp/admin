@@ -15,10 +15,25 @@ class Create extends Table
 {
     public function run(): void
     {
-        $this->db->create($this->class->table, function(Blueprint $table) {
-            $this->createColumns($table, $this->class);
-            $table->json('data')->nullable();
-        });
+        if ($this->scope) {
+            if (!$this->scope->id) {
+                $this->db->create($this->class->table, function(Blueprint $table) {
+                    $this->createPrimaryColumns($table, $this->class);
+                });
+            }
+
+            $this->db->create("{$this->scope->prefix}{$this->class->table}",
+                function(Blueprint $table) {
+                    $this->createColumns($table, $this->class);
+                    $table->json('data')->nullable();
+                });
+        }
+        else {
+            $this->db->create($this->class->table, function(Blueprint $table) {
+                $this->createColumns($table, $this->class);
+                $table->json('data')->nullable();
+            });
+        }
     }
 
     protected function createColumns(Blueprint $table, Class_ $class,
@@ -26,13 +41,26 @@ class Create extends Table
     {
         foreach ($class->properties as $property) {
             if ($property->column) {
-                $this->createColumn($table, $property, $prefix);
+                if ($this->scope) {
+                    $property->column->createScope($table, $property, $prefix);
+                }
+                else {
+                    $property->column->create($table, $property, $prefix);
+                }
                 continue;
             }
 
             if (isset($class->schema->classes[$property->type])) {
                 throw new NotImplemented($this);
             }
+        }
+    }
+
+    protected function createPrimaryColumns(Blueprint $table, Class_ $class)
+        : void
+    {
+        foreach ($class->properties as $property) {
+            $property->column?->createKey($table, $property);
         }
     }
 }

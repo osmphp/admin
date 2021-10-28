@@ -10,6 +10,7 @@ use Osm\Data\Schema\Class_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Data\Schema\Diff;
 use Osm\Data\Schema\Schema;
+use Osm\Data\Scopes\Scope;
 use Osm\Data\Tables\Query;
 use Osm\Framework\Db\Db;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -27,17 +28,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Migrator extends Object_
 {
     public function migrate(): void {
+        global $osm_app; /* @var App $osm_app */
+
         $this->migrateFromEarlierSchemaVersions();
         $this->migrateScopeFromEarlierSchemaVersions();
 
-        $this->migrateGlobals();
-        //$this->migrateScope();
+        $this->migrateNonScopedClasses();
+        $this->migrateScopedClasses($osm_app->root_scope);
     }
 
-    protected function migrateGlobals(): void
+    protected function migrateNonScopedClasses(): void
     {
         $migrations = Planner::new([
             'diff' => $this->diff,
+        ])->plan();
+
+        foreach ($migrations as $migration) {
+            $migration->run();
+        }
+    }
+
+    protected function migrateScopedClasses(Scope $scope): void
+    {
+        $migrations = Planner::new([
+            'diff' => $this->diff,
+            'scope' => $scope,
         ])->plan();
 
         foreach ($migrations as $migration) {

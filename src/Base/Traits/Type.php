@@ -5,18 +5,18 @@ namespace Osm\Data\Base\Traits;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Data\Base\Attributes\Type;
+use Osm\Data\Base\Attributes\Type as TypeAttribute;
 
 /**
  * @property ?string $type #[Serialized]
  */
-trait Types
+trait Type
 {
     protected function get_type(): ?string {
         /* @var Object_ $this */
-        /* @var Type $type */
+        /* @var TypeAttribute $type */
 
-        return ($type = $this->__class->attributes[Type::class] ?? null)
+        return ($type = $this->__class->attributes[TypeAttribute::class] ?? null)
             ? $type->name
             : null;
     }

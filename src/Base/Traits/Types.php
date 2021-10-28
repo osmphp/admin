@@ -10,7 +10,7 @@ use Osm\Data\Base\Attributes\Type;
 /**
  * @property ?string $type #[Serialized]
  */
-trait Subtypes
+trait Types
 {
     protected function get_type(): ?string {
         /* @var Object_ $this */

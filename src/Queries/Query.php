@@ -3,6 +3,7 @@
 namespace Osm\Data\Queries;
 
 use Osm\Core\App;
+use Osm\Core\Attributes\Name;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -15,6 +16,7 @@ use Osm\Data\Schema\Class_;
  *
  * @property string $object_class_name
  * @property Class_ $object_class
+ * @property string $name
  */
 class Query extends Object_
 {
@@ -57,11 +59,7 @@ class Query extends Object_
     protected function selectAllProperties(): void
     {
         foreach ($this->object_class->properties as $property) {
-            throw new NotImplemented($this);
-
-            if ($property->primitive) {
-                $this->selectProperty($property->name);
-            }
+            $this->selectProperty($property->name);
         }
     }
 
@@ -105,5 +103,12 @@ class Query extends Object_
 
         return $osm_app->schema->classes[$this->object_class_name]
             ?? throw new Required(__METHOD__);
+    }
+
+    protected function get_name(): string {
+        /* @var Name $name */
+        return ($name = $this->__class->attributes[Name::class] ?? null)
+            ? $name->name
+            : throw new Required(__METHOD__);
     }
 }

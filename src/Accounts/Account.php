@@ -1,15 +1,15 @@
 <?php
 
-namespace Osm\Data\Tables;
+namespace Osm\Data\Accounts;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
+use Osm\Data\Base\Traits\Types;
 
 /**
  * @property int $id #[Serialized]
- * @property string $data #[Serialized]
  */
-class Record extends Object_
+class Account extends Object_
 {
-
+    use Types;
 }

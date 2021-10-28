@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Scopes;
+namespace Osm\Data\Accounts;
 
 use Osm\Core\BaseModule;
 

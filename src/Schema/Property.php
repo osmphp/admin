@@ -6,7 +6,7 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Base\Traits\Subtypes;
+use Osm\Data\Base\Traits\Types;
 
 /**
  * @property string $name #[Serialized]
@@ -16,7 +16,7 @@ use Osm\Data\Base\Traits\Subtypes;
  */
 class Property extends Object_
 {
-    use Subtypes;
+    use Types;
 
     protected function get_primitive(): bool {
         throw new NotImplemented($this);

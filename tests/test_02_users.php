@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Osm\Data\Tests;
 
-use Osm\Data\Samples\Products\Products;
+use Osm\Data\Accounts\Accounts;
 use Osm\Framework\TestCase;
 
-class test_02_products extends TestCase
+class test_02_users extends TestCase
 {
     public string $app_class_name = \Osm\Data\Samples\App::class;
 
@@ -15,7 +15,7 @@ class test_02_products extends TestCase
         // GIVEN sample classes and queries
 
         // WHEN you retrieve all products
-        $count = Products::new()->get()->count;
+        $count = Accounts::new()->get()->count;
 
         // THEN it's the sample application's name
         $this->assertEquals(1, $count);

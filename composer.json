@@ -24,6 +24,7 @@
     "autoload-dev": {
         "psr-4": {
             "Osm\\Data\\Tests\\": "tests/",
+            "Osm\\Data\\TestsMigrations\\": "tests_migrations/",
             "Osm\\Data\\Samples\\": "samples/"
         }
     }

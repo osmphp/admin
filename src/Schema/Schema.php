@@ -18,6 +18,6 @@ class Schema extends Object_
     public int $version = 1;
 
     protected function get_classes(): array {
-        return Reflector::new()->getClasses();
+        return Reflector::new(['schema' => $this])->getClasses();
     }
 }

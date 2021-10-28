@@ -54,7 +54,7 @@ class Planner extends Object_
             return;
         }
 
-        $this->migrations[] = Migration\CreateTable::new([
+        $this->migrations[] = Migration\Table\Create::new([
             'class' => $class,
         ]);
     }

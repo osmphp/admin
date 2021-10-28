@@ -7,6 +7,7 @@ use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 
 /**
+ * @property Schema $schema
  * @property string $name #[Serialized]
  * @property string $module_class_name #[Serialized]
  * @property Property[] $properties #[Serialized]

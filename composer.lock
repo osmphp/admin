@@ -1731,16 +1731,16 @@
         },
         {
             "name": "osmphp/core",
-            "version": "v0.10.3",
+            "version": "v0.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/core.git",
-                "reference": "29ef1cf89bd74bfc4c0f209898d7f66a1b7a5f84"
+                "reference": "cd5c0881d55e026803356deba55b6a72a9c657eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/core/zipball/29ef1cf89bd74bfc4c0f209898d7f66a1b7a5f84",
-                "reference": "29ef1cf89bd74bfc4c0f209898d7f66a1b7a5f84",
+                "url": "https://api.github.com/repos/osmphp/core/zipball/cd5c0881d55e026803356deba55b6a72a9c657eb",
+                "reference": "cd5c0881d55e026803356deba55b6a72a9c657eb",
                 "shasum": ""
             },
             "require": {
@@ -1777,9 +1777,9 @@
             "description": "Enables modular software development in any PHP project",
             "support": {
                 "issues": "https://github.com/osmphp/core/issues",
-                "source": "https://github.com/osmphp/core/tree/v0.10.3"
+                "source": "https://github.com/osmphp/core/tree/v0.10.4"
             },
-            "time": "2021-10-24T08:09:23+00:00"
+            "time": "2021-10-28T14:41:03+00:00"
         },
         {
             "name": "osmphp/framework",

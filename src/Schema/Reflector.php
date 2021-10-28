@@ -13,6 +13,7 @@ use Osm\Data\Queries\Query;
 use Osm\Framework\Cache\Descendants;
 
 /**
+ * @property Schema $schema
  * @property Class_[] $classes
  * @property Descendants $descendants
  */
@@ -43,6 +44,7 @@ class Reflector extends Object_
         $this->classes[$className] = $class = Class_::new([
             'name' => $className,
             'reflection' => $osm_app->classes[$className],
+            'schema' => $this->schema,
         ]);
 
         $this->getProperties($class);

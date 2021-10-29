@@ -6,10 +6,13 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
+use Osm\Core\Object_;
 use Osm\Data\Queries\Query;
 use Osm\Data\Queries\Result;
+use Osm\Data\Queries\Traits\Dehydrated;
 use Osm\Data\Tables\Attributes\Table as TableAttribute;
 use Osm\Framework\Db\Db;
+use function Osm\merge;
 
 /**
  * @property Db $db
@@ -17,6 +20,8 @@ use Osm\Framework\Db\Db;
  */
 class Table extends Query
 {
+    use Dehydrated;
+
     protected function run(): Result
     {
         // TODO: temporary implementation
@@ -25,7 +30,9 @@ class Table extends Query
         $this->applySelect($query);
 
         return Result::new([
-            'items' => $query->get()->toArray(),
+            'items' => $query->get()
+                ->map(fn(\stdClass $item) => $this->load($item))
+                ->toArray(),
         ]);
     }
 
@@ -63,5 +70,47 @@ class Table extends Query
                 $query->addSelect('data');
             }
         }
+    }
+
+    public function insert(\stdClass|Object_ $data): ?int {
+        if (!$this->dehydrated) {
+            throw new NotImplemented($this);
+        }
+
+        if (!($data instanceof \stdClass)) {
+            throw new NotImplemented($this);
+        }
+
+        $values = [];
+
+        foreach ($this->object_class->properties as $property) {
+            if ($property->column && isset($data->{$property->name})) {
+                $values[$property->name] = $data->{$property->name};
+                unset($data->{$property->name});
+            }
+        }
+
+        $values['data'] = !empty($data) ? json_encode($data) : null;
+
+        return $this->db->table($this->name)->insertGetId($values);
+    }
+
+    protected function load(\stdClass $item): \stdClass|Object_
+    {
+        if (!$this->dehydrated) {
+            throw new NotImplemented($this);
+        }
+
+        if (isset($item->data)) {
+            $item = merge($item, json_decode($item->data));
+        }
+
+        foreach ($item as $property => $value) {
+            if (!isset($this->select[$property])) {
+                unset($item->$property);
+            }
+        }
+
+        return $item;
     }
 }

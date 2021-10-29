@@ -11,7 +11,7 @@ use Osm\Data\Queries\Attributes\Of;
 use Osm\Data\Schema\Class_;
 
 /**
- * @property string[] $select
+ * @property string[]|null $select
  * @property ?int $limit
  *
  * @property string $object_class_name

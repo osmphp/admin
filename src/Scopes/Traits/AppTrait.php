@@ -8,6 +8,7 @@ use Osm\Data\Scopes\Scope;
 
 /**
  * @property Scope $root_scope
+ * @property Scope $scope
  */
 #[UseIn(App::class)]
 trait AppTrait

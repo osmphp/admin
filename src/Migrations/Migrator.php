@@ -11,7 +11,7 @@ use Osm\Core\Attributes\Serialized;
 use Osm\Data\Schema\Diff;
 use Osm\Data\Schema\Schema;
 use Osm\Data\Scopes\Scope;
-use Osm\Data\Tables\Query;
+use Osm\Data\Tables\Table;
 use Osm\Framework\Db\Db;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;

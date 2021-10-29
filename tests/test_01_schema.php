@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Osm\Data\Tests;
 
 use Osm\Data\Samples\Products\Product;
-use Osm\Data\Samples\Products\Products;
+use Osm\Data\Samples\Products\ProductTable;
 use Osm\Framework\TestCase;
 
 class test_01_schema extends TestCase

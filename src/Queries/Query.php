@@ -27,11 +27,8 @@ class Query extends Object_
             if (!is_int($key)) {
                 $this->selectPropertyWithCallback($key, $value);
             }
-            elseif ($value = '~') {
+            elseif ($value = '*') {
                 $this->selectAllProperties();
-            }
-            elseif ($value = '~~') {
-                $this->selectAllPropertiesRecursively();
             }
             else {
                 $this->selectProperty($value);
@@ -63,18 +60,13 @@ class Query extends Object_
         }
     }
 
-    protected function selectAllPropertiesRecursively(): void
-    {
-        throw new NotImplemented($this);
-    }
-
     public function get(array $select = null): Result {
         if (is_array($select)) {
             $this->select($select);
         }
 
         if (empty($this->select)) {
-            $this->select(['~']);
+            $this->select(['*']);
         }
 
         return $this->run();

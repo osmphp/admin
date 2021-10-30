@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Osm\Data\Tests;
 
 use Osm\Data\Accounts\Account;
-use Osm\Data\Accounts\AccountTable;
+use Osm\Data\Accounts\Accounts;
 use Osm\Framework\TestCase;
 
 class test_02_accounts extends TestCase
@@ -17,7 +17,7 @@ class test_02_accounts extends TestCase
         // GIVEN an empty table
 
         // WHEN you retrieve all records
-        $result = AccountTable::new()->get();
+        $result = Accounts::new()->get();
 
         // THEN there are none
         $this->assertCount(0, $result->items);
@@ -27,16 +27,16 @@ class test_02_accounts extends TestCase
         // GIVEN an empty table
 
         // WHEN you insert a record
-        $id = AccountTable::new()->dehydrated()->insert((object)[
+        $id = Accounts::new()->dehydrated()->insert((object)[
             'type' => 'user',
             'email' => 'foo@bar.com',
         ]);
 
         // THEN it's there
-        $result = AccountTable::new()->dehydrated()->get();
+        $result = Accounts::new()->dehydrated()->get();
         $this->assertCount(1, $result->items);
 
-        // AND dehydrated data is merged with explicit columns
+        // AND `data` is merged with explicit columns
         /* @var Account $account data class used as a hint class */
         $account = $result->first;
         $this->assertTrue($account->id === $id);

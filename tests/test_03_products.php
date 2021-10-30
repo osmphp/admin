@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Osm\Data\Tests;
 
-use Osm\Data\Samples\Products\ProductTable;
+use Osm\Data\Samples\Products\Products;
 use Osm\Framework\TestCase;
 
 class test_03_products extends TestCase
@@ -15,7 +15,7 @@ class test_03_products extends TestCase
         // GIVEN sample classes and queries
 
         // WHEN you retrieve all products
-        $result = ProductTable::new()->get();
+        $result = Products::new()->get();
 
         // THEN it's the sample application's name
         $this->assertCount(0, $result->items);

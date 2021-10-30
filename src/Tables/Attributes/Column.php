@@ -5,28 +5,16 @@ namespace Osm\Data\Tables\Attributes;
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Data\Schema\Property;
+use Osm\Data\Tables\Column as TableColumn;
 
 abstract class Column
 {
-    public function getMethod(): string {
-        return strtolower((new \ReflectionClass(static::class))
-            ->getShortName());
+    protected function getHandlerClassName(): string {
+        return str_replace('\\Attributes\\', '\\', static::class);
     }
 
-    public function create(Blueprint $table, Property $property,
-        string $prefix): void
-    {
-        throw new NotImplemented($this);
-    }
-
-    public function createKey(Blueprint $table, Property $property): void
-    {
-    }
-
-
-    public function createScope(Blueprint $table, Property $property,
-        string $prefix): void
-    {
-        $this->create($table, $property, $prefix);
+    public function createHandler(Property $property): TableColumn {
+        $new = "{$this->getHandlerClassName()}::new";
+        return $new(array_merge(['property' => $property], (array)$this));
     }
 }

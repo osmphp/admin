@@ -4,13 +4,18 @@ namespace Osm\Data\Migrations;
 
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Data\Scopes\Scope;
 use Osm\Framework\Db\Db;
 
 /**
- * @property Scope $scope
+ * @property Planner $planner
+ * @property Scope $scope null when creating global tables
  * @property Db $db
+ * @property ?int $priority
+ * @property string $name
+ * @property string[] $after
  */
 class Migration extends Object_
 {
@@ -22,5 +27,13 @@ class Migration extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function get_name(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_after(): array {
+        return [];
     }
 }

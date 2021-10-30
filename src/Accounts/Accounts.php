@@ -3,10 +3,10 @@
 namespace Osm\Data\Accounts;
 
 use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Tables\Table;
+use Osm\Data\Scopes\Table;
 
 #[Of(Account::class)]
-class AccountTable extends Table
+class Accounts extends Table
 {
 
 }

@@ -6,7 +6,7 @@ use Osm\Data\Queries\Attributes\Of;
 use Osm\Data\Scopes\Table;
 
 #[Of(Product::class)]
-class ProductTable extends Table
+class Products extends Table
 {
 
 }

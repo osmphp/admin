@@ -16,27 +16,4 @@ final class Int_ extends Column
     )
     {
     }
-
-    public function create(Blueprint $table, Property $property,
-        string $prefix): void
-    {
-        $column = $table->integer("{$prefix}{$property->name}");
-
-        if ($this->unsigned) {
-            $column->unsigned();
-        }
-
-        if ($this->references) {
-            list($foreignTable, $foreignColumn) =
-                explode('.', $this->references);
-
-            $foreign = $table->foreign("{$prefix}{$property->name}")
-                ->references($foreignColumn)
-                ->on($foreignTable);
-
-            if ($this->on_delete) {
-                $foreign->onDelete($this->on_delete);
-            }
-        }
-    }
 }

@@ -13,6 +13,7 @@ use Osm\Data\Base\Traits\Type;
  * @property string $class_name #[Serialized]
  * @property Class_ $class
  * @property CoreProperty $reflection
+ * @property bool $nullable #[Serialized]
  */
 class Property extends Object_
 {
@@ -20,5 +21,9 @@ class Property extends Object_
 
     protected function get_reflection(): CoreProperty {
         throw new NotImplemented($this);
+    }
+
+    protected function get_nullable(): bool {
+        return $this->reflection->nullable;
     }
 }

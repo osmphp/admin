@@ -3,6 +3,7 @@
 namespace Osm\Data\Scopes;
 
 use Osm\Core\App;
+use Osm\Core\Object_;
 use Osm\Data\Tables\Table as BaseTable;
 
 /**
@@ -24,5 +25,17 @@ class Table extends BaseTable
     protected function get_name(): string
     {
         return $this->scope->prefix . parent::get_name();
+    }
+
+    protected function doInsert(array $values): ?int
+    {
+        $id = $this->db->table($this->global_name)->insertGetId([
+            'scope_id' => $this->scope->id,
+        ]);
+
+        $this->db->table($this->name)->insert(
+            array_merge(['id' => $id], $values));
+
+        return $id;
     }
 }

@@ -24,7 +24,7 @@ trait IncrementsTrait
         $table->increments($this->property->name);
     }
 
-    public function createScope(Blueprint $table, string $prefix): void
+    public function createScoped(Blueprint $table, string $prefix): void
     {
         /* @var Column\Increments|static $this */
         $table->unsignedInteger("{$prefix}{$this->property->name}")

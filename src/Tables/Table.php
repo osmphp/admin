@@ -81,6 +81,15 @@ class Table extends Query
             throw new NotImplemented($this);
         }
 
+        return $this->doInsert($this->dehydratedInsertValues($data));
+    }
+
+    protected function doInsert(array $values): ?int
+    {
+        return $this->db->table($this->name)->insertGetId($values);
+    }
+
+    protected function dehydratedInsertValues(\stdClass $data): array {
         $values = [];
 
         foreach ($this->object_class->properties as $property) {
@@ -92,7 +101,7 @@ class Table extends Query
 
         $values['data'] = !empty($data) ? json_encode($data) : null;
 
-        return $this->db->table($this->name)->insertGetId($values);
+        return $values;
     }
 
     protected function load(\stdClass $item): \stdClass|Object_

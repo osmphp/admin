@@ -8,6 +8,7 @@ class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Data\Accounts\Module::class,
+        \Osm\Data\Grids\Module::class,
         \Osm\Data\Queries\Module::class,
         \Osm\Data\Migrations\Module::class,
         \Osm\Data\Schema\Module::class,

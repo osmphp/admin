@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Admin\Tables\Attributes;
+namespace Osm\Admin\Base\Attributes\Table;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-final class Table
+final class Column
 {
     public function __construct(public string $name)
     {

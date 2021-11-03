@@ -10,7 +10,7 @@ use Osm\Core\Object_;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Queries\Result;
 use Osm\Admin\Queries\Traits\Dehydrated;
-use Osm\Admin\Tables\Attributes\Table as TableAttribute;
+use Osm\Admin\Base\Attributes\Table as TableAttribute;
 use Osm\Framework\Db\Db;
 use function Osm\merge;
 

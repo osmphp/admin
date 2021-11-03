@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Admin\Tables\Traits;
+namespace Osm\Admin\Base\Traits;
 
 use Osm\Core\Attributes\Serialized;
-use Osm\Admin\Tables\Attributes\Column;
+use Osm\Admin\Base\Attributes\Table;
 
 /**
  * @property int $id #[
  *      Serialized,
- *      Column\Increments
+ *      Table\Increments
  * ]
  */
 trait Id

@@ -5,7 +5,7 @@ namespace Osm\Admin\Scopes\Traits;
 use Osm\Core\Attributes\UseIn;
 use Osm\Admin\Schema\Class_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Admin\Scopes\Attributes\Scoped;
+use Osm\Admin\Base\Attributes\Scoped;
 
 /**
  * @property bool $scoped #[Serialized]

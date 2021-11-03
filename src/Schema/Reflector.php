@@ -8,7 +8,7 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
 use Osm\Admin\Base\Attributes\Type;
-use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Queries\Query;
 use Osm\Framework\Cache\Descendants;
 

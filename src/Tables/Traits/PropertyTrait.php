@@ -4,7 +4,6 @@ namespace Osm\Admin\Tables\Traits;
 
 use Osm\Core\Attributes\UseIn;
 use Osm\Admin\Schema\Property;
-use Osm\Admin\Tables\Attributes\Column as ColumnAttribute;
 use Osm\Core\Attributes\Serialized;
 use Osm\Admin\Tables\Column;
 

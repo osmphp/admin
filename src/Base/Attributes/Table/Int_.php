@@ -1,13 +1,12 @@
 <?php
 
-namespace Osm\Admin\Tables\Attributes\Column;
+namespace Osm\Admin\Base\Attributes\Table;
 
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Property;
-use Osm\Admin\Tables\Attributes\Column;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Int_ extends Column
+#[\Attribute(\Attribute::TARGET_PROPERTY), Column('int')]
+final class Int_
 {
     public function __construct(
         public bool $unsigned = false,

@@ -4,14 +4,13 @@ namespace Osm\Admin\Scopes;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Admin\Tables\Attributes\Table;
-use Osm\Admin\Tables\Attributes\Column;
-use Osm\Admin\Tables\Traits\Id;
+use Osm\Admin\Base\Attributes\Table;
+use Osm\Admin\Base\Traits\Id;
 
 /**
  * @property ?int $parent_id #[
  *      Serialized,
- *      Column\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
+ *      Table\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
  * ]
  * @property string $prefix
  */

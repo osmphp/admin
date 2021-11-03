@@ -5,7 +5,7 @@ namespace Osm\Admin\Grids\Routes;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Admin\Grids\Grid;
-use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Tables\Table;
 use Osm\Framework\Http\Route;
 use Symfony\Component\HttpFoundation\Response;

@@ -7,7 +7,7 @@ use Osm\Core\Attributes\Name;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Schema\Class_;
 
 /**

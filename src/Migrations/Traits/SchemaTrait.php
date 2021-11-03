@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Migrations\Traits;
+namespace Osm\Admin\Migrations\Traits;
 
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Migrations\Migrator;
-use Osm\Data\Schema\Schema;
+use Osm\Admin\Migrations\Migrator;
+use Osm\Admin\Schema\Schema;
 
 #[UseIn(Schema::class)]
 trait SchemaTrait

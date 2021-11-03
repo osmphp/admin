@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Osm\Data\TestsMigrations;
+namespace Osm\Admin\TestsMigrations;
 
-use Osm\Data\Accounts\Accounts;
+use Osm\Admin\Accounts\Accounts;
 use Osm\Framework\TestCase;
 
 class test_01_accounts extends TestCase
 {
-    public string $app_class_name = \Osm\Data\Samples\App::class;
+    public string $app_class_name = \Osm\Admin\Samples\App::class;
 
     public function test_migrate_up() {
         // GIVEN sample classes and queries

@@ -1,8 +1,8 @@
 <?php
 
-namespace Osm\Data\Tables\Column;
+namespace Osm\Admin\Tables\Column;
 
-use Osm\Data\Tables\Column;
+use Osm\Admin\Tables\Column;
 use Osm\Core\Attributes\Serialized;
 
 /**

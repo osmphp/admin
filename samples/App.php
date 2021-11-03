@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Osm\Data\Samples;
+namespace Osm\Admin\Samples;
 
 use Osm\App\App as BaseApp;
 

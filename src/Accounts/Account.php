@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Data\Accounts;
+namespace Osm\Admin\Accounts;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Scopes\Attributes\Scoped;
-use Osm\Data\Tables\Traits\Id;
-use Osm\Data\Tables\Traits\Type;
-use Osm\Data\Tables\Attributes\Table;
-use Osm\Data\Tables\Attributes\Column;
+use Osm\Admin\Scopes\Attributes\Scoped;
+use Osm\Admin\Tables\Traits\Id;
+use Osm\Admin\Tables\Traits\Type;
+use Osm\Admin\Tables\Attributes\Table;
+use Osm\Admin\Tables\Attributes\Column;
 
 #[Table('accounts'), Scoped]
 class Account extends Object_

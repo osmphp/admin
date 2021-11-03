@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Schema\Diff;
+namespace Osm\Admin\Schema\Diff;
 
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
-use Osm\Data\Schema\Class_ as SchemaClass;
+use Osm\Admin\Schema\Class_ as SchemaClass;
 
 /**
  * @property SchemaClass $old

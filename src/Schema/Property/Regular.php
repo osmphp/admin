@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Schema\Property;
+namespace Osm\Admin\Schema\Property;
 
 use Osm\Core\Property as CoreProperty;
-use Osm\Data\Base\Attributes\Type;
-use Osm\Data\Schema\Property;
+use Osm\Admin\Base\Attributes\Type;
+use Osm\Admin\Schema\Property;
 use Osm\Core\Attributes\Serialized;
 
 /**

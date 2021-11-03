@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Migrations;
+namespace Osm\Admin\Migrations;
 
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
-use Osm\Data\Schema\Class_;
-use Osm\Data\Schema\Diff;
-use Osm\Data\Scopes\Scope;
+use Osm\Admin\Schema\Class_;
+use Osm\Admin\Schema\Diff;
+use Osm\Admin\Scopes\Scope;
 use function Osm\__;
 use function Osm\sort_by_dependency;
 

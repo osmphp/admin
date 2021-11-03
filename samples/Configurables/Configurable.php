@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Samples\Configurables;
+namespace Osm\Admin\Samples\Configurables;
 
-use Osm\Data\Base\Attributes\Type;
-use Osm\Data\Samples\Products\Product;
+use Osm\Admin\Base\Attributes\Type;
+use Osm\Admin\Samples\Products\Product;
 use Osm\Core\Attributes\Serialized;
 
 /**

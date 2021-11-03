@@ -1,13 +1,13 @@
 <?php
 
-namespace Osm\Data\Migrations\Migration\Table;
+namespace Osm\Admin\Migrations\Migration\Table;
 
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Core\Exceptions\NotImplemented;
-use Osm\Data\Migrations\Migration\Table;
-use Osm\Data\Schema\Class_;
-use Osm\Data\Schema\Property;
-use Osm\Data\Scopes\Scope;
+use Osm\Admin\Migrations\Migration\Table;
+use Osm\Admin\Schema\Class_;
+use Osm\Admin\Schema\Property;
+use Osm\Admin\Scopes\Scope;
 
 /**
  * @property Class_ $class

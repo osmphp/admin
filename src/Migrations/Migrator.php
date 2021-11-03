@@ -1,17 +1,17 @@
 <?php
 
-namespace Osm\Data\Migrations;
+namespace Osm\Admin\Migrations;
 
 use Illuminate\Database\Schema\Blueprint as TableBlueprint;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
-use Osm\Data\Schema\Class_;
+use Osm\Admin\Schema\Class_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Schema\Diff;
-use Osm\Data\Schema\Schema;
-use Osm\Data\Scopes\Scope;
-use Osm\Data\Tables\Table;
+use Osm\Admin\Schema\Diff;
+use Osm\Admin\Schema\Schema;
+use Osm\Admin\Scopes\Scope;
+use Osm\Admin\Tables\Table;
 use Osm\Framework\Db\Db;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;

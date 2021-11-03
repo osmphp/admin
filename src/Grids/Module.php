@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Grids;
+namespace Osm\Admin\Grids;
 
 use Osm\Core\Attributes\Name;
 use Osm\Core\BaseModule;
@@ -9,7 +9,7 @@ use Osm\Core\BaseModule;
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Data\Base\Module::class,
+        \Osm\Admin\Base\Module::class,
     ];
 
 }

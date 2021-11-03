@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Samples\Orders;
+namespace Osm\Admin\Samples\Orders;
 
 use Osm\Core\Object_;
-use Osm\Data\Tables\Attributes\Table;
-use Osm\Data\Tables\Traits\Id;
+use Osm\Admin\Tables\Attributes\Table;
+use Osm\Admin\Tables\Traits\Id;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Tables\Attributes\Column;
+use Osm\Admin\Tables\Attributes\Column;
 
 /**
  * @property int $order_id #[

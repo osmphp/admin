@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Tables\Traits;
+namespace Osm\Admin\Tables\Traits;
 
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Schema\Property;
-use Osm\Data\Tables\Attributes\Column as ColumnAttribute;
+use Osm\Admin\Schema\Property;
+use Osm\Admin\Tables\Attributes\Column as ColumnAttribute;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Tables\Column;
+use Osm\Admin\Tables\Column;
 
 /**
  * @property ?Column $column #[Serialized]

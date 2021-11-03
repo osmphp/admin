@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Scopes\Traits;
+namespace Osm\Admin\Scopes\Traits;
 
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Scopes\Scope;
+use Osm\Admin\Scopes\Scope;
 
 /**
  * @property Scope $root_scope

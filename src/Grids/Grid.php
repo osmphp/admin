@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Grids;
+namespace Osm\Admin\Grids;
 
 use Osm\Core\Object_;
 

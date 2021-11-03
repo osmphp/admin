@@ -1,17 +1,17 @@
 <?php
 
-namespace Osm\Data\All;
+namespace Osm\Admin\All;
 
 use Osm\Core\BaseModule;
 
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Data\Accounts\Module::class,
-        \Osm\Data\Grids\Module::class,
-        \Osm\Data\Queries\Module::class,
-        \Osm\Data\Migrations\Module::class,
-        \Osm\Data\Schema\Module::class,
-        \Osm\Data\Tables\Module::class,
+        \Osm\Admin\Accounts\Module::class,
+        \Osm\Admin\Grids\Module::class,
+        \Osm\Admin\Queries\Module::class,
+        \Osm\Admin\Migrations\Module::class,
+        \Osm\Admin\Schema\Module::class,
+        \Osm\Admin\Tables\Module::class,
     ];
 }

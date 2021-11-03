@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Data\Tables;
+namespace Osm\Admin\Tables;
 
 use Osm\Core\BaseModule;
 
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Data\Base\Module::class,
-        \Osm\Data\Queries\Module::class,
+        \Osm\Admin\Base\Module::class,
+        \Osm\Admin\Queries\Module::class,
     ];
 
 }

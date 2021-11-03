@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Tables;
+namespace Osm\Admin\Tables;
 
 use Osm\Core\Object_;
-use Osm\Data\Schema\Property;
+use Osm\Admin\Schema\Property;
 
 /**
  * @property Property $property

@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Data\Queries;
+namespace Osm\Admin\Queries;
 
 use Osm\Core\App;
 use Osm\Core\Attributes\Name;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Schema\Class_;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Schema\Class_;
 
 /**
  * @property string[]|null $select

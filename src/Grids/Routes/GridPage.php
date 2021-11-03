@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Grids\Routes;
+namespace Osm\Admin\Grids\Routes;
 
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
-use Osm\Data\Grids\Grid;
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Tables\Table;
+use Osm\Admin\Grids\Grid;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Tables\Table;
 use Osm\Framework\Http\Route;
 use Symfony\Component\HttpFoundation\Response;
 use function Osm\view_response;

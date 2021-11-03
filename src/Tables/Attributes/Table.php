@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Tables\Attributes;
+namespace Osm\Admin\Tables\Attributes;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class Table

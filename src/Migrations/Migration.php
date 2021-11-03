@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Migrations;
+namespace Osm\Admin\Migrations;
 
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Data\Scopes\Scope;
+use Osm\Admin\Scopes\Scope;
 use Osm\Framework\Db\Db;
 
 /**

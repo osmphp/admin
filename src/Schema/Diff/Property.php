@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Schema\Diff;
+namespace Osm\Admin\Schema\Diff;
 
 use Osm\Core\Object_;
-use Osm\Data\Schema\Property as SchemaProperty;
+use Osm\Admin\Schema\Property as SchemaProperty;
 
 /**
  * @property SchemaProperty $old

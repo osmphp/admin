@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Tables\Traits;
+namespace Osm\Admin\Tables\Traits;
 
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Base\Traits\Type as BaseType;
+use Osm\Admin\Base\Traits\Type as BaseType;
 
 trait Type
 {

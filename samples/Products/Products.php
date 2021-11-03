@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Samples\Products;
+namespace Osm\Admin\Samples\Products;
 
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Scopes\Table;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Scopes\Table;
 
 #[Of(Product::class)]
 class Products extends Table

@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Queries;
+namespace Osm\Admin\Queries;
 
 use Osm\Core\Object_;
 use Osm\Framework\Search\Hints\Result\Facet;

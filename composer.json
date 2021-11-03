@@ -1,6 +1,6 @@
 {
-    "name": "osmphp/data",
-    "description": "\"The Big Red Button\" - a project about defining application data structures and logic in PHP code, pressing *the big red button* (hence the codename), and getting fully functioning Admin Panel and API.",
+    "name": "osmphp/admin",
+    "description": "A package for defining data structures using PHP 8 classes and attributes, and getting fully functioning Admin Panel and API.",
     "license": "GPL-3.0-only",
     "authors": [
         {
@@ -17,15 +17,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Osm\\Data\\": "src/",
-            "Osm\\Data\\Tools\\": "tools/"
+            "Osm\\Admin\\": "src/",
+            "Osm\\Admin\\Tools\\": "tools/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Osm\\Data\\Tests\\": "tests/",
-            "Osm\\Data\\TestsMigrations\\": "tests_migrations/",
-            "Osm\\Data\\Samples\\": "samples/"
+            "Osm\\Admin\\Tests\\": "tests/",
+            "Osm\\Admin\\TestsMigrations\\": "tests_migrations/",
+            "Osm\\Admin\\Samples\\": "samples/"
         }
     }
 }

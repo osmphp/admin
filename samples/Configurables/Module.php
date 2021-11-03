@@ -1,16 +1,16 @@
 <?php
 
-namespace Osm\Data\Samples\Configurables;
+namespace Osm\Admin\Samples\Configurables;
 
 use Osm\Core\BaseModule;
-use Osm\Data\Samples\App;
+use Osm\Admin\Samples\App;
 
 class Module extends BaseModule
 {
     public static ?string $app_class_name = App::class;
 
     public static array $requires = [
-        \Osm\Data\All\Module::class,
-        \Osm\Data\Samples\Products\Module::class,
+        \Osm\Admin\All\Module::class,
+        \Osm\Admin\Samples\Products\Module::class,
     ];
 }

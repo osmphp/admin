@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Tables\Traits;
+namespace Osm\Admin\Tables\Traits;
 
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Schema\Class_;
-use Osm\Data\Tables\Attributes\Table;
+use Osm\Admin\Schema\Class_;
+use Osm\Admin\Tables\Attributes\Table;
 use Osm\Core\Attributes\Serialized;
 
 /**

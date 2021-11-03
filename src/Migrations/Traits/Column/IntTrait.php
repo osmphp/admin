@@ -1,11 +1,11 @@
 <?php
 
-namespace Osm\Data\Migrations\Traits\Column;
+namespace Osm\Admin\Migrations\Traits\Column;
 
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Migrations\Traits\ColumnTrait;
-use Osm\Data\Tables\Column;
+use Osm\Admin\Migrations\Traits\ColumnTrait;
+use Osm\Admin\Tables\Column;
 
 #[UseIn(Column\Int_::class)]
 trait IntTrait

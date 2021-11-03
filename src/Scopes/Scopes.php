@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Scopes;
+namespace Osm\Admin\Scopes;
 
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Tables\Table;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Tables\Table;
 
 #[Of(Scope::class)]
 class Scopes extends Table

@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Queries\Attributes;
+namespace Osm\Admin\Queries\Attributes;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class Of

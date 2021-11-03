@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Samples\Inventory\Traits;
+namespace Osm\Admin\Samples\Inventory\Traits;
 
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Samples\Products\Product;
+use Osm\Admin\Samples\Products\Product;
 
 /**
  * @property bool $in_stock #[Serialized]

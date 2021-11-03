@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Osm\Data\Samples\App;
+use Osm\Admin\Samples\App;
 use Osm\Runtime\Apps;
 use function Osm\handle_errors;
 

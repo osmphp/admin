@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Schema\Traits;
+namespace Osm\Admin\Schema\Traits;
 
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Schema\Schema;
+use Osm\Admin\Schema\Schema;
 
 /**
  * @property Schema $schema

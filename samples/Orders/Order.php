@@ -1,11 +1,11 @@
 <?php
 
-namespace Osm\Data\Samples\Orders;
+namespace Osm\Admin\Samples\Orders;
 
 use Osm\Core\Object_;
-use Osm\Data\Scopes\Traits\ScopeId;
-use Osm\Data\Tables\Attributes\Table;
-use Osm\Data\Tables\Traits\Id;
+use Osm\Admin\Scopes\Traits\ScopeId;
+use Osm\Admin\Tables\Attributes\Table;
+use Osm\Admin\Tables\Traits\Id;
 use Osm\Core\Attributes\Serialized;
 
 /**

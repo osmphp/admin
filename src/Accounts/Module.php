@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Data\Accounts;
+namespace Osm\Admin\Accounts;
 
 use Osm\Core\BaseModule;
 
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Data\Base\Module::class,
-        \Osm\Data\Tables\Module::class,
-        \Osm\Data\Scopes\Module::class,
+        \Osm\Admin\Base\Module::class,
+        \Osm\Admin\Tables\Module::class,
+        \Osm\Admin\Scopes\Module::class,
     ];
 }

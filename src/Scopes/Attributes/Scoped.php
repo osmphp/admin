@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Scopes\Attributes;
+namespace Osm\Admin\Scopes\Attributes;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class Scoped

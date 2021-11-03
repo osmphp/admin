@@ -1,15 +1,15 @@
 <?php
 
-namespace Osm\Data\Schema;
+namespace Osm\Admin\Schema;
 
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
-use Osm\Data\Base\Attributes\Type;
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Queries\Query;
+use Osm\Admin\Base\Attributes\Type;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Queries\Query;
 use Osm\Framework\Cache\Descendants;
 
 /**

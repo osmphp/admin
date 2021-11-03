@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Tables\Traits;
+namespace Osm\Admin\Tables\Traits;
 
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Tables\Attributes\Column;
+use Osm\Admin\Tables\Attributes\Column;
 
 /**
  * @property int $id #[

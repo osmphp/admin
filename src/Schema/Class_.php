@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Schema;
+namespace Osm\Admin\Schema;
 
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Object_;

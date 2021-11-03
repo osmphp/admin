@@ -1,11 +1,11 @@
 <?php
 
-namespace Osm\Data\Base\Traits;
+namespace Osm\Admin\Base\Traits;
 
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Data\Base\Attributes\Type as TypeAttribute;
+use Osm\Admin\Base\Attributes\Type as TypeAttribute;
 
 /**
  * @property ?string $type #[Serialized]

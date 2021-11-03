@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Scopes;
+namespace Osm\Admin\Scopes;
 
 use Osm\Core\App;
 use Osm\Core\Object_;
-use Osm\Data\Tables\Table as BaseTable;
+use Osm\Admin\Tables\Table as BaseTable;
 
 /**
  * @property Scope $scope

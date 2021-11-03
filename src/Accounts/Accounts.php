@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Accounts;
+namespace Osm\Admin\Accounts;
 
-use Osm\Data\Queries\Attributes\Of;
-use Osm\Data\Scopes\Table;
+use Osm\Admin\Queries\Attributes\Of;
+use Osm\Admin\Scopes\Table;
 
 #[Of(Account::class)]
 class Accounts extends Table

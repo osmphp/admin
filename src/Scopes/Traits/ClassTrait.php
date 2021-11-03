@@ -1,11 +1,11 @@
 <?php
 
-namespace Osm\Data\Scopes\Traits;
+namespace Osm\Admin\Scopes\Traits;
 
 use Osm\Core\Attributes\UseIn;
-use Osm\Data\Schema\Class_;
+use Osm\Admin\Schema\Class_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Scopes\Attributes\Scoped;
+use Osm\Admin\Scopes\Attributes\Scoped;
 
 /**
  * @property bool $scoped #[Serialized]

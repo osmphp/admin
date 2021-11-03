@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Data\Queries\Traits;
+namespace Osm\Admin\Queries\Traits;
 
 /**
  * @property ?bool $dehydrated

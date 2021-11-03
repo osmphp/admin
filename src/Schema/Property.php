@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Schema;
+namespace Osm\Admin\Schema;
 
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Property as CoreProperty;
-use Osm\Data\Base\Traits\Type;
+use Osm\Admin\Base\Traits\Type;
 
 /**
  * @property string $name #[Serialized]

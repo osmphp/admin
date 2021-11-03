@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Tables\Attributes\Column;
+namespace Osm\Admin\Tables\Attributes\Column;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Data\Schema\Property;
-use Osm\Data\Tables\Attributes\Column;
+use Osm\Admin\Schema\Property;
+use Osm\Admin\Tables\Attributes\Column;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class Int_ extends Column

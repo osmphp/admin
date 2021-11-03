@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Data\Samples\Users;
+namespace Osm\Admin\Samples\Users;
 
-use Osm\Data\Accounts\Account;
+use Osm\Admin\Accounts\Account;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Base\Attributes\Type;
+use Osm\Admin\Base\Attributes\Type;
 
 /**
  * @property string $email #[Serialized]

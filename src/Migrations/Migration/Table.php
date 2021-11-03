@@ -1,11 +1,11 @@
 <?php
 
-namespace Osm\Data\Migrations\Migration;
+namespace Osm\Admin\Migrations\Migration;
 
 use Osm\Core\Exceptions\NotImplemented;
-use Osm\Data\Migrations\Migration;
-use Osm\Data\Schema\Class_;
-use Osm\Data\Tables\Column;
+use Osm\Admin\Migrations\Migration;
+use Osm\Admin\Schema\Class_;
+use Osm\Admin\Tables\Column;
 
 class Table extends Migration
 {

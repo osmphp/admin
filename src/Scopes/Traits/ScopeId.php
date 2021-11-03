@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Data\Scopes\Traits;
+namespace Osm\Admin\Scopes\Traits;
 
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Tables\Attributes\Column;
+use Osm\Admin\Tables\Attributes\Column;
 
 /**
  * @property ?int $scope_id #[

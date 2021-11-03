@@ -1,12 +1,12 @@
 <?php
 
-namespace Osm\Data\Scopes;
+namespace Osm\Admin\Scopes;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Tables\Attributes\Table;
-use Osm\Data\Tables\Attributes\Column;
-use Osm\Data\Tables\Traits\Id;
+use Osm\Admin\Tables\Attributes\Table;
+use Osm\Admin\Tables\Attributes\Column;
+use Osm\Admin\Tables\Traits\Id;
 
 /**
  * @property ?int $parent_id #[

@@ -1,16 +1,16 @@
 <?php
 
-namespace Osm\Data\Tables;
+namespace Osm\Admin\Tables;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Data\Queries\Query;
-use Osm\Data\Queries\Result;
-use Osm\Data\Queries\Traits\Dehydrated;
-use Osm\Data\Tables\Attributes\Table as TableAttribute;
+use Osm\Admin\Queries\Query;
+use Osm\Admin\Queries\Result;
+use Osm\Admin\Queries\Traits\Dehydrated;
+use Osm\Admin\Tables\Attributes\Table as TableAttribute;
 use Osm\Framework\Db\Db;
 use function Osm\merge;
 

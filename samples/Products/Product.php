@@ -1,13 +1,13 @@
 <?php
 
-namespace Osm\Data\Samples\Products;
+namespace Osm\Admin\Samples\Products;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Data\Scopes\Attributes\Scoped;
-use Osm\Data\Tables\Attributes\Table;
-use Osm\Data\Tables\Traits\Id;
-use Osm\Data\Tables\Traits\Type;
+use Osm\Admin\Scopes\Attributes\Scoped;
+use Osm\Admin\Tables\Attributes\Table;
+use Osm\Admin\Tables\Traits\Id;
+use Osm\Admin\Tables\Traits\Type;
 
 /**
  * @property string $sku #[Serialized]

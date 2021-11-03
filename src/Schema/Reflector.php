@@ -2,8 +2,10 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Base\Attributes\Object_ as ObjectAttribute;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
@@ -16,34 +18,31 @@ use Osm\Framework\Cache\Descendants;
  * @property Schema $schema
  * @property Class_[] $classes
  * @property Descendants $descendants
+ * @property CoreClass[] $core_classes
+ * @property string[] $data_class_markers
  */
 class Reflector extends Object_
 {
     public function getClasses(): array {
         $this->classes = [];
 
-        $queryClasses = $this->descendants->classes(Query::class);
-
-        foreach ($queryClasses as $queryClass) {
-            /* @var Of $of */
-            if ($of = $queryClass->attributes[Of::class] ?? null) {
-                $this->getClass($of->class_name);
-            }
+        foreach ($this->core_classes as $class) {
+            $this->getClass($class);
         }
 
         return $this->classes;
     }
 
-    protected function getClass(string $className): Class_ {
+    protected function getClass(CoreClass $reflection): Class_ {
         global $osm_app; /* @var App $osm_app */
 
-        if (isset($this->classes[$className])) {
-            return $this->classes[$className];
+        if (isset($this->classes[$reflection->name])) {
+            return $this->classes[$reflection->name];
         }
 
-        $this->classes[$className] = $class = Class_::new([
-            'name' => $className,
-            'reflection' => $osm_app->classes[$className],
+        $this->classes[$reflection->name] = $class = Class_::new([
+            'name' => $reflection->name,
+            'reflection' => $reflection,
             'schema' => $this->schema,
         ]);
 
@@ -66,6 +65,8 @@ class Reflector extends Object_
     protected function getProperty(Class_ $class, CoreProperty $reflection)
         : void
     {
+        global $osm_app; /* @var App $osm_app */
+
         if (!isset($reflection->attributes[Serialized::class])) {
             return;
         }
@@ -91,16 +92,18 @@ class Reflector extends Object_
             is_subclass_of($reflection->type, Object_::class,
                 true))
         {
-            $this->getClass($reflection->type);
+            $this->getClass($osm_app->classes[$reflection->type]);
         }
     }
 
     protected function getSubtypes(Class_ $class): void {
+        global $osm_app; /* @var App $osm_app */
+
         $class->type_class_names = $this->descendants->byName($class->name,
             Type::class);
 
         $class->types = array_map(
-            fn(string $className) => $this->getClass($className),
+            fn(string $className) => $this->getClass($osm_app->classes[$className]),
             $class->type_class_names);
 
         foreach ($class->types as $typeName => $type) {
@@ -143,5 +146,43 @@ class Reflector extends Object_
 
         $classProperty->type_names[] = $typeName;
         $classProperty->types[] = $type;
+    }
+
+    protected function get_core_classes(): array {
+        global $osm_app; /* @var App $osm_app */
+
+        return array_filter($osm_app->classes,
+            fn(CoreClass $class) => $this->isDataClass($class));
+    }
+
+    protected function isDataClass(CoreClass $class): bool
+    {
+        foreach ($this->data_class_markers as $attributeClassName) {
+            if (isset($class->attributes[$attributeClassName])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function get_data_class_markers(): array {
+        global $osm_app; /* @var App $osm_app */
+
+        $dataClassMarkers = [];
+
+        foreach ($osm_app->classes as $class) {
+            if (!isset($class->attributes[\Attribute::class])) {
+                continue;
+            }
+
+            if (!isset($class->attributes[ObjectAttribute::class])) {
+                continue;
+            }
+
+            $dataClassMarkers[] = $class->name;
+        }
+
+        return $dataClassMarkers;
     }
 }

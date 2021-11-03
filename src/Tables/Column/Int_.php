@@ -3,6 +3,7 @@
 namespace Osm\Admin\Tables\Column;
 
 use Osm\Admin\Tables\Column;
+use Osm\Core\Attributes\Name;
 use Osm\Core\Attributes\Serialized;
 
 /**
@@ -12,6 +13,7 @@ use Osm\Core\Attributes\Serialized;
  * @property ?string $references_column #[Serialized]
  * @property ?string $on_delete #[Serialized]
  */
+#[Name('int')]
 class Int_ extends Column
 {
     protected function get_references_table(): ?string {

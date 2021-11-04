@@ -28,6 +28,6 @@ class RenderGridPage extends Route
 
         return $osm_app->schema
             ->classes[$this->data_class_name]
-            ->grids["{$this->http->area->name}:{$this->grid_name}"];
+            ->grids[$this->grid_name];
     }
 }

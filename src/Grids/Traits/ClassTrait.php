@@ -2,15 +2,16 @@
 
 namespace Osm\Admin\Grids\Traits;
 
-use Osm\Admin\Base\Attributes\Grid as GridAttribute;
+use Osm\Admin\Base\Attributes\Grid\Grid as GridAttribute;
 use Osm\Admin\Grids\Grid;
 use Osm\Admin\Schema\Class_;
+use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Attributes\Serialized;
+use Osm\Framework\Areas\Admin;
 
 /**
- * @property ?string $default_grid_url #[Serialized]
  * @property Grid[] $grids #[Serialized]
  */
 #[UseIn(Class_::class)]
@@ -20,23 +21,43 @@ trait ClassTrait
         /* @var Class_|static $this */
         $grids = [];
 
-        if ($this->default_grid_url) {
-            $grids['admin:'] = Grid::new([
-                'data_class_name' => $this->name,
-                'area_name' => 'admin',
-                'url' => $this->default_grid_url,
-            ]);
+        foreach ($this->reflection->attributes as $className => $attributes) {
+            if (!is_array($attributes)) {
+                $attributes = [$attributes];
+            }
+            $grids = array_merge($grids,
+                $this->createGrids($className, $attributes));
         }
 
         return $grids;
     }
 
-    protected function get_default_grid_url(): ?string {
+    protected function createGrids(string $attributeClassName,
+        array $attributes): array
+    {
+        global $osm_app; /* @var App $osm_app */
         /* @var Class_|static $this */
 
-        /* @var GridAttribute $grid */
-        return ($grid = $this->reflection->attributes[GridAttribute::class] ?? null)
-            ? $grid->url
-            : null;
+        if (!($class = $osm_app->classes[$attributeClassName] ?? null)) {
+            return [];
+        }
+
+        /* @var GridAttribute $marker */
+        if (!($marker = $class->attributes[GridAttribute::class] ?? null)) {
+            return [];
+        }
+
+        $gridClassNames = $osm_app->descendants->byName(Grid::class);
+        $new = "{$gridClassNames[$marker->type]}::new";
+
+        $grids = [];
+
+        foreach ($attributes as $attribute) {
+            $grid = $new(array_merge(['data_class_name' => $this->name],
+                (array)$attribute));
+            $grids[$grid->name] = $grid;
+        }
+
+        return $grids;
     }
 }

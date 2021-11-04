@@ -15,11 +15,14 @@ use Osm\Admin\Base\Traits\Id;
  * ]
  * @property ?string $title #[
  *      Serialized,
- *      Grid\String_(sort_order: 20),
+ *      Grid\String_,
  * ]
  * @property string $prefix
  */
-#[Table('scopes'), Grid('/scopes/')]
+#[
+    Table('scopes'),
+    Grid\Page('/scopes', 'Scopes', select: ['id', 'title']),
+]
 class Scope extends Object_
 {
     use Id;

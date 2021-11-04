@@ -11,7 +11,7 @@ use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string $data_class_name #[Serialized]
- * @property string $area_name #[Serialized]
+ * @property string $area_class_name #[Serialized]
  * @property ?string $name #[Serialized]
  * @property string $url #[Serialized]
  * @property Column[] $columns #[Serialized]
@@ -25,7 +25,7 @@ class Grid extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_area_name(): string {
+    protected function get_area_class_name(): string {
         throw new Required(__METHOD__);
     }
 
@@ -71,14 +71,18 @@ class Grid extends Object_
 
     protected function get_routes(): array {
         return [
-            "{$this->area_name}:GET {$this->url}" => Route::new([
-                'class_name' => Routes\Admin\RenderGridPage::class,
-                'data_class_name' => $this->data_class_name,
-                'grid_name' => $this->name,
-            ]),
+            $this->area_class_name => [
+                "GET {$this->url}/" => [ Routes\Admin\RenderGridPage::class => [
+                    'data_class_name' => $this->data_class_name,
+                    'grid_name' => $this->name,
+                ]],
+            ],
         ];
     }
 
+    protected function get_name(): string {
+        return "{$this->area_class_name}:{$this->url}";
+    }
     // for a data class, there may be several grids
 
     // each grid defines columns, filters, sort order

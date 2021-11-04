@@ -1784,16 +1784,16 @@
         },
         {
             "name": "osmphp/framework",
-            "version": "v0.13.12",
+            "version": "v0.13.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/framework.git",
-                "reference": "6abe7c8b1bed5dbb851b3cf5fe1b088c02ff7ea2"
+                "reference": "448222ef77614796f57ab0b890b6b4e1c21ef386"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/framework/zipball/6abe7c8b1bed5dbb851b3cf5fe1b088c02ff7ea2",
-                "reference": "6abe7c8b1bed5dbb851b3cf5fe1b088c02ff7ea2",
+                "url": "https://api.github.com/repos/osmphp/framework/zipball/448222ef77614796f57ab0b890b6b4e1c21ef386",
+                "reference": "448222ef77614796f57ab0b890b6b4e1c21ef386",
                 "shasum": ""
             },
             "require": {
@@ -1849,9 +1849,9 @@
             "description": "Osm Framework is an open-source, insanely fast, unprecedentedly extensible, and fun to work with PHP 8 framework for creating modern Web applications. It's built on top of tried and tested Symfony and Laravel components.",
             "support": {
                 "issues": "https://github.com/osmphp/framework/issues",
-                "source": "https://github.com/osmphp/framework/tree/v0.13.12"
+                "source": "https://github.com/osmphp/framework/tree/v0.13.13"
             },
-            "time": "2021-11-04T08:41:06+00:00"
+            "time": "2021-11-04T18:20:42+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

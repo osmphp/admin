@@ -15,6 +15,7 @@ final class Page
         public ?string $parameters = null,
         public bool $multiselect = true,
         public bool $editable = false,
+        public bool $can_create = true,
     )
     {
     }

@@ -15,7 +15,7 @@ use Osm\Admin\Base\Traits\Id;
  * ]
  * @property ?string $title #[
  *      Serialized,
- *      Grid\String_,
+ *      Grid\String_('Title'),
  * ]
  * @property string $prefix
  */

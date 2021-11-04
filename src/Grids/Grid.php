@@ -18,6 +18,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string[] $select #[Serialized]
  * @property Route[] $routes #[Serialized]
  * @property Class_ $data_class
+ * @property Column[] $selected_columns
  */
 class Grid extends Object_
 {
@@ -46,21 +47,7 @@ class Grid extends Object_
     }
 
     protected function get_select(): array {
-        if ($this->name) {
-            throw new Required(__METHOD__);
-        }
-
-        $select = [];
-
-        foreach ($this->columns as $column) {
-            if ($column->sort_order) {
-                $select[$column->name] = $column->sort_order;
-            }
-        }
-
-        uasort($select, fn(int $a, int $b) => $a <=> $b);
-
-        return array_keys($select);
+        throw new Required(__METHOD__);
     }
 
     protected function get_data_class(): Class_ {
@@ -83,7 +70,14 @@ class Grid extends Object_
     protected function get_name(): string {
         return "{$this->area_class_name}:{$this->url}";
     }
-    // for a data class, there may be several grids
 
-    // each grid defines columns, filters, sort order
+    protected function get_selected_columns(): array {
+        $columns = [];
+
+        foreach ($this->select as $name) {
+            $columns[$name] = $this->columns[$name];
+        }
+
+        return $columns;
+    }
 }

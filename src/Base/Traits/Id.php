@@ -10,7 +10,7 @@ use Osm\Admin\Base\Attributes\Grid;
  * @property int $id #[
  *      Serialized,
  *      Table\Increments,
- *      Grid\PrimaryKey,
+ *      Grid\PrimaryKey('ID'),
  * ]
  */
 trait Id

@@ -14,11 +14,10 @@ use Osm\Core\Attributes\Serialized;
  * @property string $area_class_name #[Serialized]
  * @property ?string $name #[Serialized]
  * @property string $url #[Serialized]
- * @property Column[] $columns #[Serialized]
+ * @property Column[] $columns
  * @property string[] $select #[Serialized]
- * @property Route[] $routes #[Serialized]
+ * @property array $routes #[Serialized]
  * @property Class_ $data_class
- * @property Column[] $selected_columns
  */
 class Grid extends Object_
 {
@@ -37,7 +36,9 @@ class Grid extends Object_
     protected function get_columns(): array {
         $columns = [];
 
-        foreach ($this->data_class->properties as $property) {
+        foreach ($this->select as $name) {
+            $property = $this->data_class->properties[$name];
+
             if ($property->grid_column) {
                 $columns[$property->name] = $property->grid_column;
             }
@@ -59,7 +60,7 @@ class Grid extends Object_
     protected function get_routes(): array {
         return [
             $this->area_class_name => [
-                "GET {$this->url}/" => [ Routes\Admin\RenderGridPage::class => [
+                "GET {$this->url}" => [ Routes\Admin\RenderGridPage::class => [
                     'data_class_name' => $this->data_class_name,
                     'grid_name' => $this->name,
                 ]],
@@ -69,15 +70,5 @@ class Grid extends Object_
 
     protected function get_name(): string {
         return "{$this->area_class_name}:{$this->url}";
-    }
-
-    protected function get_selected_columns(): array {
-        $columns = [];
-
-        foreach ($this->select as $name) {
-            $columns[$name] = $this->columns[$name];
-        }
-
-        return $columns;
     }
 }

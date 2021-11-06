@@ -23,11 +23,11 @@ class test_02_grids extends TestCase
         $grid = $class->grids[$key];
 
         // THEN it has columns specified in PHP attributes
-        $this->assertArrayHasKey('id', $grid->selected_columns);
+        $this->assertArrayHasKey('id', $grid->columns);
         $this->assertInstanceOf(Column\PrimaryKey::class,
-            $grid->selected_columns['id']);
-        $this->assertArrayHasKey('title', $grid->selected_columns);
+            $grid->columns['id']);
+        $this->assertArrayHasKey('title', $grid->columns);
         $this->assertInstanceOf(Column\String_::class,
-            $grid->selected_columns['title']);
+            $grid->columns['title']);
     }
 }

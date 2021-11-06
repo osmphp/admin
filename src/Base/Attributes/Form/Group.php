@@ -11,6 +11,7 @@ final class Group
         public int $sort_order,
         public string $name,
         public string $title,
+        public string $section_name = 'implicit',
     )
     {
     }

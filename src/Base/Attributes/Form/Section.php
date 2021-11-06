@@ -11,6 +11,7 @@ final class Section
         public int $sort_order,
         public string $name,
         public string $title,
+        public string $chapter_name = 'implicit',
     )
     {
     }

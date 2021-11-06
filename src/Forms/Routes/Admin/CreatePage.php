@@ -6,7 +6,7 @@ use Osm\Admin\Forms\Routes\Route;
 use Symfony\Component\HttpFoundation\Response;
 use function Osm\view_response;
 
-class RenderCreateFormPage extends Route
+class CreatePage extends Route
 {
     public function run(): Response
     {

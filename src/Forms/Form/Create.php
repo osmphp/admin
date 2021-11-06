@@ -29,7 +29,7 @@ class Create extends Form
 
         return [
             $this->area_class_name => [
-                "GET {$this->url}" => [ Routes\Admin\RenderCreateFormPage::class => $data],
+                "GET {$this->url}" => [ Routes\Admin\CreatePage::class => $data],
                 "POST {$this->save_url}" => [ Routes\Admin\Save::class => $data],
             ],
         ];

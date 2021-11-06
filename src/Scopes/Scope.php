@@ -4,6 +4,7 @@ namespace Osm\Admin\Scopes;
 
 use Osm\Admin\Base\Attributes\Form;
 use Osm\Admin\Base\Attributes\Grid;
+use Osm\Admin\Base\Attributes\Icon;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Admin\Base\Attributes\Table;
@@ -23,9 +24,10 @@ use Osm\Admin\Base\Traits\Id;
  */
 #[
     Table('scopes'),
+    Icon('/scopes/', 'Scopes'),
     Grid('/scopes/', 'Scopes', select: ['id', 'title']),
     Form\Create('/scopes/create', 'New Scope'),
-    Form\Edit('/scopes/edit', ":title - Scope")
+    Form\Edit('/scopes/edit', ":title - Scope"),
 ]
 class Scope extends Object_
 {

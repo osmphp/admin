@@ -10,6 +10,7 @@ class Module extends BaseModule
         \Osm\Admin\Accounts\Module::class,
         \Osm\Admin\Forms\Module::class,
         \Osm\Admin\Grids\Module::class,
+        \Osm\Admin\Icons\Module::class,
         \Osm\Admin\Queries\Module::class,
         \Osm\Admin\Migrations\Module::class,
         \Osm\Admin\Schema\Module::class,

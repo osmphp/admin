@@ -22,21 +22,20 @@ class Create extends Form
     }
 
     protected function get_routes(): array {
+        $data = [
+            'data_class_name' => $this->data_class_name,
+            'form_name' => $this->name,
+        ];
+
         return [
             $this->area_class_name => [
-                "GET {$this->url}" => [ Routes\Admin\RenderCreateFormPage::class => [
-                    'data_class_name' => $this->data_class_name,
-                    'form_name' => $this->name,
-                ]],
+                "GET {$this->url}" => [ Routes\Admin\RenderCreateFormPage::class => $data],
+                "POST {$this->save_url}" => [ Routes\Admin\Save::class => $data],
             ],
         ];
     }
 
     protected function get_save_url(): string {
-        global $osm_app; /* @var App $osm_app */
-
-        $url = mb_substr($this->url, 0, mb_strrpos($this->url, '/'));
-
-        return "{$osm_app->area_url}{$url}/save";
+        return mb_substr($this->url, 0, mb_strrpos($this->url, '/')) . '/save';
     }
 }

@@ -10,7 +10,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
             </h1>
         </section>
         <section class="col-start-1 col-span-12">
-            <form method="POST" action="{{ $form->save_url}}">
+            <form method="POST" action="{{ "{$osm_app->area_url}{$form->save_url}" }}">
                 @include ($form->template, ['form' => $form])
             </form>
         </section>

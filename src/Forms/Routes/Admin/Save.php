@@ -3,15 +3,13 @@
 namespace Osm\Admin\Forms\Routes\Admin;
 
 use Osm\Admin\Forms\Routes\Route;
+use Osm\Core\Exceptions\NotImplemented;
 use Symfony\Component\HttpFoundation\Response;
-use function Osm\view_response;
 
-class RenderCreateFormPage extends Route
+class Save extends Route
 {
     public function run(): Response
     {
-        return view_response('forms::pages.create', [
-            'form' => $this->form,
-        ]);
+        throw new NotImplemented($this);
     }
 }

@@ -1,11 +1,12 @@
 <?php
 
-namespace Osm\Admin\Base\Attributes\Grid;
+namespace Osm\Admin\Base\Attributes;
 
+use Osm\Admin\Base\Attributes\Markers\Grid as GridMarker;
 use Osm\Framework\Areas\Admin;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE), Grid('page')]
-final class Page
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE), GridMarker('page')]
+final class Grid
 {
     public function __construct(
         public string $url,

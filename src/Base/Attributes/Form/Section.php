@@ -2,7 +2,9 @@
 
 namespace Osm\Admin\Base\Attributes\Form;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY), Part('section')]
+use Osm\Admin\Base\Attributes\Markers\Form\Section as SectionMarker;
+
+#[\Attribute(\Attribute::TARGET_PROPERTY), SectionMarker('standard')]
 final class Section
 {
     public function __construct(

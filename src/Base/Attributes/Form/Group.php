@@ -2,7 +2,9 @@
 
 namespace Osm\Admin\Base\Attributes\Form;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY), Part('group')]
+use Osm\Admin\Base\Attributes\Markers\Form\Group as GroupMarker;
+
+#[\Attribute(\Attribute::TARGET_PROPERTY), GroupMarker('standard')]
 final class Group
 {
     public function __construct(

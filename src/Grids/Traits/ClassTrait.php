@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Grids\Traits;
 
-use Osm\Admin\Base\Attributes\Grid\Grid as GridAttribute;
+use Osm\Admin\Base\Attributes\Markers\Grid as GridMarker;
 use Osm\Admin\Grids\Grid;
 use Osm\Admin\Schema\Class_;
 use Osm\Core\App;
@@ -42,8 +42,8 @@ trait ClassTrait
             return [];
         }
 
-        /* @var GridAttribute $marker */
-        if (!($marker = $class->attributes[GridAttribute::class] ?? null)) {
+        /* @var GridMarker $marker */
+        if (!($marker = $class->attributes[GridMarker::class] ?? null)) {
             return [];
         }
 

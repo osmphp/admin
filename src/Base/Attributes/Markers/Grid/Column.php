@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Admin\Base\Attributes\Form;
+namespace Osm\Admin\Base\Attributes\Markers\Grid;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class Part
+final class Column
 {
     public function __construct(public string $type)
     {

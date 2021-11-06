@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Schema;
 
-use Osm\Admin\Base\Attributes\Object_ as ObjectAttribute;
+use Osm\Admin\Base\Attributes\Markers\Object_ as ObjectMarker;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Class_ as CoreClass;
@@ -176,7 +176,7 @@ class Reflector extends Object_
                 continue;
             }
 
-            if (!isset($class->attributes[ObjectAttribute::class])) {
+            if (!isset($class->attributes[ObjectMarker::class])) {
                 continue;
             }
 

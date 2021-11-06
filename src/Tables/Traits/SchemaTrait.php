@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Tables\Traits;
 
-use Osm\Admin\Base\Attributes\Table\Column;
+use Osm\Admin\Base\Attributes\Markers\Table\Column as ColumnMarker;
 use Osm\Admin\Schema\Schema;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
@@ -24,9 +24,9 @@ trait SchemaTrait
                 continue;
             }
 
-            /* @var Column $column */
-            if ($column  = $class->attributes[Column::class] ?? null) {
-                $columnTypeNames[$class->name] = $column->name;
+            /* @var ColumnMarker $column */
+            if ($column  = $class->attributes[ColumnMarker::class] ?? null) {
+                $columnTypeNames[$class->name] = $column->type;
             }
 
         }

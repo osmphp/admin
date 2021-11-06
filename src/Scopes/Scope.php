@@ -23,8 +23,9 @@ use Osm\Admin\Base\Traits\Id;
  */
 #[
     Table('scopes'),
-    Grid\Page('/scopes', 'Scopes', select: ['id', 'title']),
-    Form('/scopes', title_create: 'New Scope', title_edit: "Scope ':title'"),
+    Grid('/scopes', 'Scopes', select: ['id', 'title']),
+    Form\Create('New Scope'),
+    Form\Edit(":title - Scope")
 ]
 class Scope extends Object_
 {

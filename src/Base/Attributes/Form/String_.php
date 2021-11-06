@@ -2,6 +2,8 @@
 
 namespace Osm\Admin\Base\Attributes\Form;
 
+use Osm\Admin\Base\Attributes\Markers\Form\Field;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY), Field('string')]
 final class String_
 {

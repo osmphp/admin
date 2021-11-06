@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Grids\Traits;
 
-use Osm\Admin\Base\Attributes\Grid\Column as ColumnAttribute;
+use Osm\Admin\Base\Attributes\Markers\Grid\Column as ColumnMarker;
 use Osm\Admin\Grids\Column;
 use Osm\Admin\Schema\Property;
 use Osm\Core\App;
@@ -27,7 +27,7 @@ trait PropertyTrait
                 continue;
             }
 
-            if (!($marker = $class->attributes[ColumnAttribute::class] ?? null)) {
+            if (!($marker = $class->attributes[ColumnMarker::class] ?? null)) {
                 continue;
             }
 

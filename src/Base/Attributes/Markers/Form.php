@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Admin\Base\Attributes\Form;
+namespace Osm\Admin\Base\Attributes\Markers;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class Field
+final class Form
 {
     public function __construct(public string $type)
     {

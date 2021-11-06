@@ -23,6 +23,8 @@ use Osm\Core\Attributes\Serialized;
  * @property Group[] $groups #[Serialized]
  * @property Field[] $fields #[Serialized]
  * @property Class_ $data_class
+ * @property array $routes #[Serialized]
+ * @property string $template #[Serialized]
  */
 class Form extends Object_
 {
@@ -195,5 +197,13 @@ class Form extends Object_
         }
 
         return $parts;
+    }
+
+    protected function get_routes(): array {
+        return [];
+    }
+
+    protected function get_template(): string {
+        throw new Required(__METHOD__);
     }
 }

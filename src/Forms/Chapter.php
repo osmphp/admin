@@ -13,6 +13,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string $name #[Serialized]
  * @property string $title #[Serialized]
  * @property Section[] $sections #[Serialized]
+ * @property string $template #[Serialized]
  */
 class Chapter extends Object_
 {
@@ -35,5 +36,9 @@ class Chapter extends Object_
     protected function get_sections(): array {
         return array_filter($this->form->sections, fn(Section $section) =>
             $section->chapter_name === $this->name);
+    }
+
+    protected function get_template(): string {
+        throw new Required(__METHOD__);
     }
 }

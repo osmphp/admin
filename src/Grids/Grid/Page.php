@@ -24,6 +24,8 @@ class Page extends Grid
             throw new Required(__METHOD__);
         }
 
-        return "{$osm_app->area_url}{$this->url}/create";
+        $url = mb_substr($this->url, 0, mb_strrpos($this->url, '/'));
+
+        return "{$osm_app->area_url}{$url}/create";
     }
 }

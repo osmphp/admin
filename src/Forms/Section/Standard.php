@@ -8,5 +8,6 @@ use Osm\Core\Attributes\Name;
 #[Name('standard')]
 class Standard extends Section
 {
+    public string $template = 'forms::section';
 
 }

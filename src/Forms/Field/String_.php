@@ -8,5 +8,5 @@ use Osm\Core\Attributes\Name;
 #[Name('string')]
 class String_ extends Field
 {
-
+    public string $template = 'forms::field.string';
 }

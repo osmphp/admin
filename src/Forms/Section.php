@@ -15,6 +15,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string $title #[Serialized]
  * @property string $chapter_name #[Serialized]
  * @property Group[] $groups #[Serialized]
+ * @property string $template #[Serialized]
  */
 class Section extends Object_
 {
@@ -45,5 +46,9 @@ class Section extends Object_
     protected function get_groups(): array {
         return array_filter($this->form->groups, fn(Group $group) =>
             $group->section_name === $this->name);
+    }
+
+    protected function get_template(): string {
+        throw new Required(__METHOD__);
     }
 }

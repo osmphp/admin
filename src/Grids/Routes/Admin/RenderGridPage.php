@@ -11,7 +11,7 @@ use function Osm\view_response;
 
 /**
  * @property string $data_class_name
- * @property ?string $grid_name
+ * @property string $grid_name
  * @property Grid $grid
  */
 class RenderGridPage extends Route

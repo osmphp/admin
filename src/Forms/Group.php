@@ -16,6 +16,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string $title #[Serialized]
  * @property string $section_name #[Serialized]
  * @property Field[] $fields #[Serialized]
+ * @property string $template #[Serialized]
  */
 class Group extends Object_
 {
@@ -50,5 +51,9 @@ class Group extends Object_
     protected function get_fields(): array {
         return array_filter($this->form->fields, fn(Field $field) =>
             $field->group_name === $this->name);
+    }
+
+    protected function get_template(): string {
+        throw new Required(__METHOD__);
     }
 }

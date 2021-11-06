@@ -8,5 +8,5 @@ use Osm\Core\Attributes\Name;
 #[Name('standard')]
 class Standard extends Group
 {
-
+    public string $template = 'forms::group';
 }

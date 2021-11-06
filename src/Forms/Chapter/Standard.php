@@ -8,5 +8,6 @@ use Osm\Core\Attributes\Name;
 #[Name('standard')]
 class Standard extends Chapter
 {
+    public string $template = 'forms::chapter';
 
 }

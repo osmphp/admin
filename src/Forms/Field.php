@@ -16,6 +16,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string $name #[Serialized]
  * @property string $title #[Serialized]
  * @property string $group_name #[Serialized]
+ * @property string $template #[Serialized]
  */
 class Field extends Object_
 {
@@ -51,4 +52,7 @@ class Field extends Object_
         return $this->group->section;
     }
 
+    protected function get_template(): string {
+        throw new Required(__METHOD__);
+    }
 }

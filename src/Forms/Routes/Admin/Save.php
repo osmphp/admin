@@ -10,6 +10,7 @@ class Save extends Route
 {
     public function run(): Response
     {
+        $item = json_decode($this->http->content, flags: JSON_THROW_ON_ERROR);
         throw new NotImplemented($this);
     }
 }

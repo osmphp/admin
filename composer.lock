@@ -1784,16 +1784,16 @@
         },
         {
             "name": "osmphp/framework",
-            "version": "v0.13.13",
+            "version": "v0.13.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/framework.git",
-                "reference": "448222ef77614796f57ab0b890b6b4e1c21ef386"
+                "reference": "a4103cdf3cf5089697ce9b5ae47f9d65d2128a6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/framework/zipball/448222ef77614796f57ab0b890b6b4e1c21ef386",
-                "reference": "448222ef77614796f57ab0b890b6b4e1c21ef386",
+                "url": "https://api.github.com/repos/osmphp/framework/zipball/a4103cdf3cf5089697ce9b5ae47f9d65d2128a6a",
+                "reference": "a4103cdf3cf5089697ce9b5ae47f9d65d2128a6a",
                 "shasum": ""
             },
             "require": {
@@ -1849,9 +1849,9 @@
             "description": "Osm Framework is an open-source, insanely fast, unprecedentedly extensible, and fun to work with PHP 8 framework for creating modern Web applications. It's built on top of tried and tested Symfony and Laravel components.",
             "support": {
                 "issues": "https://github.com/osmphp/framework/issues",
-                "source": "https://github.com/osmphp/framework/tree/v0.13.13"
+                "source": "https://github.com/osmphp/framework/tree/v0.13.15"
             },
-            "time": "2021-11-04T18:20:42+00:00"
+            "time": "2021-11-07T08:56:50+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -2133,20 +2133,20 @@
         },
         {
             "name": "psr/container",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf"
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/8622567409010282b7aeebe4bb841fe98b58dcaf",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.0"
+                "php": ">=7.4.0"
             },
             "type": "library",
             "autoload": {
@@ -2175,9 +2175,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.1"
+                "source": "https://github.com/php-fig/container/tree/1.1.2"
             },
-            "time": "2021-03-05T17:36:06+00:00"
+            "time": "2021-11-05T16:50:12+00:00"
         },
         {
             "name": "psr/http-message",

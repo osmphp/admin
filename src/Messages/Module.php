@@ -1,15 +1,14 @@
 <?php
 
-namespace Osm\Admin\Forms;
+namespace Osm\Admin\Messages;
 
 use Osm\Core\Attributes\Name;
 use Osm\Core\BaseModule;
 
-#[Name('forms')]
+#[Name('messages')]
 class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Admin\Base\Module::class,
-        \Osm\Admin\Messages\Module::class,
     ];
 }

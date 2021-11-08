@@ -1,5 +1,6 @@
 import Controller from "../../js/Controller";
 import {register} from '../../js/scripts';
+import {show, modal, fetch} from '../../messages/var/messages';
 import Field from "./Field";
 
 export default register('form', class Form extends Controller {
@@ -12,10 +13,23 @@ export default register('form', class Form extends Controller {
     onSubmit(e) {
         e.preventDefault();
 
+        let message = modal('Saving new scope ...');
+
         fetch(this.element.action, {
             method: this.element.method,
             body: JSON.stringify(this.data),
         })
+        .catch(response => {
+            message.hide();
+
+            throw 'not implemented';
+        })
+        .then(response => {
+            message.hide();
+            show('Scope saved successfully.');
+
+            throw 'not implemented';
+        });
     }
 
     get $fields() {

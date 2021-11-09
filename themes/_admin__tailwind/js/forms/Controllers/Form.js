@@ -1,6 +1,6 @@
 import Controller from "../../js/Controller";
 import {register} from '../../js/scripts';
-import {show, modal, fetch, hide} from '../../messages/var/messages';
+import {notice, fetch} from '../../messages/var/messages';
 import Field from "./Field";
 
 export default register('form', class Form extends Controller {
@@ -13,26 +13,20 @@ export default register('form', class Form extends Controller {
     onSubmit(e) {
         e.preventDefault();
 
-        let message = modal('Saving new scope ...');
-
         fetch(this.element.action, {
             method: this.element.method,
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.data),
-        })
-        .catch(response => {
-            hide(message);
-
-            throw 'not implemented';
+            message: 'Saving new scope ...',
         })
         .then(response => {
-            hide(message);
-            show('Scope saved successfully.');
+            notice('Scope saved successfully.');
 
             throw 'not implemented';
-        });
+        })
+        .catch(() => null);
     }
 
     get $fields() {

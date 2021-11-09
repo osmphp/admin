@@ -10,6 +10,5 @@ class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Admin\Base\Module::class,
-        \Osm\Admin\Overlay\Module::class,
     ];
 }

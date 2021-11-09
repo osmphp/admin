@@ -1,24 +1,14 @@
 import Mustache from 'mustache';
-import overlay from '../overlay/scripts';
+import {capture, release} from '../js/scripts';
 
 export default class Messages {
     get message_bar_element() {
         return document.getElementById('message-bar');
     }
 
-    get overlay() {
-        return document.getElementById('overlay')
-            .osm_controllers['overlay'];
-    }
-
-    message(text) {
-        let message = this.show('message', false, {text});
-
-        setTimeout(() => {
-            this.hide(message);
-        }, 5000);
-
-        return message;
+    notice(text) {
+        return this.show('message', false, true,
+            {text});
     }
 
     /**
@@ -26,28 +16,26 @@ export default class Messages {
      * @returns {{modal: boolean, element: Element}}
      */
     modal(text) {
-        return this.show('message', true, {text});
+        return this.show('message', true, false,
+            {text});
     }
 
     error(text) {
-        return this.show('error', true, {text});
-    }
-
-    exception(text, stack_trace) {
-        return this.show('exception', true,
-            {text, stack_trace});
+        return this.show('error', false, true,
+            {text});
     }
 
     /**
      *
      * @param {string} template
      * @param {boolean} modal
+     * @param {boolean} autohide
      * @param {Object} variables
      * @returns {{modal: boolean, element: Element}}
      */
-    show(template, modal, variables) {
+    show(template, modal, autohide, variables) {
         if (modal) {
-            overlay.show();
+            capture(this.message_bar_element);
         }
 
         let html = document.getElementById(`${template}-template`)
@@ -61,7 +49,15 @@ export default class Messages {
 
         this.message_bar_element.append(element);
 
-        return {modal, element};
+        let message = {modal, element};
+
+        if (autohide) {
+            setTimeout(() => {
+                this.hide(message);
+            }, 5000);
+        }
+
+        return message;
     }
 
     /**
@@ -71,16 +67,34 @@ export default class Messages {
         this.message_bar_element.removeChild(message.element);
 
         if (message.modal) {
-            overlay.hide();
+            release(this.message_bar_element);
         }
     }
 
     fetch(resource, init) {
         init.redirect = 'error';
 
+        let message;
+        if (init.message) {
+            message = this.modal(init.message);
+            delete init.message;
+        }
+
         return fetch(resource, init)
-            .then(response => this.handleResponse(response))
-            .catch(error => this.handleError(error));
+            .then(response => {
+                if (message) {
+                    this.hide(message);
+                    message = null;
+                }
+                return this.handleResponse(response);
+            })
+            .catch(error => {
+                if (message) {
+                    this.hide(message);
+                    message = null;
+                }
+                return this.handleError(error);
+            });
     }
 
     handleResponse(response) {
@@ -91,7 +105,7 @@ export default class Messages {
             if (contentType === 'text/html') {
                 return response.text().then(text => {
                     if (!text.length) {
-                        throw 'Unexpected empty response';
+                        return Promise.reject('Unexpected empty response');
                     }
 
                     return response;
@@ -102,20 +116,40 @@ export default class Messages {
         }
 
         switch (contentType) {
-            case 'text/html':  throw 'Not Implemented';
-            case 'text/plain': throw 'Not Implemented';
-            case 'application/json': throw 'Not Implemented';
-            default: throw 'Not Implemented';
+            case 'text/html':  return this.handleHtmlError(response);
+            case 'text/plain': return this.handleTextError(response);
+            case 'application/json': return Promise.reject(response);
         }
+
+        console.log('Unhandled fetch error', response);
+        return Promise.reject();
+    }
+
+    handleHtmlError(response) {
+    }
+
+    handleTextError(response) {
+        return response.text().then(text => {
+            return Promise.reject(text.split("\n")[0].trim());
+        });
     }
 
     handleError(error) {
         if (typeof error === 'string') {
             this.error(error);
-            return;
+            return Promise.reject();
         }
 
-        console.log(error);
-        throw 'not implemented';
+        if (error instanceof Error) {
+            this.error(error.message);
+            return Promise.reject();
+        }
+
+        if (error instanceof Response) {
+            return Promise.reject(error);
+        }
+
+        console.log('Unhandled fetch error', error);
+        return Promise.reject();
     }
 };

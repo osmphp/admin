@@ -14,7 +14,6 @@ class Module extends BaseModule
         \Osm\Admin\Queries\Module::class,
         \Osm\Admin\Messages\Module::class,
         \Osm\Admin\Migrations\Module::class,
-        \Osm\Admin\Overlay\Module::class,
         \Osm\Admin\Schema\Module::class,
         \Osm\Admin\Tables\Module::class,
     ];

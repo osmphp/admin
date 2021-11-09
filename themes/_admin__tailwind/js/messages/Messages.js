@@ -67,7 +67,7 @@ export default class Messages {
         this.message_bar_element.removeChild(message.element);
 
         if (message.modal) {
-            release(this.message_bar_element);
+            release();
         }
     }
 
@@ -126,6 +126,20 @@ export default class Messages {
     }
 
     handleHtmlError(response) {
+        return response.text().then(text => {
+            if (!text.length) {
+                return Promise.reject('Unexpected empty response');
+            }
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, 'text/html');
+
+            if (!doc.title.length) {
+                return Promise.reject('Unexpected empty response');
+            }
+
+            return Promise.reject(doc.title);
+        });
     }
 
     handleTextError(response) {

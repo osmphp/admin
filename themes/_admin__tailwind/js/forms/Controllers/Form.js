@@ -1,6 +1,6 @@
 import Controller from "../../js/Controller";
 import {register} from '../../js/scripts';
-import {show, modal, fetch} from '../../messages/var/messages';
+import {show, modal, fetch, hide} from '../../messages/var/messages';
 import Field from "./Field";
 
 export default register('form', class Form extends Controller {
@@ -17,15 +17,18 @@ export default register('form', class Form extends Controller {
 
         fetch(this.element.action, {
             method: this.element.method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(this.data),
         })
         .catch(response => {
-            message.hide();
+            hide(message);
 
             throw 'not implemented';
         })
         .then(response => {
-            message.hide();
+            hide(message);
             show('Scope saved successfully.');
 
             throw 'not implemented';

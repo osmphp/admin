@@ -5,5 +5,6 @@ const messages = new Messages();
 const show = messages.show.bind(messages);
 const modal = messages.modal.bind(messages);
 const fetch = messages.fetch.bind(messages);
+const hide = messages.hide.bind(messages);
 
-export { show, modal, fetch };
+export { show, modal, fetch, hide };

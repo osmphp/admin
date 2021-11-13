@@ -2,15 +2,13 @@
 
 namespace Osm\Admin\Schema;
 
-use Osm\Admin\Base\Attributes\Markers\Object_ as ObjectMarker;
+use Osm\Admin\Base\Attributes\Markers\Storage as ObjectMarker;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
-use Osm\Admin\Base\Attributes\Type;
-use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Queries\Query;
 use Osm\Framework\Cache\Descendants;
 
@@ -34,8 +32,6 @@ class Reflector extends Object_
     }
 
     protected function getClass(CoreClass $reflection): Class_ {
-        global $osm_app; /* @var App $osm_app */
-
         if (isset($this->classes[$reflection->name])) {
             return $this->classes[$reflection->name];
         }
@@ -99,12 +95,9 @@ class Reflector extends Object_
     protected function getSubtypes(Class_ $class): void {
         global $osm_app; /* @var App $osm_app */
 
-        $class->type_class_names = $this->descendants->byName($class->name,
-            Type::class);
-
         $class->types = array_map(
             fn(string $className) => $this->getClass($osm_app->classes[$className]),
-            $class->type_class_names);
+            $class->reflection->types ?? []);
 
         foreach ($class->types as $typeName => $type) {
             $this->mergeProperties($class, $typeName, $type);

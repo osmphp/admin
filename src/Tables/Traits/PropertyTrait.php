@@ -11,7 +11,7 @@ use Osm\Admin\Tables\Column;
 /**
  * @property ?Column $column #[Serialized]
  */
-#[UseIn(Property::class)]
+//#[UseIn(Property::class)]
 trait PropertyTrait
 {
     protected function get_column(): ?Column {

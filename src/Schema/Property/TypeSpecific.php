@@ -2,9 +2,9 @@
 
 namespace Osm\Admin\Schema\Property;
 
+use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Property as CoreProperty;
-use Osm\Admin\Base\Attributes\Type;
 use Osm\Admin\Schema\Class_;
 use Osm\Admin\Schema\Property;
 use Osm\Core\Attributes\Serialized;
@@ -26,4 +26,9 @@ class TypeSpecific extends Property
         throw new NotImplemented($this);
     }
 
+    protected function get_types(): array {
+        return array_map(
+            fn(string $className) => $this->class->types[$className],
+            $this->type_names);
+    }
 }

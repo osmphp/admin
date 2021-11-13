@@ -15,6 +15,7 @@ class Module extends BaseModule
         \Osm\Admin\Messages\Module::class,
         \Osm\Admin\Migrations\Module::class,
         \Osm\Admin\Schema\Module::class,
+        \Osm\Admin\Storages\Module::class,
         \Osm\Admin\Tables\Module::class,
     ];
 }

@@ -8,20 +8,25 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Traits\SubTypes;
 
 /**
- * @property string $data_class_name #[Serialized]
+ * @property Class_ $class
  * @property string $area_class_name #[Serialized]
  * @property ?string $name #[Serialized]
  * @property string $url #[Serialized]
  * @property Column[] $columns
  * @property string[] $select #[Serialized]
  * @property array $routes #[Serialized]
- * @property Class_ $data_class
+ * @property bool $multiselect #[Serialized]
+ * @property bool $editable #[Serialized]
+ * @property bool $can_create #[Serialized]
  */
 class Grid extends Object_
 {
-    protected function get_data_class_name(): string {
+    use SubTypes;
+
+    protected function get_class(): Class_ {
         throw new Required(__METHOD__);
     }
 
@@ -37,7 +42,7 @@ class Grid extends Object_
         $columns = [];
 
         foreach ($this->select as $name) {
-            $property = $this->data_class->properties[$name];
+            $property = $this->class->properties[$name];
 
             if ($property->grid_column) {
                 $columns[$property->name] = $property->grid_column;
@@ -51,17 +56,11 @@ class Grid extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_data_class(): Class_ {
-        global $osm_app; /* @var App $osm_app */
-
-        return $osm_app->schema->classes[$this->data_class_name];
-    }
-
     protected function get_routes(): array {
         return [
             $this->area_class_name => [
                 "GET {$this->url}" => [ Routes\Admin\RenderGridPage::class => [
-                    'data_class_name' => $this->data_class_name,
+                    'data_class_name' => $this->class->name,
                     'grid_name' => $this->name,
                 ]],
             ],

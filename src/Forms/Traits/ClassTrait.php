@@ -46,17 +46,24 @@ trait ClassTrait
             return [];
         }
 
-        $formClassNames = $osm_app->descendants->byName(Form::class);
-        $new = "{$formClassNames[$marker->type]}::new";
+        $new = "{$osm_app->classes[Form::class]
+            ->getTypeClassName($marker->type ?? null)}::new";
 
         $forms = [];
 
         foreach ($attributes as $attribute) {
-            $form = $new(array_merge(['data_class_name' => $this->name],
-                (array)$attribute));
+            $form = $new(array_merge(['class' => $this], (array)$attribute));
             $forms[$form->name] = $form;
         }
 
         return $forms;
+    }
+
+    protected function around___wakeup(callable $proceed): void {
+        $proceed();
+
+        foreach ($this->forms as $form) {
+            $form->class = $this;
+        }
     }
 }

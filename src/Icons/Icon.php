@@ -2,11 +2,13 @@
 
 namespace Osm\Admin\Icons;
 
+use Osm\Admin\Schema\Schema;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 
 /**
+ * @property Schema $schema
  * @property string $url #[Serialized]
  * @property string $title #[Serialized]
  * @property string $area_class_name #[Serialized]

@@ -84,10 +84,7 @@ class Query extends Object_
     }
 
     protected function get_object_class_name(): string {
-        /* @var Of $of */
-        return ($of = $this->__class->attributes[Of::class] ?? null)
-            ? $of->class_name
-            : throw new Required(__METHOD__);
+        throw new NotImplemented($this);
     }
 
     protected function get_object_class(): Class_ {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Osm\Admin\TestsMigrations;
 
-use Osm\Admin\Accounts\Accounts;
 use Osm\Framework\TestCase;
 
 class test_11_accounts extends TestCase

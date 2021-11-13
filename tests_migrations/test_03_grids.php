@@ -9,7 +9,7 @@ use Osm\Admin\Scopes\Scope;
 use Osm\Framework\Areas\Admin;
 use Osm\Framework\TestCase;
 
-class test_02_grids extends TestCase
+class test_03_grids extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 

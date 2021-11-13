@@ -2,8 +2,8 @@
 
 namespace Osm\Admin\Schema\Property;
 
+use Osm\Core\Attributes\Type;
 use Osm\Core\Property as CoreProperty;
-use Osm\Admin\Base\Attributes\Type;
 use Osm\Admin\Schema\Property;
 use Osm\Core\Attributes\Serialized;
 

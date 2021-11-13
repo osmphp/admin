@@ -4,8 +4,8 @@ namespace Osm\Admin\Grids\Grid;
 
 use Osm\Admin\Grids\Grid;
 use Osm\Core\App;
-use Osm\Core\Attributes\Name;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 
@@ -14,7 +14,7 @@ use Osm\Core\Exceptions\Required;
  * @property bool $can_create #[Serialized]
  * @property string $create_url
  */
-#[Name('page')]
+#[Type('page')]
 class Page extends Grid
 {
     protected function get_create_url(): string {

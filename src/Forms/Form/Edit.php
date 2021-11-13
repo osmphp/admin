@@ -3,9 +3,9 @@
 namespace Osm\Admin\Forms\Form;
 
 use Osm\Admin\Forms\Form;
-use Osm\Core\Attributes\Name;
+use Osm\Core\Attributes\Type;
 
-#[Name('edit')]
+#[Type('edit')]
 class Edit extends Form
 {
 

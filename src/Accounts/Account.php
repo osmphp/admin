@@ -4,13 +4,12 @@ namespace Osm\Admin\Accounts;
 
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Admin\Base\Attributes\Scoped;
 use Osm\Admin\Base\Traits\Id;
-use Osm\Admin\Base\Traits\Type;
-use Osm\Admin\Base\Attributes\Table;
+use Osm\Admin\Base\Traits\SubTypes;
+use Osm\Admin\Base\Attributes\Storage;
 
-#[Table('accounts'), Scoped]
+#[Storage\ScopedTable('accounts')]
 class Account extends Object_
 {
-    use Id, Type;
+    use Id, SubTypes;
 }

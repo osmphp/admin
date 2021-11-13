@@ -12,9 +12,10 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Traits\SubTypes;
 
 /**
- * @property string $data_class_name #[Serialized]
+ * @property Class_ $class
  * @property string $area_class_name #[Serialized]
  * @property ?string $name #[Serialized]
  * @property string $url #[Serialized]
@@ -22,13 +23,14 @@ use Osm\Core\Attributes\Serialized;
  * @property Section[] $sections #[Serialized]
  * @property Group[] $groups #[Serialized]
  * @property Field[] $fields #[Serialized]
- * @property Class_ $data_class
  * @property array $routes #[Serialized]
  * @property string $template #[Serialized]
  */
 class Form extends Object_
 {
-    protected function get_data_class_name(): string {
+    use SubTypes;
+
+    protected function get_class(): Class_ {
         throw new Required(__METHOD__);
     }
 
@@ -113,12 +115,6 @@ class Form extends Object_
         return $fields;
     }
 
-    protected function get_data_class(): Class_ {
-        global $osm_app; /* @var App $osm_app */
-
-        return $osm_app->schema->classes[$this->data_class_name];
-    }
-
     protected function createParts(string $markerClassName,
         string $partClassName, string $attributeClassName,
         array $attributes): array
@@ -152,7 +148,7 @@ class Form extends Object_
     {
         $parts = [];
 
-        foreach ($this->data_class->reflection->attributes as
+        foreach ($this->class->reflection->attributes as
                  $className => $attributes)
         {
             if (!is_array($attributes)) {
@@ -173,7 +169,7 @@ class Form extends Object_
 
         $parts = [];
 
-        foreach ($this->data_class->properties as $property) {
+        foreach ($this->class->properties as $property) {
             foreach ($property->reflection->attributes as
                      $attributeClassName => $attribute)
             {

@@ -34,10 +34,19 @@ trait SchemaTrait
             }
 
             foreach ($attributes as $attribute) {
-                $icons[$attribute->url] = Icon::new((array)$attribute);
+                $icons[$attribute->url] = Icon::new(
+                    array_merge(['schema' => $this], (array)$attribute));
             }
         }
 
         return $icons;
+    }
+
+    protected function around___wakeup(callable $proceed): void {
+        $proceed();
+
+        foreach ($this->icons as $icon) {
+            $icon->schema = $this;
+        }
     }
 }

@@ -13,7 +13,7 @@ use Osm\Core\Attributes\Serialized;
 /**
  * @property ?Column $grid_column #[Serialized]
  */
-#[UseIn(Property::class)]
+//#[UseIn(Property::class)]
 trait PropertyTrait
 {
     protected function get_grid_column(): ?Column {

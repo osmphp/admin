@@ -20,4 +20,10 @@ class Schema extends Object_
     protected function get_classes(): array {
         return Reflector::new(['schema' => $this])->getClasses();
     }
+
+    public function __wakeup(): void {
+        foreach ($this->classes as $class) {
+            $class->schema = $this;
+        }
+    }
 }

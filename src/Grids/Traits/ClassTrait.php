@@ -47,17 +47,24 @@ trait ClassTrait
             return [];
         }
 
-        $gridClassNames = $osm_app->descendants->byName(Grid::class);
-        $new = "{$gridClassNames[$marker->type]}::new";
+        $new = "{$osm_app->classes[Grid::class]
+            ->getTypeClassName($marker->type ?? null)}::new";
 
         $grids = [];
 
         foreach ($attributes as $attribute) {
-            $grid = $new(array_merge(['data_class_name' => $this->name],
-                (array)$attribute));
+            $grid = $new(array_merge(['class' => $this], (array)$attribute));
             $grids[$grid->name] = $grid;
         }
 
         return $grids;
+    }
+
+    protected function around___wakeup(callable $proceed): void {
+        $proceed();
+
+        foreach ($this->grids as $grid) {
+            $grid->class = $this;
+        }
     }
 }

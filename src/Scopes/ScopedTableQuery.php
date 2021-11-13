@@ -3,14 +3,13 @@
 namespace Osm\Admin\Scopes;
 
 use Osm\Core\App;
-use Osm\Core\Object_;
-use Osm\Admin\Tables\Table as BaseTable;
+use Osm\Admin\Tables\TableQuery;
 
 /**
  * @property Scope $scope
  * @property string $global_name
  */
-class Table extends BaseTable
+class ScopedTableQuery extends TableQuery
 {
     protected function get_scope(): Scope {
         global $osm_app; /* @var App $osm_app */

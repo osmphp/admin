@@ -8,7 +8,7 @@ use Osm\Admin\Base\Attributes\Icon;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Admin\Base\Attributes\Table;
-use Osm\Admin\Base\Attributes\Storage;
+use Osm\Admin\Scopes\Attributes\Storage;
 use Osm\Admin\Base\Traits\Id;
 
 /**
@@ -24,7 +24,7 @@ use Osm\Admin\Base\Traits\Id;
  * @property string $prefix
  */
 #[
-    Storage\Table('scopes'),
+    Storage\Scopes,
     Icon('/scopes/', 'Scopes'),
     Grid('/scopes/', 'Scopes', select: ['id', 'title']),
     Form\Create('/scopes/create', 'New Scope'),

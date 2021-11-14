@@ -11,11 +11,10 @@ use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Schema\Class_;
 
 /**
+ * @property Class_ $class
  * @property string[]|null $select
  * @property ?int $limit
  *
- * @property string $object_class_name
- * @property Class_ $object_class
  * @property string $name
  */
 class Query extends Object_
@@ -55,7 +54,7 @@ class Query extends Object_
 
     protected function selectAllProperties(): void
     {
-        foreach ($this->object_class->properties as $property) {
+        foreach ($this->class->properties as $property) {
             $this->selectProperty($property->name);
         }
     }
@@ -83,14 +82,8 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    protected function get_object_class_name(): string {
-        throw new NotImplemented($this);
-    }
 
-    protected function get_object_class(): Class_ {
-        global $osm_app; /* @var App $osm_app */
-
-        return $osm_app->schema->classes[$this->object_class_name]
-            ?? throw new Required(__METHOD__);
+    protected function get_class(): Class_ {
+        throw new Required(__METHOD__);
     }
 }

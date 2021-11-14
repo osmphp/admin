@@ -9,6 +9,7 @@ final class Table
 {
     public function __construct(
         public string $name,
+        public int $version = 1,
         public ?string $query_class_name = null,
     )
     {

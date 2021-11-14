@@ -7,7 +7,6 @@ use Osm\Core\Attributes\UseIn;
 use Osm\Admin\Migrations\Traits\ColumnTrait;
 use Osm\Admin\Tables\Column;
 
-#[UseIn(Column\Int_::class)]
 trait IntTrait
 {
     use ColumnTrait;

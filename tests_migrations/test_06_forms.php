@@ -11,7 +11,7 @@ use Osm\Framework\Areas\Admin;
 use Osm\Framework\TestCase;
 use Osm\Admin\Forms\Field;
 
-class test_04_forms extends TestCase
+class test_06_forms extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 

@@ -9,7 +9,6 @@ use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
-use Osm\Admin\Queries\Query;
 use Osm\Framework\Cache\Descendants;
 
 /**

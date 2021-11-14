@@ -7,7 +7,6 @@ use Osm\Core\Attributes\UseIn;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Admin\Tables\Column;
 
-#[UseIn(Column::class)]
 trait ColumnTrait
 {
     public function create(Blueprint $table, string $prefix): void

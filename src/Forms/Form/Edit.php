@@ -8,5 +8,6 @@ use Osm\Core\Attributes\Type;
 #[Type('edit')]
 class Edit extends Form
 {
+    public string $template = 'forms::form.edit';
 
 }

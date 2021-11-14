@@ -7,9 +7,9 @@ use Osm\Admin\Schema\Class_;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 use Osm\Admin\Base\Attributes\Markers\Storage as QueryMarker;
-
+use Osm\Core\Attributes\Serialized;
 /**
- * @property ?Storage $storage
+ * @property ?Storage $storage #[Serialized]
  */
 #[UseIn(Class_::class)]
 trait ClassTrait

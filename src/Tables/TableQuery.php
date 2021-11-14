@@ -43,11 +43,7 @@ class TableQuery extends Query
     }
 
     protected function get_name(): string {
-        /* @var TableAttribute $table */
-        return ($table = $this->object_class->reflection
-            ->attributes[TableAttribute::class] ?? null)
-                ? $table->name
-                : throw new Required(__METHOD__);
+        return $this->class->storage->name;
     }
 
     protected function applySelect(QueryBuilder $query): void
@@ -57,7 +53,7 @@ class TableQuery extends Query
         }
 
         foreach (array_keys($this->select) as $propertyName) {
-            if (!($property = $this->object_class->properties[$propertyName]
+            if (!($property = $this->class->properties[$propertyName]
                 ?? null))
             {
                 throw new NotImplemented($this);
@@ -92,7 +88,7 @@ class TableQuery extends Query
     protected function dehydratedInsertValues(\stdClass $data): array {
         $values = [];
 
-        foreach ($this->object_class->properties as $property) {
+        foreach ($this->class->properties as $property) {
             if ($property->column && isset($data->{$property->name})) {
                 $values[$property->name] = $data->{$property->name};
                 unset($data->{$property->name});

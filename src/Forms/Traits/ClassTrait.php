@@ -8,9 +8,10 @@ use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Admin\Base\Attributes\Markers\Form as FormMarker;
+use Osm\Core\Attributes\Serialized;
 
 /**
- * @property Form[] $forms
+ * @property Form[] $forms #[Serialized]
  */
 #[UseIn(Class_::class)]
 trait ClassTrait

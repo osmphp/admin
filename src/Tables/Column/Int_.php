@@ -2,31 +2,32 @@
 
 namespace Osm\Admin\Tables\Column;
 
+use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Tables\Column;
-use Osm\Core\Attributes\Name;
+use Osm\Admin\Tables\Traits\ForeignKey;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Attributes\Type;
 
 /**
  * @property bool $unsigned #[Serialized]
- * @property ?string $references #[Serialized]
- * @property ?string $references_table #[Serialized]
- * @property ?string $references_column #[Serialized]
- * @property ?string $on_delete #[Serialized]
  */
-#[Name('int')]
+#[Type('int')]
 class Int_ extends Column
 {
-    protected function get_references_table(): ?string {
-        return $this->references
-            ? substr($this->references, 0,
-                strpos($this->references, '.'))
-            : null;
-    }
+    use ForeignKey;
 
-    protected function get_references_column(): ?string {
-        return $this->references
-            ? substr($this->references,
-                strpos($this->references, '.') + 1)
-            : null;
+    public function create(Blueprint $table): void
+    {
+        $column = $table->integer($this->property->name);
+
+        if ($this->unsigned) {
+            $column->unsigned();
+        }
+
+        if ($this->property->nullable) {
+            $column->nullable();
+        }
+
+        $this->createForeignKey($table);
     }
 }

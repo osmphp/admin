@@ -12,7 +12,10 @@ use Osm\Admin\Schema\Class_;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Schema;
 use Osm\Admin\Scopes\Scope;
+use Osm\Admin\Scopes\ScopedTable;
 use Osm\Admin\Storages\Storage;
+use Osm\Admin\Tables\Column as TableColumn;
+use Osm\Admin\Tables\Table;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Framework\Areas\Admin;
@@ -101,20 +104,20 @@ class test_01_schema_hydration extends TestCase
 
         foreach ($original->properties as $key => $property) {
             $this->assertPropertyHydrated($property, $hydrated->properties[$key],
-                $hydrated);
+                $hydratedSchema);
         }
 
         foreach ($original->grids as $key => $grid) {
             $this->assertGridHydrated($grid, $hydrated->grids[$key],
-                $hydrated);
+                $hydratedSchema);
         }
         foreach ($original->forms as $key => $form) {
             $this->assertFormHydrated($form, $hydrated->forms[$key],
-                $hydrated);
+                $hydratedSchema);
         }
 
         $this->assertStorageHydrated($original->storage, $hydrated->storage,
-            $hydrated);
+            $hydratedSchema);
     }
 
     protected function assertIconHydrated(Icon $original,
@@ -127,21 +130,23 @@ class test_01_schema_hydration extends TestCase
     }
 
     protected function assertPropertyHydrated(Property $original,
-        Property $hydrated, Class_ $hydratedClass): void
+        Property $hydrated, Schema $hydratedSchema): void
     {
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->class === $hydratedClass);
+        $this->assertTrue($hydrated->class ===
+            $hydratedSchema->classes[$hydrated->class->name]);
         $this->assertPropertiesEqual($original, $hydrated,
             ['name', 'type', 'reflection', 'nullable', 'module_class_name']);
     }
 
     protected function assertGridHydrated(Grid $original,
-        Grid $hydrated, Class_ $hydratedClass): void
+        Grid $hydrated, Schema $hydratedSchema): void
     {
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->class === $hydratedClass);
+        $this->assertTrue($hydrated->class ===
+            $hydratedSchema->classes[$hydrated->class->name]);
         $this->assertPropertiesEqual($original, $hydrated,
             [
                 'url', 'title', 'area_class_name', 'select', 'parameters',
@@ -151,16 +156,17 @@ class test_01_schema_hydration extends TestCase
     }
 
     protected function assertFormHydrated(Form $original,
-        Form $hydrated, Class_ $hydratedClass): void
+        Form $hydrated, Schema $hydratedSchema): void
     {
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->class === $hydratedClass);
+        $this->assertTrue($hydrated->class ===
+            $hydratedSchema->classes[$hydrated->class->name]);
         //throw new NotImplemented($this);
     }
 
     protected function assertStorageHydrated(?Storage $original,
-        ?Storage $hydrated, Class_ $hydratedClass): void
+        ?Storage $hydrated, Schema $hydratedSchema): void
     {
         if (!$original && !$hydrated) {
             return;
@@ -170,7 +176,41 @@ class test_01_schema_hydration extends TestCase
         $this->assertNotNull($hydrated);
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->class === $hydratedClass);
-        //throw new NotImplemented($this);
+        $this->assertTrue($hydrated->class ===
+            $hydratedSchema->classes[$hydrated->class->name]);
+
+        if ($hydrated instanceof Table || $hydrated instanceof ScopedTable) {
+            $this->assertTableHydrated($original, $hydrated, $hydratedSchema);
+        }
+        else {
+            throw new NotImplemented($this);
+        }
+    }
+
+    protected function assertTableHydrated(Table|Storage $original,
+        Table|Storage $hydrated, Schema $hydratedSchema): void
+    {
+        $this->assertPropertiesEqual($original, $hydrated, ['name']);
+        $this->assertArrayKeysEqual($original, $hydrated, ['columns']);
+
+        foreach ($original->columns as $key => $column) {
+            $this->assertTableColumnHydrated($column, $hydrated->columns[$key],
+                $hydratedSchema);
+        }
+    }
+
+    protected function assertTableColumnHydrated(TableColumn $original,
+        TableColumn $hydrated, Schema $hydratedSchema): void
+    {
+        $this->assertTrue($original::class === $hydrated::class);
+
+        $this->assertTrue($hydrated->table === $hydratedSchema
+            ->classes[$hydrated->table->class->name]
+            ->storage);
+        $this->assertTrue($hydrated->property === $hydratedSchema
+            ->classes[$hydrated->table->class->name]
+            ->properties[$hydrated->name]);
+        $this->assertPropertiesEqual($original, $hydrated,
+            ['name', 'unsigned', 'references', 'on_delete']);
     }
 }

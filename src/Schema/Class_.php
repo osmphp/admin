@@ -4,6 +4,7 @@ namespace Osm\Admin\Schema;
 
 use Osm\Core\App;
 use Osm\Core\Class_ as CoreClass;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
@@ -14,6 +15,7 @@ use Osm\Core\Attributes\Serialized;
  * @property Property[] $properties #[Serialized]
  * @property Class_[] $types
  * @property CoreClass $reflection
+ * @property string[] $after
  */
 class Class_ extends Object_
 {
@@ -42,5 +44,9 @@ class Class_ extends Object_
         foreach ($this->properties as $property) {
             $property->class = $this;
         }
+    }
+
+    protected function get_after(): array {
+        return [];
     }
 }

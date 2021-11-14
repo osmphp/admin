@@ -14,6 +14,7 @@ try {
     Apps::run(Apps::create(App::class), function(App $app) {
         $app->cache->clear();
         $app->migrations()->fresh();
+        $app->migrations()->up();
     });
 }
 catch (Throwable $e) {

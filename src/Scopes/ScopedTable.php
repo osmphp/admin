@@ -3,13 +3,17 @@
 namespace Osm\Admin\Scopes;
 
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Base\Traits\Id;
 use Osm\Admin\Storages\Storage;
 use Osm\Admin\Tables\Interfaces\HasColumns;
 use Osm\Admin\Tables\Traits\Columns;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
+use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\NotSupported;
 use Osm\Framework\Db\Db;
 use Osm\Core\Attributes\Serialized;
+use function Osm\__;
 
 /**
  * @property string $name #[Serialized]
@@ -34,6 +38,11 @@ class ScopedTable extends Storage implements HasColumns
         });
     }
 
+    public function alter(Storage $current): void
+    {
+        throw new NotImplemented($this);
+    }
+
     public function drop(): void
     {
         $this->db->drop($this->name);
@@ -43,5 +52,32 @@ class ScopedTable extends Storage implements HasColumns
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    public function createScope(int $scopeId): void {
+        if (!isset($this->columns['id'])) {
+            throw new NotSupported(__("Use ':trait' trait in ':class' class.", [
+                'trait' => Id::class,
+                'class' => $this->class->name,
+            ]));
+        }
+
+        $this->db->create("s{$scopeId}__{$this->name}", function(Blueprint $table) {
+            $table->unsignedInteger('id')->primary();
+            $table->foreign('id')
+                ->references('id')->on($this->name)
+                ->onDelete('cascade');
+
+            foreach ($this->columns as $column) {
+                if ($column->name !== 'id') {
+                    $column->create($table);
+                }
+            }
+            $table->json('data')->nullable();
+        });
+    }
+
+    public function alterScope(int $scopeId, Storage $current): void {
+        throw new NotImplemented($this);
     }
 }

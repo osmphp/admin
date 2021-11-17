@@ -15,6 +15,7 @@ use Osm\Framework\Db\Db;
 use function Osm\merge;
 
 /**
+ * @property Table $storage
  * @property Db $db
  * @property string $name
  */
@@ -59,7 +60,7 @@ class TableQuery extends Query
                 throw new NotImplemented($this);
             }
 
-            if ($property->column) {
+            if ($this->storage->columns[$propertyName]) {
                 $query->addSelect($property->name);
             }
             elseif (!in_array('data', $query->columns)) {
@@ -68,30 +69,29 @@ class TableQuery extends Query
         }
     }
 
-    public function insert(\stdClass|Object_ $data): ?int {
-        if (!$this->dehydrated) {
-            throw new NotImplemented($this);
-        }
+    public function insert(\stdClass $data): ?int {
+        return $this->db->transaction(function() use ($data) {
+            $id = $this->db->table($this->name)->insertGetId(
+                $this->insertValues($data));
 
-        if (!($data instanceof \stdClass)) {
-            throw new NotImplemented($this);
-        }
+            $this->db->committed(function () use ($id) {
+                $this->inserted($id);
+            });
 
-        return $this->doInsert($this->dehydratedInsertValues($data));
+            return $id;
+        });
     }
 
-    protected function doInsert(array $values): ?int
-    {
-        return $this->db->table($this->name)->insertGetId($values);
+    protected function inserted(int $id): void {
     }
 
-    protected function dehydratedInsertValues(\stdClass $data): array {
+    protected function insertValues(\stdClass $data): array {
         $values = [];
 
-        foreach ($this->class->properties as $property) {
-            if ($property->column && isset($data->{$property->name})) {
-                $values[$property->name] = $data->{$property->name};
-                unset($data->{$property->name});
+        foreach ($this->storage->columns as $column) {
+            if (isset($data->{$column->name})) {
+                $values[$column->name] = $data->{$column->name};
+                unset($data->{$column->name});
             }
         }
 

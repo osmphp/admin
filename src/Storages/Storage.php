@@ -47,7 +47,7 @@ class Storage extends Object_
         }
 
         $new = "{$this->query_class_name}::new";
-        return $new(['class' => $this->class]);
+        return $new(['storage' => $this]);
     }
 
     protected function genericQuery(): Query {

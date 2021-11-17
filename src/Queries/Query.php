@@ -2,15 +2,16 @@
 
 namespace Osm\Admin\Queries;
 
+use Osm\Admin\Storages\Storage;
 use Osm\Core\App;
 use Osm\Core\Attributes\Name;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Admin\Base\Attributes\Of;
 use Osm\Admin\Schema\Class_;
 
 /**
+ * @property Storage $storage
  * @property Class_ $class
  * @property string[]|null $select
  * @property ?int $limit
@@ -20,6 +21,14 @@ use Osm\Admin\Schema\Class_;
 class Query extends Object_
 {
     public const DEFAULT_LIMIT = 10;
+
+    protected function get_storage(): Storage {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_class(): Class_ {
+        return $this->storage->class;
+    }
 
     public function select(array $select): static {
         foreach ($select as $key => $value) {
@@ -80,10 +89,5 @@ class Query extends Object_
 
     protected function run(): Result {
         throw new NotImplemented($this);
-    }
-
-
-    protected function get_class(): Class_ {
-        throw new Required(__METHOD__);
     }
 }

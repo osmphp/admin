@@ -79,6 +79,6 @@ class Table extends Storage implements HasColumns
 
     protected function genericQuery(): Query
     {
-        return TableQuery::new(['class' => $this->class]);
+        return TableQuery::new(['storage' => $this]);
     }
 }

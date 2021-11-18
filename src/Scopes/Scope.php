@@ -16,6 +16,14 @@ use Osm\Admin\Base\Traits\Id;
  *      Serialized,
  *      Table\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
  * ]
+ * @property ?int $level #[
+ *      Serialized,
+ *      Table\Int_(unsigned: true),
+ * ]
+ * @property ?string $id_path #[
+ *      Serialized,
+ *      Table\String_,
+ * ]
  * @property ?string $title #[
  *      Serialized,
  *      Grid\String_('Title'),

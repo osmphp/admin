@@ -10,7 +10,7 @@ use Osm\Admin\Tables\Table;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\TestCase;
 
-class test_03_scopes extends TestCase
+class test_13_scopes extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 

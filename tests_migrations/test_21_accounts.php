@@ -6,7 +6,7 @@ namespace Osm\Admin\TestsMigrations;
 
 use Osm\Framework\TestCase;
 
-class test_11_accounts extends TestCase
+class test_21_accounts extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 

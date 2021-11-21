@@ -24,8 +24,8 @@ class Schema extends Object_
 
         $this->classes = sort_by_dependency($this->classes, __("Classes"),
             fn($positions) =>
-            fn(Class_ $a, Class_ $b) =>
-                $positions[$a->name] <=> $positions[$b->name]
+                fn(Class_ $a, Class_ $b) =>
+                    $positions[$a->name] <=> $positions[$b->name]
         );
 
         return $this->classes;

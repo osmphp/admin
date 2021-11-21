@@ -3,7 +3,6 @@
 namespace Osm\Admin\Tables;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Base\Attributes\Markers\Table\Column as ColumnMarker;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Storages\Storage;
 use Osm\Admin\Tables\Interfaces\HasColumns;
@@ -11,11 +10,9 @@ use Osm\Admin\Tables\Traits\Columns;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Attributes\Serialized;
-use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Db\Db;
 
 /**
- * @property string $name #[Serialized]
  * @property Db $db
  */
 #[Type('table')]

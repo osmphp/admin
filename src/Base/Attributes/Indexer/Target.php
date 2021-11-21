@@ -6,8 +6,7 @@ namespace Osm\Admin\Base\Attributes\Indexer;
 final class Target
 {
     public function __construct(
-        public string $class_name,
-    )
-    {
-    }
+        public string $name,
+        public ?string $type_name = null,
+    ) { }
 }

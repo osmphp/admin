@@ -3,6 +3,7 @@
 namespace Osm\Admin\Tables;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Osm\Admin\Indexing\Index;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
@@ -18,6 +19,11 @@ use function Osm\merge;
  * @property Table $storage
  * @property Db $db
  * @property string $name
+ *
+ * @property \stdClass $data
+ * @property string[] $data_after_insert
+ * @property array $insert_values
+ * @property array $update_after_insert_values
  */
 class TableQuery extends Query
 {
@@ -70,32 +76,93 @@ class TableQuery extends Query
     }
 
     public function insert(\stdClass $data): ?int {
-        return $this->db->transaction(function() use ($data) {
-            $id = $this->db->table($this->name)->insertGetId(
-                $this->insertValues($data));
+        $this->data = clone $data;
+        $this->inserting();
 
-            $this->db->committed(function () use ($id) {
-                $this->inserted($id);
+        return $this->db->transaction(function() use ($data) {
+            $this->data->id = $this->db->table($this->name)
+                ->insertGetId($this->insert_values);
+
+            $this->data_after_insert = [];
+            $this->inserted();
+            if (!empty($this->data_after_insert)) {
+                $this->db->table($this->name)
+                    ->where('id', $this->data->id)
+                    ->update($this->update_after_insert_values);
+            }
+
+            $this->db->committed(function () {
+                $this->insertCommitted();
             });
 
-            return $id;
+            return $this->data->id;
         });
     }
 
-    protected function inserted(int $id): void {
+    protected function inserting(): void {
+        $this->index?->inserting($this);
     }
 
-    protected function insertValues(\stdClass $data): array {
+    protected function inserted(): void {
+        $this->index?->inserted($this);
+    }
+
+    protected function insertCommitted(): void {
+    }
+
+    protected function get_insert_values(): array {
+        $data = (array)$this->data;
         $values = [];
 
-        foreach ($this->storage->columns as $column) {
-            if (isset($data->{$column->name})) {
-                $values[$column->name] = $data->{$column->name};
-                unset($data->{$column->name});
+        foreach ($data as $propertyName => $value) {
+            if (!isset($this->class->properties[$propertyName])) {
+                unset($data[$propertyName]);
             }
         }
 
-        $values['data'] = !empty($data) ? json_encode($data) : null;
+        foreach ($this->storage->columns as $column) {
+            if (isset($data[$column->name])) {
+                $values[$column->name] = $data[$column->name];
+                unset($data[$column->name]);
+            }
+        }
+
+        $values['data'] = !empty($data) ? json_encode((object)$data) : null;
+
+        return $values;
+    }
+
+    protected function get_update_after_insert_values(): array {
+        $data = (array)$this->data;
+        $values = [];
+
+        foreach ($data as $propertyName => $value) {
+            if (!isset($this->data_after_insert[$propertyName])) {
+                unset($data[$propertyName]);
+                continue;
+            }
+
+            if (!isset($this->class->properties[$propertyName])) {
+                unset($data[$propertyName]);
+            }
+        }
+
+        foreach ($this->storage->columns as $column) {
+            if (isset($data[$column->name])) {
+                $values[$column->name] = $data[$column->name];
+                unset($data[$column->name]);
+            }
+        }
+
+        if (!empty($data)) {
+            $data = (object)$data;
+
+            if (!empty($this->insert_values['data'])) {
+                $data = merge(json_decode($this->insert_values['data']), $data);
+            }
+
+            $values['data'] = json_encode($data);
+        }
 
         return $values;
     }

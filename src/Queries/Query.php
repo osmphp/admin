@@ -2,9 +2,9 @@
 
 namespace Osm\Admin\Queries;
 
+use Osm\Admin\Indexing\Index;
 use Osm\Admin\Storages\Storage;
 use Osm\Core\App;
-use Osm\Core\Attributes\Name;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -15,8 +15,7 @@ use Osm\Admin\Schema\Class_;
  * @property Class_ $class
  * @property string[]|null $select
  * @property ?int $limit
- *
- * @property string $name
+ * @property ?Index $index
  */
 class Query extends Object_
 {
@@ -89,5 +88,9 @@ class Query extends Object_
 
     protected function run(): Result {
         throw new NotImplemented($this);
+    }
+
+    protected function get_index(): ?Index {
+        return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
     }
 }

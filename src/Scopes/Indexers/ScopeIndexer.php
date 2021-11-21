@@ -4,15 +4,15 @@ namespace Osm\Admin\Scopes\Indexers;
 
 use Osm\Admin\Base\Attributes\Indexer\Source;
 use Osm\Admin\Base\Attributes\Indexer\Target;
-use Osm\Admin\Indexing\Indexer;
 use Osm\Admin\Scopes\Scope;
+use Osm\Admin\Tables\TableIndexer;
 use function Osm\query;
 
-#[Target(Scope::class), Source(Scope::class)]
-class ScopeIndexer extends Indexer
+#[Target('scopes'), Source('scopes')]
+class ScopeIndexer extends TableIndexer
 {
     protected function index_level(?Scope $parent): int {
-        return $parent->level ?? 0;
+        return $parent ? $parent->level + 1 : 0;
     }
 
     protected function index_id_path(?Scope $parent, int $id): string {

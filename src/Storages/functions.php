@@ -10,6 +10,4 @@ namespace Osm {
 
         return $osm_app->schema->classes[$className]->storage->query();
     }
-
 }
-

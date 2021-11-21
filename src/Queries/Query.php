@@ -13,12 +13,17 @@ use Osm\Admin\Schema\Class_;
 /**
  * @property Storage $storage
  * @property Class_ $class
- * @property string[]|null $select
  * @property ?int $limit
  * @property ?Index $index
+ * @property bool $hydrate
  */
 class Query extends Object_
 {
+    /**
+     * @var string[]
+     */
+    public array $select = [];
+
     public const DEFAULT_LIMIT = 10;
 
     protected function get_storage(): Storage {
@@ -34,7 +39,7 @@ class Query extends Object_
             if (!is_int($key)) {
                 $this->selectPropertyWithCallback($key, $value);
             }
-            elseif ($value = '*') {
+            elseif ($value == '*') {
                 $this->selectAllProperties();
             }
             else {
@@ -80,6 +85,11 @@ class Query extends Object_
     }
 
     public function first(array $select = null): \stdClass|Object_|null {
+        foreach ($this->get($select)->items as $item) {
+            return $item;
+        }
+
+        return null;
     }
 
     protected function get_limit(): ?int {
@@ -92,5 +102,18 @@ class Query extends Object_
 
     protected function get_index(): ?Index {
         return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
+    }
+
+    public function insert(\stdClass $data): int {
+        throw new NotImplemented($this);
+    }
+
+    public function hydrate(): static {
+        $this->hydrate = true;
+        return $this;
+    }
+
+    public function raw(callable $callback): static {
+        throw new NotImplemented($this);
     }
 }

@@ -13,12 +13,14 @@ use Osm\Admin\Queries\Result;
 use Osm\Admin\Queries\Traits\Dehydrated;
 use Osm\Admin\Base\Attributes\Table as TableAttribute;
 use Osm\Framework\Db\Db;
+use function Osm\hydrate;
 use function Osm\merge;
 
 /**
  * @property Table $storage
  * @property Db $db
  * @property string $name
+ * @property QueryBuilder $raw
  *
  * @property \stdClass $data
  * @property string[] $data_after_insert
@@ -27,17 +29,12 @@ use function Osm\merge;
  */
 class TableQuery extends Query
 {
-    use Dehydrated;
-
     protected function run(): Result
     {
-        // TODO: temporary implementation
-        $query = $this->db->table($this->name);
-
-        $this->applySelect($query);
+        $this->applySelect();
 
         return Result::new([
-            'items' => $query->get()
+            'items' => $this->raw->get([])
                 ->map(fn(\stdClass $item) => $this->load($item))
                 ->toArray(),
         ]);
@@ -53,7 +50,7 @@ class TableQuery extends Query
         return $this->class->storage->name;
     }
 
-    protected function applySelect(QueryBuilder $query): void
+    protected function applySelect(): void
     {
         if (empty($this->select)) {
             throw new NotImplemented($this);
@@ -66,22 +63,21 @@ class TableQuery extends Query
                 throw new NotImplemented($this);
             }
 
-            if ($this->storage->columns[$propertyName]) {
-                $query->addSelect($property->name);
+            if (isset($this->storage->columns[$propertyName])) {
+                $this->raw->addSelect($property->name);
             }
-            elseif (!in_array('data', $query->columns)) {
-                $query->addSelect('data');
+            elseif (!in_array('data', $this->raw->columns)) {
+                $this->raw->addSelect('data');
             }
         }
     }
 
-    public function insert(\stdClass $data): ?int {
+    public function insert(\stdClass $data): int {
         $this->data = clone $data;
         $this->inserting();
 
         return $this->db->transaction(function() use ($data) {
-            $this->data->id = $this->db->table($this->name)
-                ->insertGetId($this->insert_values);
+            $this->data->id = $this->raw->insertGetId($this->insert_values);
 
             $this->data_after_insert = [];
             $this->inserted();
@@ -169,10 +165,6 @@ class TableQuery extends Query
 
     protected function load(\stdClass $item): \stdClass|Object_
     {
-        if (!$this->dehydrated) {
-            throw new NotImplemented($this);
-        }
-
         if (isset($item->data)) {
             $item = merge($item, json_decode($item->data));
         }
@@ -183,6 +175,18 @@ class TableQuery extends Query
             }
         }
 
-        return $item;
+        return $this->hydrate
+            ? hydrate($this->class->name, $item)
+            : $item;
+    }
+
+    protected function get_raw(): QueryBuilder {
+        return $this->db->table($this->name);
+    }
+
+    public function raw(callable $callback): static {
+        $callback($this->raw);
+
+        return $this;
     }
 }

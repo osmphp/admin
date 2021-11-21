@@ -2,10 +2,12 @@
 
 namespace Osm\Admin\Scopes\Indexers;
 
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Osm\Admin\Base\Attributes\Indexer\Source;
 use Osm\Admin\Base\Attributes\Indexer\Target;
 use Osm\Admin\Scopes\Scope;
 use Osm\Admin\Tables\TableIndexer;
+use Osm\Core\Object_;
 use function Osm\query;
 
 #[Target('scopes'), Source('scopes')]
@@ -19,10 +21,10 @@ class ScopeIndexer extends TableIndexer
         return $parent ? "{$parent->id_path}/{$id}" : "{$id}";
     }
 
-    protected function index_parent(?int $parent_id): ?Scope {
+    protected function index_parent(?int $parent_id): Scope|Object_|null {
         return $parent_id
             ? query(Scope::class)
-                ->where('id', $parent_id)
+                ->raw(fn(QueryBuilder $q) => $q->where('id', $parent_id))
                 ->hydrate()
                 ->first(['level', 'id_path'])
             : null;

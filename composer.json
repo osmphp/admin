@@ -16,6 +16,9 @@
         "phpunit/phpunit": "^9"
     },
     "autoload": {
+        "files": [
+          "src/Storages/functions.php"
+        ],
         "psr-4": {
             "Osm\\Admin\\": "src/",
             "Osm\\Admin\\Tools\\": "tools/"

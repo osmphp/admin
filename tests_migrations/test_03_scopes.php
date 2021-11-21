@@ -10,7 +10,7 @@ use Osm\Admin\Tables\Table;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\TestCase;
 
-class test_13_scopes extends TestCase
+class test_03_scopes extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 
@@ -67,5 +67,17 @@ class test_13_scopes extends TestCase
             ->hasColumn('scopes', 'parent_id'));
         $this->assertTrue($this->app->db->connection->getSchemaBuilder()
             ->hasColumn('scopes', 'data'));
+
+        // AND the root scope is created and its indexed
+        // properties are computed correctly
+        $rootScope = $this->app->db->table('scopes')
+            ->whereNull('parent_id')
+            ->first();
+        $this->assertNotNull($rootScope);
+        $this->assertEquals(0, $rootScope->level);
+        $this->assertTrue($rootScope->id_path === (string)$rootScope->id);
+
+        // AND root scope-specific tables are created, too
+        $this->assertTrue($this->app->db->exists("s{$rootScope->id}__products"));
     }
 }

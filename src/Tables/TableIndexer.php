@@ -54,4 +54,21 @@ class TableIndexer extends Indexer
             $query->data_after_insert[$property->name] = true;
         }
     }
+
+    /**
+     * @param TableQuery $query
+     */
+    public function updating(Query $query, \stdClass $data): void
+    {
+        foreach ($this->index->properties as $property) {
+            $values = [];
+
+            foreach ($property->parameters as $parameter) {
+                $values[] = $data->{$parameter} ?? null;
+            }
+
+            $data->{$property->name} =
+                $this->{"index_{$property->name}"}(...$values);
+        }
+    }
 }

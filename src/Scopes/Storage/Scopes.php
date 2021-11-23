@@ -17,7 +17,7 @@ class Scopes extends Table
 {
     public function seed(?Storage $current): void
     {
-        $this->query()->insert((object)[
+        $this->query()->insert([
             'title' => __('Global'),
         ]);
     }

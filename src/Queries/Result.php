@@ -9,7 +9,6 @@ use Osm\Framework\Search\Hints\Result\Facet;
  * @property \stdClass[]|Object_[]|int[]|string[] $items
  * @property ?int $count
  * @property Facet[]|null $facets
- * @property \stdClass|Object_|int|string|null $first
  */
 class Result extends Object_
 {

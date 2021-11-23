@@ -37,6 +37,11 @@ class Index extends Object_
         $this->indexer->inserted($query);
     }
 
+    public function updating(Query $query, \stdClass $data): void
+    {
+        $this->indexer->updating($query, $data);
+    }
+
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
     }

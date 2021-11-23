@@ -19,6 +19,8 @@ use Osm\Admin\Schema\Class_;
  */
 class Query extends Object_
 {
+    public const DEFAULT_CHUNK_SIZE = 100;
+
     /**
      * @var string[]
      */
@@ -104,7 +106,11 @@ class Query extends Object_
         return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
     }
 
-    public function insert(\stdClass $data): int {
+    public function insert(\stdClass|array $data): int {
+        throw new NotImplemented($this);
+    }
+
+    public function update(\stdClass|array $data): void {
         throw new NotImplemented($this);
     }
 

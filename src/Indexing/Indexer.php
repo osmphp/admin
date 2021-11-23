@@ -12,8 +12,15 @@ use Osm\Core\Object_;
  */
 class Indexer extends Object_
 {
-    public function inserting(Query $query): void
-    {
+    public function inserting(Query $query): void {
+        throw new NotImplemented($this);
+    }
+
+    public function inserted(Query $query): void {
+        throw new NotImplemented($this);
+    }
+
+    public function updating(Query $query, \stdClass $data): void {
         throw new NotImplemented($this);
     }
 

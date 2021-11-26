@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Osm\Admin\Tests;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Osm\Admin\Accounts\Account;
-use Osm\Admin\Accounts\Accounts;
 use Osm\Admin\Scopes\Scope;
 use Osm\Framework\TestCase;
 use function Osm\__;
@@ -39,6 +37,42 @@ class test_01_scopes extends TestCase
                 ->value('id_path') === "{$rootId}/{$retailId}");
     }
 
+    public function test_joins() {
+        // GIVEN a database with the schema migrated, and the root scope created
+        $root = $this->app->db->table('scopes')
+            ->whereNull('parent_id')
+            ->value('id');
+
+        // AND 2 levels of children are created
+        $child1 = query(Scope::class)->insert([
+            'title' => __('Child 1'),
+            'parent_id' => $root,
+        ]);
+        $child2 = query(Scope::class)->insert([
+            'title' => __('Child 2'),
+            'parent_id' => $child1,
+        ]);
+
+        // WHEN you select joined columns
+        /* @var \stdClass|Scope $scope */
+        $scope = query(Scope::class)
+            ->where('parent.id', $child1)
+            ->first([
+                'id',
+                'parent.id',
+                'parent.parent.id',
+                'parent.parent.parent.id',
+                'parent.parent.parent.parent.id',
+            ]);
+
+        // THEN the returned object contains child objects
+        // recursively retrieved from the joined tables
+        $this->assertTrue($scope->id === $child2);
+        $this->assertTrue($scope->parent->id === $child1);
+        $this->assertTrue($scope->parent->parent->id === $root);
+        $this->assertNull($scope->parent->parent->parent);
+    }
+
     public function test_updates() {
         // GIVEN a database with the schema migrated, and the root scope created
         /* @var \stdClass|Scope $root */
@@ -68,6 +102,40 @@ class test_01_scopes extends TestCase
         $this->assertTrue($this->app->db->table('scopes')
                 ->where('id', $englishId)
                 ->value('id_path') === "{$rootId}/{$englishId}");
+    }
+
+    public function test_cascade_updates() {
+        // GIVEN a database with the schema migrated, and the root scope created
+        $root = $this->app->db->table('scopes')
+            ->whereNull('parent_id')
+            ->value('id');
+
+        // AND 3 levels of children are created
+        $child1 = query(Scope::class)->insert([
+            'title' => __('Child 1'),
+            'parent_id' => $root,
+        ]);
+        $child2 = query(Scope::class)->insert([
+            'title' => __('Child 2'),
+            'parent_id' => $child1,
+        ]);
+        $child3 = query(Scope::class)->insert([
+            'title' => __('Child 3'),
+            'parent_id' => $child2,
+        ]);
+
+        // WHEN you move `Child 2` scope directly under the `Global` scope
+        query(Scope::class)
+            ->raw(fn(QueryBuilder $q) => $q->where('id', $child2))
+            ->update(['parent_id' => $root]);
+
+        // THEN its child's level and id_path are recalculated, too
+        $this->assertEquals(2, $this->app->db->table('scopes')
+            ->where('id', $child3)
+            ->value('level'));
+        $this->assertTrue($this->app->db->table('scopes')
+                ->where('id', $child3)
+                ->value('id_path') === "{$root}/{$child2}/{$child3}");
     }
 
 }

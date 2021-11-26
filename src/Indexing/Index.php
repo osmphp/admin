@@ -27,14 +27,14 @@ use function Osm\sort_by_dependency;
  */
 class Index extends Object_
 {
-    public function inserting(Query $query): void
+    public function inserting(Query $query, \stdClass $data): void
     {
-        $this->indexer->inserting($query);
+        $this->indexer->inserting($query, $data);
     }
 
-    public function inserted(Query $query): void
+    public function inserted(Query $query, \stdClass $data, &$modified): void
     {
-        $this->indexer->inserted($query);
+        $this->indexer->inserted($query, $data, $modified);
     }
 
     public function updating(Query $query, \stdClass $data): void

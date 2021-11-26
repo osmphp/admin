@@ -2,13 +2,15 @@
 
 namespace Osm\Admin\Queries;
 
+use Osm\Admin\Base\Exceptions\SyntaxError;
+use Osm\Admin\Base\Exceptions\UndefinedProperty;
 use Osm\Admin\Indexing\Index;
 use Osm\Admin\Storages\Storage;
-use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Admin\Schema\Class_;
+use function Osm\__;
 
 /**
  * @property Storage $storage
@@ -19,13 +21,22 @@ use Osm\Admin\Schema\Class_;
  */
 class Query extends Object_
 {
-    public const DEFAULT_CHUNK_SIZE = 100;
+    /**
+     * @var Filter[]
+     */
+    public array $filters = [];
 
     /**
-     * @var string[]
+     * @var Select[]
      */
-    public array $select = [];
+    public array $selects = [];
 
+    /**
+     * @var Order[]
+     */
+    public array $orders = [];
+
+    public const DEFAULT_CHUNK_SIZE = 100;
     public const DEFAULT_LIMIT = 10;
 
     protected function get_storage(): Storage {
@@ -36,74 +47,36 @@ class Query extends Object_
         return $this->storage->class;
     }
 
-    public function select(array $select): static {
-        foreach ($select as $key => $value) {
-            if (!is_int($key)) {
-                $this->selectPropertyWithCallback($key, $value);
-            }
-            elseif ($value == '*') {
-                $this->selectAllProperties();
-            }
-            else {
-                $this->selectProperty($value);
-            }
-        }
-
-        return $this;
-    }
-
-    protected function selectProperty(string $property): void
-    {
-        if (($pos = strpos($property, '.')) !== false) {
-            throw new NotImplemented($this);
-        }
-
-        $this->select[$property] = true;
-    }
-
-    protected function selectPropertyWithCallback(string $property,
-        callable $callback): void
-    {
-        throw new NotImplemented($this);
-    }
-
-    protected function selectAllProperties(): void
-    {
-        foreach ($this->class->properties as $property) {
-            $this->selectProperty($property->name);
-        }
-    }
-
-    public function get(array $select = null): Result {
-        if (is_array($select)) {
-            $this->select($select);
-        }
-
-        if (empty($this->select)) {
-            $this->select(['*']);
-        }
-
-        return $this->run();
-    }
-
-    public function first(array $select = null): \stdClass|Object_|null {
-        foreach ($this->get($select)->items as $item) {
-            return $item;
-        }
-
-        return null;
-    }
-
     protected function get_limit(): ?int {
         return static::DEFAULT_LIMIT;
     }
 
-    protected function run(): Result {
+    protected function get_index(): ?Index {
+        return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
+    }
+
+    public function get(...$expressions): array {
         throw new NotImplemented($this);
     }
 
-    protected function get_index(): ?Index {
-        return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
+    public function first(...$expressions): \stdClass|Object_|null {
+        throw new NotImplemented($this);
+    }
+
+    public function value(string $expression): mixed {
+        if (($value = $this->first($expression)) === null) {
+            return null;
+        }
+
+        foreach (array_keys($this->selects[$expression]->parsed_expression)
+            as $propertyName)
+        {
+            if (($value = $value->$propertyName) === null) {
+                return null;
+            }
+        }
+
+        return $value;
     }
 
     public function insert(\stdClass|array $data): int {
@@ -121,5 +94,97 @@ class Query extends Object_
 
     public function raw(callable $callback): static {
         throw new NotImplemented($this);
+    }
+
+    public function select(...$expressions): static {
+        foreach ($expressions as $text) {
+            $this
+                ->parseExpression($text, allowWildcard: true)
+                ->select();
+        }
+
+        return $this;
+    }
+
+    public function parseExpression(string $text,
+        bool $allowWildcard = false): Expression
+    {
+        $class = $this->class;
+        $properties = [];
+        $wildcard = false;
+
+        foreach (explode('.', $text) as $propertyName) {
+            if (!$class) {
+                throw new SyntaxError(__("Can't use dot syntax after scalar property in ':expression' expression", [
+                    'expression' => $text,
+                ]));
+            }
+
+            if ($allowWildcard) {
+                if ($wildcard) {
+                    throw new SyntaxError(__("Can't use dot syntax after '*' in ':expression' expression", [
+                        'expression' => $text,
+                    ]));
+                }
+
+                if ($propertyName == '*') {
+                    $wildcard = true;
+                    continue;
+                }
+            }
+
+            if (!($property = $class->properties[$propertyName] ?? null)) {
+                throw new UndefinedProperty(__("':property' property, referenced in ':expression' expression, is not defined in ':class' class.", [
+                    'property' => $propertyName,
+                    'expression' => $text,
+                    'class' => $class->name,
+                ]));
+            }
+
+            $properties[$propertyName] = $property;
+            $class = $class->schema->classes[$property->type] ?? null;
+        }
+
+        return $wildcard
+            ? Expression\Wildcard::new([
+                'query' => $this,
+                'text' => $text,
+                'properties' => $properties,
+            ])
+            : Expression\Identifier::new([
+                'query' => $this,
+                'text' => $text,
+                'properties' => $properties,
+            ]);
+    }
+
+    public function orderBy(string $expression, bool $desc = false): static {
+        $this->orders[$expression] = Order::new([
+            'query' => $this,
+            'expression' => $this->parseExpression($expression),
+            'desc' => $desc,
+        ]);
+
+        return $this;
+    }
+
+    public function equals(string $expression, mixed $value): static {
+        $this->filters[] = Filter\Property\Equals::new([
+            'query' => $this,
+            'expression' => $this->parseExpression($expression),
+            'value' => $value,
+        ]);
+
+        return $this;
+    }
+
+    public function and(callable $callback): static {
+        $this->filters[] = $filter = Filter\Logical\And_::new([
+            'query' => $this,
+        ]);
+
+        $callback($filter);
+
+        return $this;
     }
 }

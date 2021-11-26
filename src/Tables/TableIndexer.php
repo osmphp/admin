@@ -11,10 +11,10 @@ class TableIndexer extends Indexer
     /**
      * @param TableQuery $query
      */
-    public function inserting(Query $query): void
+    public function inserting(Query $query, \stdClass $data): void
     {
         foreach ($this->index->properties as $property) {
-            if (property_exists($query->data, $property->name)) {
+            if (property_exists($data, $property->name)) {
                 continue;
             }
 
@@ -25,10 +25,10 @@ class TableIndexer extends Indexer
             $values = [];
 
             foreach ($property->parameters as $parameter) {
-                $values[] = $query->data->{$parameter} ?? null;
+                $values[] = $data->{$parameter} ?? null;
             }
 
-            $query->data->{$property->name} =
+            $data->{$property->name} =
                 $this->{"index_{$property->name}"}(...$values);
         }
     }
@@ -36,22 +36,22 @@ class TableIndexer extends Indexer
     /**
      * @param TableQuery $query
      */
-    public function inserted(Query $query): void
+    public function inserted(Query $query, \stdClass $data, &$modified): void
     {
         foreach ($this->index->properties as $property) {
-            if (property_exists($query->data, $property->name)) {
+            if (property_exists($data, $property->name)) {
                 continue;
             }
 
             $values = [];
 
             foreach ($property->parameters as $parameter) {
-                $values[] = $query->data->{$parameter} ?? null;
+                $values[] = $data->{$parameter} ?? null;
             }
 
-            $query->data->{$property->name} =
+            $data->{$property->name} =
                 $this->{"index_{$property->name}"}(...$values);
-            $query->data_after_insert[$property->name] = true;
+            $modified[$property->name] = true;
         }
     }
 

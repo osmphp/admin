@@ -6,9 +6,9 @@ use Osm\Admin\Tables\TableQuery;
 
 class Scopes extends TableQuery
 {
-    protected function insertCommitted(): void
+    protected function insertCommitted(\stdClass $data): void
     {
-        $this->class->schema->migrateScopeUp($this->data->id);
-        parent::insertCommitted();
+        $this->class->schema->migrateScopeUp($data->id);
+        parent::insertCommitted($data);
     }
 }

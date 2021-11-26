@@ -30,6 +30,7 @@ use Osm\Admin\Base\Traits\Id;
  *      Form\String_(10, 'Title'),
  * ]
  * @property string $prefix
+ * @property Scope $parent
  */
 #[
     Storage\Scopes,

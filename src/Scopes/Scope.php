@@ -5,6 +5,7 @@ namespace Osm\Admin\Scopes;
 use Osm\Admin\Base\Attributes\Form;
 use Osm\Admin\Base\Attributes\Grid;
 use Osm\Admin\Base\Attributes\Icon;
+use Osm\Admin\Tables\TableQuery;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Admin\Base\Attributes\Table;
@@ -30,7 +31,8 @@ use Osm\Admin\Base\Traits\Id;
  *      Form\String_(10, 'Title'),
  * ]
  * @property string $prefix
- * @property Scope $parent
+ * @property Scope $parent #[Serialized(not_having: 'children')]
+ * @property Scope[] $children #[Serialized]
  */
 #[
     Storage\Scopes,
@@ -47,5 +49,12 @@ class Scope extends Object_
         $id = $this->id ?? 0;
 
         return "s{$id}__";
+    }
+
+    public function join_parent(TableQuery $query, string $joinMethod,
+        string $from, string $as): void
+    {
+        $query->db_query->$joinMethod("scopes AS {$as}",
+            "{$from}.parent_id", '=', "{$as}.id");
     }
 }

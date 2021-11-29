@@ -16,6 +16,7 @@ use Osm\Core\Attributes\Serialized;
  * @property Class_[] $types
  * @property CoreClass $reflection
  * @property string[] $after
+ * @property Object_ $instance
  */
 class Class_ extends Object_
 {
@@ -48,5 +49,10 @@ class Class_ extends Object_
 
     protected function get_after(): array {
         return [];
+    }
+
+    protected function get_instance(): Object_ {
+        $new = "{$this->name}::new";
+        return $new();
     }
 }

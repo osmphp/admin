@@ -10,7 +10,7 @@ use Osm\Framework\TestCase;
 use function Osm\__;
 use function Osm\query;
 
-class test_01_scopes extends TestCase
+class test_02_scopes extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
     public bool $use_db = true;
@@ -56,21 +56,21 @@ class test_01_scopes extends TestCase
         // WHEN you select joined columns
         /* @var \stdClass|Scope $scope */
         $scope = query(Scope::class)
-            ->where('parent.id', $child1)
-            ->first([
+            ->equals('parent.id', $child1)
+            ->first(
                 'id',
                 'parent.id',
                 'parent.parent.id',
                 'parent.parent.parent.id',
                 'parent.parent.parent.parent.id',
-            ]);
+            );
 
         // THEN the returned object contains child objects
         // recursively retrieved from the joined tables
         $this->assertTrue($scope->id === $child2);
         $this->assertTrue($scope->parent->id === $child1);
         $this->assertTrue($scope->parent->parent->id === $root);
-        $this->assertNull($scope->parent->parent->parent);
+        $this->assertTrue(!isset($scope->parent->parent->parent));
     }
 
     public function test_updates() {
@@ -92,7 +92,7 @@ class test_01_scopes extends TestCase
 
         // WHEN you move `English` scope directly under the `Global` scope
         query(Scope::class)
-            ->raw(fn(QueryBuilder $q) => $q->where('id', $englishId))
+            ->equals('id', $englishId)
             ->update(['parent_id' => $rootId]);
 
         // THEN its level and id_path are recalculated, too
@@ -126,7 +126,7 @@ class test_01_scopes extends TestCase
 
         // WHEN you move `Child 2` scope directly under the `Global` scope
         query(Scope::class)
-            ->raw(fn(QueryBuilder $q) => $q->where('id', $child2))
+            ->equals('id', $child2)
             ->update(['parent_id' => $root]);
 
         // THEN its child's level and id_path are recalculated, too

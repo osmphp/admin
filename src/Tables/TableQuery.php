@@ -7,6 +7,8 @@ use Osm\Core\App;
 use Osm\Admin\Queries\Query;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Db\Db;
+use Osm\Core\Object_;
+use function Osm\hydrate;
 use function Osm\merge;
 
 /**
@@ -14,10 +16,12 @@ use function Osm\merge;
  * @property Db $db
  * @property string $name
  *
- * @property QueryBuilder $raw Execution-phase property.
+ * @property QueryBuilder $db_query Execution-phase property.
  */
 class TableQuery extends Query
 {
+    public array $joins = [];
+
     protected function get_db(): Db {
         global $osm_app; /* @var App $osm_app */
 
@@ -28,38 +32,72 @@ class TableQuery extends Query
         return $this->class->storage->name;
     }
 
-    protected function get_raw(): QueryBuilder {
-        return $this->db->table($this->name);
-    }
+    public function get(...$formulas): array {
+        $this->select(...$formulas);
+        $this->prepareSelect();
 
-    public function raw(callable $callback): static {
-        $callback($this->raw);
-
-        return $this;
-    }
-
-    public function get(...$expressions): array {
-        $this->select(...$expressions);
-
-        foreach ($this->filters as $filter) {
-            $filter->addToTableQuery();
-        }
-
-        foreach ($this->selects as $select) {
-            $select->addToTableQuery();
-        }
-
-        foreach ($this->orders as $order) {
-            $order->addToTableQuery();
-        }
-
-        return $this->raw->get([])
+        return $this->db_query->get([])
             ->map(fn(\stdClass $item) => $this->load($item))
             ->toArray();
     }
 
-    protected function load(\stdClass $item): \stdClass {
-        throw new NotImplemented($this);
+    public function first(...$formulas): \stdClass|Object_|null
+    {
+        $this->select(...$formulas);
+        $this->prepareSelect();
+
+        $item = $this->db_query->first();
+        return $item ? $this->load($item) : null;
+    }
+
+    protected function prepareSelect(): void
+    {
+        $this->db_query = $this->db->table("{$this->name} as this");
+
+        foreach ($this->filters as $filter) {
+            $filter->tables_filter($this, $this->db_query);
+        }
+
+        foreach ($this->selects as $select) {
+            $select->tables_select($this);
+        }
+
+        foreach ($this->orders as $order) {
+            $order->tables_order($this);
+        }
+    }
+
+    protected function load(\stdClass $item): \stdClass|Object_ {
+        foreach ((array)$item as $propertyName => $value) {
+            if ($value === null) {
+                unset($item->$propertyName);
+            }
+        }
+
+        foreach (array_reverse(array_keys($this->joins)) as $alias) {
+            foreach ((array)$item as $propertyName => $value) {
+                if (!str_starts_with($propertyName, "{$alias}__")) {
+                    continue;
+                }
+
+                $accessors = explode('__', $propertyName);
+                $property = array_pop($accessors);
+                $object = $item;
+                foreach ($accessors as $accessor) {
+                    if (!isset($object->$accessor)) {
+                        $object->$accessor = new \stdClass();
+                    }
+                    $object = $object->$accessor;
+                }
+                $object->$property = $value;
+
+                unset($item->$propertyName);
+            }
+        }
+
+        return $this->hydrate
+            ? hydrate($this->class->name, $item)
+            : $item;
     }
 
     public function insert(\stdClass|array $data): int {
@@ -67,7 +105,7 @@ class TableQuery extends Query
         $this->inserting($data);
 
         return $this->db->transaction(function() use ($data) {
-            $data->id = $this->raw->insertGetId(
+            $data->id = $this->db->table($this->name)->insertGetId(
                 $values = $this->insertValues($data));
 
             $modified = [];

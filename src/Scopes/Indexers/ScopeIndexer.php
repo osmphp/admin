@@ -24,9 +24,9 @@ class ScopeIndexer extends TableIndexer
     protected function index_parent(?int $parent_id): Scope|Object_|null {
         return $parent_id
             ? query(Scope::class)
-                ->raw(fn(QueryBuilder $q) => $q->where('id', $parent_id))
+                ->equals('id', $parent_id)
                 ->hydrate()
-                ->first(['level', 'id_path'])
+                ->first('level', 'id_path')
             : null;
     }
 }

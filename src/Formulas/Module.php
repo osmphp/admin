@@ -1,16 +1,20 @@
 <?php
 
-namespace Osm\Admin\Queries;
+namespace Osm\Admin\Formulas;
 
 use Osm\Core\BaseModule;
 
+/**
+ * @property Parser $parser
+ */
 class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Admin\Base\Module::class,
-        \Osm\Admin\Formulas\Module::class,
-        \Osm\Admin\Indexing\Module::class,
         \Osm\Admin\Schema\Module::class,
-        \Osm\Admin\Storages\Module::class,
     ];
+
+    protected function get_parser(): Parser {
+        return Parser::new();
+    }
 }

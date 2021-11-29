@@ -4,13 +4,16 @@ namespace Osm\Admin\Queries;
 
 use Osm\Admin\Base\Exceptions\SyntaxError;
 use Osm\Admin\Base\Exceptions\UndefinedProperty;
+use Osm\Admin\Formulas\Formula;
 use Osm\Admin\Indexing\Index;
+use Osm\Admin\Queries\Traits\Where;
 use Osm\Admin\Storages\Storage;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Admin\Schema\Class_;
 use function Osm\__;
+use function Osm\formula;
 
 /**
  * @property Storage $storage
@@ -21,18 +24,20 @@ use function Osm\__;
  */
 class Query extends Object_
 {
+    use Where;
+
     /**
-     * @var Filter[]
+     * @var Formula[]
      */
     public array $filters = [];
 
     /**
-     * @var Select[]
+     * @var Formula[]
      */
     public array $selects = [];
 
     /**
-     * @var Order[]
+     * @var Formula\Order[]
      */
     public array $orders = [];
 
@@ -55,20 +60,24 @@ class Query extends Object_
         return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
     }
 
-    public function get(...$expressions): array {
+    public function get(...$formulas): array {
         throw new NotImplemented($this);
     }
 
-    public function first(...$expressions): \stdClass|Object_|null {
+    public function first(...$formulas): \stdClass|Object_|null {
         throw new NotImplemented($this);
     }
 
-    public function value(string $expression): mixed {
-        if (($value = $this->first($expression)) === null) {
+    public function value(string $formula): mixed {
+        if (($value = $this->first($formula)) === null) {
             return null;
         }
 
-        foreach (array_keys($this->selects[$expression]->parsed_expression)
+        if (!($this->selects[$formula] instanceof Formula\Identifier)) {
+            throw new NotImplemented($this);
+        }
+
+        foreach (array_keys($this->selects[$formula]->properties)
             as $propertyName)
         {
             if (($value = $value->$propertyName) === null) {
@@ -96,94 +105,49 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    public function select(...$expressions): static {
-        foreach ($expressions as $text) {
-            $this
-                ->parseExpression($text, allowWildcard: true)
-                ->select();
+    public function select(...$formulas): static {
+        foreach ($formulas as $formula) {
+            $parsed = formula($formula, $this->class);
+
+            if ($parsed instanceof Formula\Identifier && $parsed->wildcard) {
+                $class = $this->class;
+                if (!empty($parsed->accessors)) {
+                    $type = $parsed->accessors[count($parsed->accessors - 1)]
+                        ->reflection->type;
+
+                    if (!($class = $this->class->schema->classes[$type] ?? null)) {
+                        throw new SyntaxError(__("Can't resolve ':formula' formula to properties of a data class.", [
+                            'formula' => $formula,
+                        ]));
+                    }
+                }
+
+                $prefix = mb_substr($formula, mb_strlen($formula) - 1);
+                foreach ($class->properties as $property) {
+                    $this->selects["{$prefix}{$property->name}"] =
+                        Formula\Identifier::new([
+                            'text' => "{$prefix}{$property->name}",
+                            'accessors' => $parsed->accessors,
+                            'property' => $property,
+                            'wildcard' => false,
+                        ]);
+                }
+
+                continue;
+            }
+
+            $this->selects[$formula] = $parsed;
         }
 
         return $this;
     }
 
-    public function parseExpression(string $text,
-        bool $allowWildcard = false): Expression
-    {
-        $class = $this->class;
-        $properties = [];
-        $wildcard = false;
-
-        foreach (explode('.', $text) as $propertyName) {
-            if (!$class) {
-                throw new SyntaxError(__("Can't use dot syntax after scalar property in ':expression' expression", [
-                    'expression' => $text,
-                ]));
-            }
-
-            if ($allowWildcard) {
-                if ($wildcard) {
-                    throw new SyntaxError(__("Can't use dot syntax after '*' in ':expression' expression", [
-                        'expression' => $text,
-                    ]));
-                }
-
-                if ($propertyName == '*') {
-                    $wildcard = true;
-                    continue;
-                }
-            }
-
-            if (!($property = $class->properties[$propertyName] ?? null)) {
-                throw new UndefinedProperty(__("':property' property, referenced in ':expression' expression, is not defined in ':class' class.", [
-                    'property' => $propertyName,
-                    'expression' => $text,
-                    'class' => $class->name,
-                ]));
-            }
-
-            $properties[$propertyName] = $property;
-            $class = $class->schema->classes[$property->type] ?? null;
-        }
-
-        return $wildcard
-            ? Expression\Wildcard::new([
-                'query' => $this,
-                'text' => $text,
-                'properties' => $properties,
-            ])
-            : Expression\Identifier::new([
-                'query' => $this,
-                'text' => $text,
-                'properties' => $properties,
-            ]);
-    }
-
-    public function orderBy(string $expression, bool $desc = false): static {
-        $this->orders[$expression] = Order::new([
-            'query' => $this,
-            'expression' => $this->parseExpression($expression),
+    public function orderBy(string $formula, bool $desc = false): static {
+        $this->orders[$formula] = $parent = Formula\Order::new([
+            'expr' => $expr = formula($formula, $this->class),
             'desc' => $desc,
         ]);
-
-        return $this;
-    }
-
-    public function equals(string $expression, mixed $value): static {
-        $this->filters[] = Filter\Property\Equals::new([
-            'query' => $this,
-            'expression' => $this->parseExpression($expression),
-            'value' => $value,
-        ]);
-
-        return $this;
-    }
-
-    public function and(callable $callback): static {
-        $this->filters[] = $filter = Filter\Logical\And_::new([
-            'query' => $this,
-        ]);
-
-        $callback($filter);
+        $expr->parent = $parent;
 
         return $this;
     }

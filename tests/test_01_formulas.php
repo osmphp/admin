@@ -8,6 +8,7 @@ use Osm\Admin\Formulas\Formula;
 use Osm\Admin\Scopes\Scope;
 use Osm\Framework\TestCase;
 use function Osm\formula;
+use function Osm\query;
 
 class test_01_formulas extends TestCase
 {
@@ -26,5 +27,19 @@ class test_01_formulas extends TestCase
         $this->assertEquals('parent', $formula->accessors[0]->name);
         $this->assertEquals('parent', $formula->accessors[1]->name);
         $this->assertEquals('title', $formula->property->name);
+    }
+
+    public function test_wildcard() {
+        // GIVEN a scope query
+        $query = query(Scope::class);
+
+        // WHEN you select *
+        $query->select('*');
+
+        // THEN it actually selects all properties that don't require
+        // joins or sub-selects
+        $this->assertArrayHasKey('id', $query->selects);
+        $this->assertArrayNotHasKey('parent', $query->selects);
+        $this->assertArrayNotHasKey('children', $query->selects);
     }
 }

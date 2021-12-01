@@ -37,9 +37,9 @@ class Index extends Object_
         $this->indexer->inserted($query, $data, $modified);
     }
 
-    public function updating(Query $query, \stdClass $data): void
+    public function updating(Query $query, \stdClass $data, array &$modified): void
     {
-        $this->indexer->updating($query, $data);
+        $this->indexer->updating($query, $data, $modified);
     }
 
     protected function get_schema(): Schema {

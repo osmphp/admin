@@ -58,7 +58,7 @@ class TableIndexer extends Indexer
     /**
      * @param TableQuery $query
      */
-    public function updating(Query $query, \stdClass $data): void
+    public function updating(Query $query, \stdClass $data, array &$modified): void
     {
         foreach ($this->index->properties as $property) {
             $values = [];
@@ -69,6 +69,7 @@ class TableIndexer extends Indexer
 
             $data->{$property->name} =
                 $this->{"index_{$property->name}"}(...$values);
+            $modified[$property->name] = true;
         }
     }
 }

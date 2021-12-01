@@ -64,6 +64,12 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
+    public function chunk(callable $callback,
+        int $size = self::DEFAULT_CHUNK_SIZE): void
+    {
+        throw new NotImplemented($this);
+    }
+
     public function first(...$formulas): \stdClass|Object_|null {
         throw new NotImplemented($this);
     }
@@ -73,11 +79,13 @@ class Query extends Object_
             return null;
         }
 
-        if (!($this->selects[$formula] instanceof Formula\Identifier)) {
+        $parsed = $this->selects[$formula];
+
+        if (!($parsed instanceof Formula\Identifier)) {
             throw new NotImplemented($this);
         }
 
-        foreach (array_keys($this->selects[$formula]->properties)
+        foreach (array_keys($parsed->accessors)
             as $propertyName)
         {
             if (($value = $value->$propertyName) === null) {
@@ -85,7 +93,7 @@ class Query extends Object_
             }
         }
 
-        return $value;
+        return $value->{$parsed->property->name};
     }
 
     public function insert(\stdClass|array $data): int {
@@ -101,45 +109,50 @@ class Query extends Object_
         return $this;
     }
 
-    public function raw(callable $callback): static {
-        throw new NotImplemented($this);
-    }
-
     public function select(...$formulas): static {
         foreach ($formulas as $formula) {
             $parsed = formula($formula, $this->class);
 
             if ($parsed instanceof Formula\Identifier && $parsed->wildcard) {
-                $class = $this->class;
-                if (!empty($parsed->accessors)) {
-                    $type = $parsed->accessors[count($parsed->accessors - 1)]
-                        ->reflection->type;
-
-                    if (!($class = $this->class->schema->classes[$type] ?? null)) {
-                        throw new SyntaxError(__("Can't resolve ':formula' formula to properties of a data class.", [
-                            'formula' => $formula,
-                        ]));
-                    }
-                }
-
-                $prefix = mb_substr($formula, mb_strlen($formula) - 1);
-                foreach ($class->properties as $property) {
-                    $this->selects["{$prefix}{$property->name}"] =
-                        Formula\Identifier::new([
-                            'text' => "{$prefix}{$property->name}",
-                            'accessors' => $parsed->accessors,
-                            'property' => $property,
-                            'wildcard' => false,
-                        ]);
-                }
-
-                continue;
+                $this->selectWildcard($parsed);
+            }
+            else {
+                $this->selects[$formula] = $parsed;
             }
 
-            $this->selects[$formula] = $parsed;
         }
 
         return $this;
+    }
+
+    protected function selectWildcard(Formula\Identifier $formula): void
+    {
+        $class = $this->class;
+        if (!empty($formula->accessors)) {
+            $type = $formula->accessors[count($formula->accessors) - 1]
+                ->reflection->type;
+
+            if (!($class = $this->class->schema->classes[$type] ?? null)) {
+                throw new SyntaxError(__("Can't resolve ':formula' formula to properties of a data class.", [
+                    'formula' => $formula,
+                ]));
+            }
+        }
+
+        $prefix = mb_substr($formula->text, 0, mb_strlen($formula->text) - 1);
+        foreach ($class->properties as $property) {
+            if (!$property->stored) {
+                continue;
+            }
+
+            $this->selects["{$prefix}{$property->name}"] =
+                Formula\Identifier::new([
+                    'text' => "{$prefix}{$property->name}",
+                    'accessors' => $formula->accessors,
+                    'property' => $property,
+                    'wildcard' => false,
+                ]);
+        }
     }
 
     public function orderBy(string $formula, bool $desc = false): static {

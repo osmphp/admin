@@ -20,7 +20,7 @@ class Indexer extends Object_
         throw new NotImplemented($this);
     }
 
-    public function updating(Query $query, \stdClass $data): void {
+    public function updating(Query $query, \stdClass $data, array &$modified): void {
         throw new NotImplemented($this);
     }
 

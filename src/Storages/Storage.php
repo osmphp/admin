@@ -6,6 +6,7 @@ use Osm\Admin\Base\Traits\SubTypes;
 use Osm\Admin\Indexing\Index;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Class_;
+use Osm\Admin\Schema\Property;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\NotSupported;
 use Osm\Core\Exceptions\Required;

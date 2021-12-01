@@ -3,6 +3,7 @@
 namespace Osm\Admin\Tables;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Osm\Core\App;
 use Osm\Admin\Queries\Query;
 use Osm\Core\Exceptions\NotImplemented;
@@ -22,6 +23,11 @@ class TableQuery extends Query
 {
     public array $joins = [];
 
+    /**
+     * @var callable[]
+     */
+    public array $raw = [];
+
     protected function get_db(): Db {
         global $osm_app; /* @var App $osm_app */
 
@@ -32,26 +38,54 @@ class TableQuery extends Query
         return $this->class->storage->name;
     }
 
-    public function get(...$formulas): array {
-        $this->select(...$formulas);
-        $this->prepareSelect();
+    public function raw(callable $callback): static {
+        $this->raw[] = $callback;
 
-        return $this->db_query->get([])
+        return $this;
+    }
+
+    public function getRaw(...$formulas): Collection {
+        $this->select(...$formulas);
+        return $this->prepareSelect()->get([]);
+    }
+
+    public function get(...$formulas): array {
+        return $this->getRaw(...$formulas)
             ->map(fn(\stdClass $item) => $this->load($item))
             ->toArray();
     }
 
-    public function first(...$formulas): \stdClass|Object_|null
+    public function chunkRaw(callable $callback,
+        int $size = self::DEFAULT_CHUNK_SIZE): void
+    {
+        $this->prepareSelect()->chunk($size, function($items) use ($callback) {
+            foreach ($items as $item) {
+                $callback($item);
+            }
+        });
+    }
+
+    public function chunk(callable $callback,
+        int $size = self::DEFAULT_CHUNK_SIZE): void
+    {
+        $this->chunkRaw(function(\stdClass $item) use ($callback) {
+            $callback($this->load($item));
+        }, $size);
+    }
+
+    public function firstRaw(...$formulas): ?\stdClass
     {
         $this->select(...$formulas);
-        $this->prepareSelect();
+        return $this->prepareSelect()->first();
+    }
 
-        $item = $this->db_query->first();
+    public function first(...$formulas): \stdClass|Object_|null
+    {
+        $item = $this->firstRaw(...$formulas);
         return $item ? $this->load($item) : null;
     }
 
-    protected function prepareSelect(): void
-    {
+    public function prepareSelect(): QueryBuilder {
         $this->db_query = $this->db->table("{$this->name} as this");
 
         foreach ($this->filters as $filter) {
@@ -64,6 +98,25 @@ class TableQuery extends Query
 
         foreach ($this->orders as $order) {
             $order->tables_order($this);
+        }
+
+        foreach ($this->raw as $callback) {
+            $callback($this);
+        }
+
+        return $this->db_query;
+    }
+
+    protected function prepareBatch(): void
+    {
+        $this->db_query = $this->db->table("{$this->name} as this");
+
+        foreach ($this->filters as $filter) {
+            $filter->tables_filter($this, $this->db_query);
+        }
+
+        foreach ($this->raw as $callback) {
+            $callback($this);
         }
     }
 
@@ -194,4 +247,60 @@ class TableQuery extends Query
 
         return $values;
     }
+
+    public function update(\stdClass|array $data): void {
+        $this->db->transaction(function() use ($data) {
+            if (is_array($data)) {
+                $data = (object)$data;
+            }
+
+            $this->db->committed(function () use ($data) {
+                $this->updateCommitted($data);
+            });
+
+            if ($this->batchUpdating($data)) {
+                $this->prepareBatch();
+                $this->db_query->update($this->updateValues($data));
+                $this->batchUpdated($data);
+                return;
+            }
+
+            $this->select('*')->orderBy('id');
+            $modified = array_map(fn() => true, array_keys((array)$data));
+
+            $this->chunk(function (\stdClass $item) use ($data, $modified) {
+                $item = merge($item, $data);
+                $this->updating($item, $modified);
+
+                if (!empty($modified)) {
+                    $this->db->table($this->name)
+                        ->where('id', $item->id)
+                        ->update($this->updateValues($item));
+                }
+                $this->updated($item);
+            });
+        });
+    }
+
+    protected function batchUpdating(\stdClass $data): bool {
+        return false;
+    }
+
+    protected function batchUpdated(\stdClass $data): void {
+    }
+
+    protected function updating(\stdClass $data, array &$modified): void {
+        $this->index?->updating($this, $data, $modified);
+    }
+
+    protected function updated(\stdClass $data): void {
+    }
+
+    protected function updateCommitted(\stdClass $data): void {
+    }
+
+    protected function updateValues(\stdClass $data): array {
+        throw new NotImplemented($this);
+    }
+
 }

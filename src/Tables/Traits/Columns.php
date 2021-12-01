@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Tables\Traits;
 use Osm\Admin\Base\Attributes\Markers\Table\Column as ColumnMarker;
+use Osm\Admin\Schema\Property;
 use Osm\Admin\Storages\Storage;
 use Osm\Admin\Tables\Column;
 use Osm\Core\App;

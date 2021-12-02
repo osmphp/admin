@@ -17,7 +17,7 @@ use Osm\Admin\Base\Traits\Id;
  *      Serialized,
  *      Table\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
  * ]
- * @property int $level #[
+ * @property ?int $level #[
  *      Serialized,
  *      Table\Int_(unsigned: true),
  * ]

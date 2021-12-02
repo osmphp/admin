@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Osm\Core\App;
 use Osm\Admin\Queries\Query;
+use Osm\Core\BaseModule;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Db\Db;
 use Osm\Core\Object_;
@@ -158,36 +159,30 @@ class TableQuery extends Query
         $this->inserting($data);
 
         return $this->db->transaction(function() use ($data) {
-            $data->id = $this->db->table($this->name)->insertGetId(
-                $values = $this->insertValues($data));
+            $id = $this->db->table($this->name)->insertGetId(
+                $this->insertValues($data));
 
-            $modified = [];
-            $this->inserted($data, $modified);
+            $this->inserted($id, $data);
 
-            if (!empty($modified)) {
-                $this->db->table($this->name)
-                    ->where('id', $data->id)
-                    ->update($this->updateAfterInsertValues($data, $values,
-                        $modified));
-            }
-
-            $this->db->committed(function () use ($data) {
-                $this->insertCommitted($data);
+            $this->db->committed(function () use ($id, $data) {
+                $this->insertCommitted($id, $data);
             });
 
-            return $data->id;
+            return $id;
         });
     }
 
     protected function inserting(\stdClass $data): void {
-        $this->index?->inserting($this, $data);
     }
 
-    protected function inserted(\stdClass $data, &$modified): void {
-        $this->index?->inserted($this, $data, $modified);
+    protected function inserted(int $id, \stdClass $data): void {
+        foreach ($this->storage->indexer_sources as $source) {
+            $source->inserted($id, $data);
+        }
     }
 
-    protected function insertCommitted(\stdClass $data): void {
+    protected function insertCommitted(int $id, \stdClass $data): void {
+        $this->indexing->index();
     }
 
     protected function insertValues(\stdClass $data): array {
@@ -208,42 +203,6 @@ class TableQuery extends Query
         }
 
         $values['data'] = !empty($data) ? json_encode((object)$data) : null;
-
-        return $values;
-    }
-
-    protected function updateAfterInsertValues(\stdClass $data,
-        array $insertValues, array $modified): array
-    {
-        $data = (array)$data;
-        $values = [];
-
-        foreach ($data as $propertyName => $value) {
-            if (!isset($modified[$propertyName])) {
-                unset($data[$propertyName]);
-                continue;
-            }
-
-            if (!isset($this->class->properties[$propertyName])) {
-                unset($data[$propertyName]);
-            }
-        }
-
-        foreach ($this->storage->columns as $column) {
-            if (isset($data[$column->name])) {
-                $values[$column->name] = $data[$column->name];
-                unset($data[$column->name]);
-            }
-        }
-
-        if (!empty($data)) {
-            $data = (object)$data;
-            if (!empty($insertValues['data'])) {
-                $data = merge(json_decode($insertValues['data']), $data);
-            }
-
-            $values['data'] = json_encode($data);
-        }
 
         return $values;
     }
@@ -302,5 +261,4 @@ class TableQuery extends Query
     protected function updateValues(\stdClass $data): array {
         throw new NotImplemented($this);
     }
-
 }

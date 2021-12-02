@@ -23,12 +23,15 @@ class test_02_migrations extends TestCase
 
     public function test_product_table_with_id_column() {
         // GIVEN a schema
+        $productClassName = str_replace('\\', '\\\\',
+            Product::class);
+
         /* @var Schema $schema */
         $schema = hydrate(Schema::class, json_decode(<<<EOT
 {
     "classes": {
-        "Product": {
-            "name": "Product",
+        "{$productClassName}": {
+            "name": "{$productClassName}",
             "properties": {
                 "id": {
                     "name": "id",
@@ -65,12 +68,15 @@ EOT));
 
     public function test_product_table_with_id_and_sku_columns() {
         // GIVEN a schema
+        $productClassName = str_replace('\\', '\\\\',
+            Product::class);
+
         /* @var Schema $schema */
         $schema = hydrate(Schema::class, json_decode(<<<EOT
 {
     "classes": {
-        "Product": {
-            "name": "Product",
+        "{$productClassName}": {
+            "name": "{$productClassName}",
             "properties": {
                 "id": {
                     "name": "id",

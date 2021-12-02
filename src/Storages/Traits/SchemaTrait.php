@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Storages\Traits;
 
+use Osm\Admin\Indexing;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Schema;
 use Osm\Core\App;
@@ -26,6 +27,7 @@ trait SchemaTrait
 
         $this->migrateDown($current);
         $this->migrateUp($current);
+        $this->migrateIndexers();
         $this->seed($current);
 
         $db->table('global_')->update([
@@ -74,5 +76,14 @@ trait SchemaTrait
             $currentStorage = $current->classes[$class->name]->storage ?? null;
             $class->storage->seed($currentStorage);
         }
+    }
+
+    protected function migrateIndexers(): void {
+        global $osm_app; /* @var App $osm_app */
+
+        /* @var Indexing\Module $module */
+        $module = $osm_app->modules[Indexing\Module::class];
+
+        $module->migrate();
     }
 }

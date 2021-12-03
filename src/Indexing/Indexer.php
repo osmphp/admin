@@ -4,6 +4,7 @@ namespace Osm\Admin\Indexing;
 
 use Osm\Admin\Base\Attributes\Markers\IndexerSource;
 use Osm\Core\App;
+use Osm\Core\BaseModule;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -14,27 +15,18 @@ use function Osm\sort_by_dependency;
 /**
  * @property string $name #[Serialized]
  * @property Source[] $sources #[Serialized]
- * @property string $target #[Serialized]
- * @property ?string $target_type #[Serialized]
  * @property Property[] $properties #[Serialized]
- * @property string[] $dependencies #[Serialized]
- * @property bool $updatable #[Serialized]
+ * @property string[] $depends_on #[Serialized]
+ *
+ * @property Module $indexing
  */
 class Indexer extends Object_
 {
-    public function index(bool $incremental = true): void {
-        throw new NotImplemented($this);
-    }
-
-    public function update(callable $filter): void {
+    public function index(int $id = null, bool $incremental = true): void {
         throw new NotImplemented($this);
     }
 
     protected function get_name(): string {
-        throw new Required(__METHOD__);
-    }
-
-    protected function get_target(): string {
         throw new Required(__METHOD__);
     }
 
@@ -64,7 +56,11 @@ class Indexer extends Object_
 
             foreach ($attributes as $attribute) {
                 $sources[$attribute->name] = $new(array_merge(
-                    ['indexer' => $this],
+                    [
+                        'indexer' => $this,
+                        'id' => $this->indexing->indexer_source_ids
+                            ["{$this->name}|{$attribute->name}"] ?? null,
+                    ],
                     (array)$attribute)
                 );
             }
@@ -83,22 +79,22 @@ class Indexer extends Object_
 
             $name = substr($method->name, strlen('index_'));
 
-            $parameters = [];
+            $dependsOn = [];
 
             foreach ($method->reflection->getParameters() as $parameter) {
-                $parameters[] = str_replace('__', '.',
+                $dependsOn[] = str_replace('__', '.',
                     $parameter->getName());
             }
 
             $properties[$name] = Property::new([
                 'index' => $this,
                 'name' => $name,
-                'parameters' => $parameters,
+                'depends_on' => $dependsOn,
             ]);
         }
 
         foreach ($properties as $property) {
-            $property->after = array_filter($property->parameters,
+            $property->after = array_filter($property->depends_on,
                 fn(string $name) => isset($properties[$name]));
         }
 
@@ -120,17 +116,23 @@ class Indexer extends Object_
         }
     }
 
-    protected function get_dependencies(): array {
-        $dependencies = ['id' => true];
+    protected function get_depends_on(): array {
+        $dependsOn = ['id' => true];
 
         foreach ($this->properties as $property) {
-            foreach ($property->parameters as $parameter) {
-                if (!isset($this->properties[$parameter])) {
-                    $dependencies[$parameter] = true;
+            foreach ($property->depends_on as $formula) {
+                if (!isset($this->properties[$formula])) {
+                    $dependsOn[$formula] = true;
                 }
             }
         }
 
-        return array_keys($dependencies);
+        return array_keys($dependsOn);
+    }
+
+    protected function get_indexing(): Module|BaseModule {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->modules[Module::class];
     }
 }

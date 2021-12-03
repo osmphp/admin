@@ -20,7 +20,7 @@ use function Osm\query;
 /**
  * @property Db $db
  */
-#[To('scopes'), From('scopes', name: 'this'), From('scopes', name: 'parent')]
+#[To('scopes'), From('scopes', name: 'parent')]
 class ScopeIndexer extends TableIndexer
 {
     protected function index_level(?int $parent__level): int {
@@ -37,7 +37,15 @@ class ScopeIndexer extends TableIndexer
         return $osm_app->db;
     }
 
-    public function index(bool $incremental = true): void {
+    public function index(int $id = null, bool $incremental = true): void {
+        if ($id) {
+            $query = $this->query()->equals('id', $id);
+            $data = $this->indexObject($query->first());
+            $query->batchUpdate($data);
+
+            return;
+        }
+
         $this->db->transaction(function() use ($incremental) {
             $count = query(Scope::class)
                 ->prepareSelect()
@@ -77,7 +85,7 @@ class ScopeIndexer extends TableIndexer
     protected function query(string $source = null): Scopes|Query
     {
         $query = query(Scope::class)
-            ->select(...$this->dependencies);
+            ->select(...$this->depends_on);
 
         if ($source) {
             $query->raw(fn(Scopes $q) =>
@@ -94,8 +102,34 @@ class ScopeIndexer extends TableIndexer
             "{$alias}.id", '=', "{$source}.id");
     }
 
-    protected function indexObject(\stdClass $object): void
+    protected function indexObject(\stdClass $object): \stdClass
     {
-        throw new NotImplemented($this);
+        $id = $object->id;
+        $data = new \stdClass();
+
+        foreach ($this->properties as $property) {
+            $arguments = [];
+
+            foreach ($property->depends_on as $formula) {
+                $identifiers = explode('.', $formula);
+                $identifier = array_shift($identifiers);
+
+                $argument = $object->$identifier ?? $data->$identifier ?? null;
+                foreach ($identifiers as $identifier) {
+                    if ($argument === null) {
+                        break;
+                    }
+
+                    $argument = $argument->$identifier;
+                }
+
+                $arguments[] = $argument;
+            }
+
+            $data->{$property->name} =
+                $this->{"index_{$property->name}"}(...$arguments);
+        }
+
+        return $data;
     }
 }

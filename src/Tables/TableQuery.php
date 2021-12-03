@@ -159,33 +159,35 @@ class TableQuery extends Query
         $this->inserting($data);
 
         return $this->db->transaction(function() use ($data) {
-            $id = $this->db->table($this->name)->insertGetId(
-                $this->insertValues($data));
+            $data->id = $this->db->table($this->name)->insertGetId(
+                $this->save($data));
 
-            $this->inserted($id, $data);
+            $this->inserted($data);
 
-            $this->db->committed(function () use ($id, $data) {
-                $this->insertCommitted($id, $data);
+            $this->db->committed(function () use ($data) {
+                $this->insertCommitted($data);
             });
 
-            return $id;
+            return $data->id;
         });
     }
 
     protected function inserting(\stdClass $data): void {
     }
 
-    protected function inserted(int $id, \stdClass $data): void {
-        foreach ($this->storage->indexer_sources as $source) {
-            $source->inserted($id, $data);
+    protected function inserted(\stdClass $data): void {
+        foreach ($this->storage->notifies as $source) {
+            if ($source->notify_inserted) {
+                $source->notify($data);
+            }
         }
     }
 
-    protected function insertCommitted(int $id, \stdClass $data): void {
+    protected function insertCommitted(\stdClass $data): void {
         $this->indexing->index();
     }
 
-    protected function insertValues(\stdClass $data): array {
+    protected function save(\stdClass $data): array {
         $data = (array)$data;
         $values = [];
 
@@ -207,6 +209,11 @@ class TableQuery extends Query
         return $values;
     }
 
+    public function batchUpdate(\stdClass|array $data): void {
+        $this->prepareBatch();
+        $this->db_query->update($this->save($data));
+    }
+
     public function update(\stdClass|array $data): void {
         $this->db->transaction(function() use ($data) {
             if (is_array($data)) {
@@ -218,8 +225,7 @@ class TableQuery extends Query
             });
 
             if ($this->batchUpdating($data)) {
-                $this->prepareBatch();
-                $this->db_query->update($this->updateValues($data));
+                $this->batchUpdate($data);
                 $this->batchUpdated($data);
                 return;
             }
@@ -234,7 +240,7 @@ class TableQuery extends Query
                 if (!empty($modified)) {
                     $this->db->table($this->name)
                         ->where('id', $item->id)
-                        ->update($this->updateValues($item));
+                        ->update($this->save($item));
                 }
                 $this->updated($item);
             });
@@ -256,9 +262,5 @@ class TableQuery extends Query
     }
 
     protected function updateCommitted(\stdClass $data): void {
-    }
-
-    protected function updateValues(\stdClass $data): array {
-        throw new NotImplemented($this);
     }
 }

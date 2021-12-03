@@ -11,17 +11,33 @@ use Osm\Core\BaseModule;
 use Osm\Core\Class_;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Cache\Attributes\Cached;
+use Osm\Framework\Cache\Cache;
 use Osm\Framework\Db\Db;
 
 /**
  * @property Indexer[] $indexers #[Cached('indexers')]
+ * @property int[] $indexer_source_ids #[Cached('indexer_source_ids')]
  * @property Db $db
+ * @property Cache $cache
  */
 class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Admin\Base\Module::class,
     ];
+
+    protected function get_indexer_source_ids(): array {
+        $items = $this->db->table('indexer_sources')
+            ->get(['id', 'indexer', 'source']);
+
+        $ids = [];
+
+        foreach($items as $item) {
+            $ids["{$item->indexer}|{$item->source}"] = $item->id;
+        }
+
+        return $ids;
+    }
 
     protected function get_indexers(): array {
         global $osm_app; /* @var App $osm_app */
@@ -30,17 +46,15 @@ class Module extends BaseModule
         $indexers = [];
 
         foreach ($classes as $class) {
-            /* @var To $target */
-            if (!($target = $class->attributes[To::class] ?? null)) {
-                continue;
-            }
-
             $new = "{$class->name}::new";
-            $indexers[$class->name] = $new([
+            /* @var Indexer $indexer */
+            $indexer = $new([
                 'name' => $class->name,
-                'target' => $target->name,
-                'target_type' => $target->type_name,
             ]);
+
+            if (!empty($indexer->sources)) {
+                $indexers[$class->name] = $indexer;
+            }
         }
 
         return $indexers;
@@ -50,6 +64,12 @@ class Module extends BaseModule
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function get_cache(): Cache {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->cache;
     }
 
     public function migrate(bool $fresh = false): void {
@@ -85,6 +105,11 @@ class Module extends BaseModule
         foreach ($query->pluck('id') as $id) {
             $this->migrateDown($id);
         }
+
+        unset($this->indexers);
+        $this->cache->deleteItem('indexers');
+        unset($this->indexer_source_ids);
+        $this->cache->deleteItem('indexer_source_ids');
     }
 
     protected function migrateUp(Source $source): ?int
@@ -93,25 +118,20 @@ class Module extends BaseModule
             return null;
         }
 
-        $id = $this->db->table('indexer_sources')->insertGetId([
+        $source->id = $this->db->table('indexer_sources')->insertGetId([
             'indexer' => $source->indexer->__class->name,
             'source' => $source->name,
             'table' => $source->table,
         ]);
 
+        $source->create();
 
-        $this->db->create("notifications__{$id}",
-            function (Blueprint $table) use ($source) {
-                $source->createNotificationTable($table);
-            }
-        );
-
-        return $id;
+        return $source->id;
     }
 
     protected function migrateDown(int $id): void
     {
-        $this->db->drop("notifications__{$id}");
+        $this->db->dropIfExists("notifications__{$id}");
         $this->db->table('indexer_sources')
             ->where('id', $id)
             ->delete();
@@ -119,5 +139,10 @@ class Module extends BaseModule
 
     protected function sources(Class_ $class): array
     {
+        throw new NotImplemented($this);
+    }
+
+    public function index(bool $incremental = true): void {
+        throw new NotImplemented($this);
     }
 }

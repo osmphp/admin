@@ -5,13 +5,15 @@ namespace Osm\Admin\Queries;
 use Osm\Admin\Base\Exceptions\SyntaxError;
 use Osm\Admin\Base\Exceptions\UndefinedProperty;
 use Osm\Admin\Formulas\Formula;
-use Osm\Admin\Indexing\Index;
 use Osm\Admin\Queries\Traits\Where;
 use Osm\Admin\Storages\Storage;
+use Osm\Core\App;
+use Osm\Core\BaseModule;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Admin\Schema\Class_;
+use Osm\Admin\Indexing;
 use function Osm\__;
 use function Osm\formula;
 
@@ -19,8 +21,8 @@ use function Osm\formula;
  * @property Storage $storage
  * @property Class_ $class
  * @property ?int $limit
- * @property ?Index $index
  * @property bool $hydrate
+ * @property Indexing\Module $indexing
  */
 class Query extends Object_
 {
@@ -54,10 +56,6 @@ class Query extends Object_
 
     protected function get_limit(): ?int {
         return static::DEFAULT_LIMIT;
-    }
-
-    protected function get_index(): ?Index {
-        return $this->storage->targeted_by[$this->data->type ?? ''] ?? null;
     }
 
     public function get(...$formulas): array {
@@ -164,4 +162,11 @@ class Query extends Object_
 
         return $this;
     }
+
+    protected function get_indexing(): Indexing\Module|BaseModule {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->modules[Indexing\Module::class];
+    }
+
 }

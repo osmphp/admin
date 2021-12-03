@@ -2,11 +2,15 @@
 
 namespace Osm\Admin\Base\Attributes\Indexer;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
+use Osm\Admin\Base\Attributes\Markers\IndexerSource;
+
+#[\Attribute(\Attribute::TARGET_CLASS), IndexerSource('to')]
 final class To
 {
+    public string $name = 'this';
+
     public function __construct(
-        public string $name,
+        public string $table,
         public ?string $type_name = null,
     ) { }
 }

@@ -21,11 +21,8 @@ use function Osm\__;
  * @property string $name #[Serialized]
  * @property int $version #[Serialized]
  * @property ?string $query_class_name #[Serialized]
- * @property string[] $source_to_class_names #[Serialized]
- * @property Indexer[] $source_to
- * @property string[] $targeted_by_class_names #[Serialized]
- * @property Indexer[] $targeted_by
- * @property Indexing\Source $indexer_sources
+ * @property array $notifies_names #[Serialized]
+ * @property Indexing\Source[] $notifies
  * @property Indexing\Module $indexing
  */
 class Storage extends Object_
@@ -67,63 +64,42 @@ class Storage extends Object_
         throw new NotImplemented($this);
     }
 
-    protected function get_source_to_class_names(): array {
-        $classNames = [];
-
-        foreach ($this->indexing->indexers as $indexer) {
-            foreach ($indexer->sources as $source) {
-                if ($this->name === $source->table) {
-                    $classNames[] = $indexer->name;
-                    break;
-                }
-            }
-        }
-
-        return $classNames;
-    }
-
-    protected function get_source_to(): array {
-        return array_map(
-            fn(string $indexClassName)
-                => $this->indexing->indexers[$indexClassName],
-            $this->source_to_class_names);
-    }
-
-    protected function get_targeted_by_class_names(): array {
-        $classNames = [];
-
-        foreach ($this->indexing->indexers as $indexer) {
-            if ($indexer->target !== $this->name) {
-                continue;
-            }
-
-            if (isset($classNames[$indexer->target_type ?? ''])) {
-                throw new NotSupported(__(
-                    "':indexer1' and ':indexer2' indexers can't target the same type ':type' of data class ':class'", [
-                        'indexer1' => $indexer->name,
-                        'indexer2' => $classNames[$indexer->target_type ?? ''],
-                        'class' => $this->class->name,
-                        'type' => $indexer->target_type ?? '',
-                    ]
-                ));
-            }
-
-            $classNames[$indexer->target_type ?? ''] = $indexer->name;
-        }
-
-        return $classNames;
-    }
-
-    protected function get_targeted_by(): array {
-        return array_map(
-            fn(string $indexClassName)
-                => $this->indexing->indexers[$indexClassName],
-            $this->targeted_by_class_names);
-    }
-
     protected function get_indexing(): Indexing\Module|BaseModule {
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->modules[Indexing\Module::class];
+    }
+
+    protected function get_notifies(): array {
+        $notifies = [];
+
+        foreach ($this->notifies_names as $indexerName => $sourceNames) {
+            $indexer = $this->indexing->indexers[$indexerName];
+            foreach ($sourceNames as $sourceName) {
+                $notifies[] = $indexer->sources[$sourceName];
+            }
+        }
+
+        return $notifies;
+    }
+
+    protected function get_notifies_names(): array {
+        $names = [];
+
+        foreach ($this->indexing->indexers as $indexer) {
+            foreach ($indexer->sources as $source) {
+                if ($this->name !== $source->table) {
+                    continue;
+                }
+
+                if (!isset($names[$indexer->name])) {
+                    $names[$indexer->name] = [];
+                }
+
+                $names[$indexer->name][] = $source->name;
+            }
+        }
+
+        return $names;
     }
 }

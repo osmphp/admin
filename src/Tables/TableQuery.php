@@ -39,6 +39,55 @@ class TableQuery extends Query
         return $this->class->storage->name;
     }
 
+    public function updatesData(array|\stdClass $data): bool {
+        foreach ($data as $propertyName => $value) {
+            if (!isset($this->storage->columns[$propertyName])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * If a property that is stored in `data` column is going to be updated,
+     * selects all properties stored in `data` column.
+     *
+     * @param array|\stdClass $data
+     * @return $this
+     */
+    public function selectData(array|\stdClass $data): static {
+        if (!$this->updatesData($data)) {
+            return $this;
+        }
+
+        foreach ($this->class->properties as $property) {
+            if (!isset($this->storage->columns[$property->name])) {
+                $this->select($property->name);
+            }
+        }
+
+        return $this;
+    }
+
+    public function mergeData(\stdClass $data, \stdClass $current): \stdClass {
+        foreach ($this->class->properties as $property) {
+            if (isset($this->storage->columns[$property->name])) {
+                continue;
+            }
+
+            if (property_exists($data, $property->name)) {
+                continue;
+            }
+
+            if (isset($current->{$property->name})) {
+                $data->{$property->name} = $current->{$property->name};
+            }
+        }
+
+        return $data;
+    }
+
     public function raw(callable $callback): static {
         $this->raw[] = $callback;
 
@@ -204,13 +253,14 @@ class TableQuery extends Query
             }
         }
 
-        $values['data'] = !empty($data) ? json_encode((object)$data) : null;
+        if (!empty($data)) {
+            $values['data'] = json_encode((object)$data);
+        }
 
         return $values;
     }
 
-    public function batchUpdate(\stdClass|array $data): void {
-        $this->prepareBatch();
+    public function doUpdate(\stdClass|array $data): void {
         $this->db_query->update($this->save($data));
     }
 
@@ -225,7 +275,8 @@ class TableQuery extends Query
             });
 
             if ($this->batchUpdating($data)) {
-                $this->batchUpdate($data);
+                $this->prepareBatch();
+                $this->doUpdate($data);
                 $this->batchUpdated($data);
                 return;
             }

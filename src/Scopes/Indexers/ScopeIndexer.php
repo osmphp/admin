@@ -5,7 +5,6 @@ namespace Osm\Admin\Scopes\Indexers;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Osm\Admin\Base\Attributes\Indexer\From;
 use Osm\Admin\Base\Attributes\Indexer\To;
-use Osm\Admin\Base\Attributes\Indexer\ThisSource;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Scopes\Scope;
 use Osm\Admin\Scopes\Scopes;
@@ -16,9 +15,11 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
 use Osm\Framework\Db\Db;
 use function Osm\query;
+use Osm\Core\Attributes\Serialized;
 
 /**
  * @property Db $db
+ * @property bool $updates_data #[Serialized]
  */
 #[To('scopes'), From('scopes', name: 'parent')]
 class ScopeIndexer extends TableIndexer
@@ -40,8 +41,8 @@ class ScopeIndexer extends TableIndexer
     public function index(int $id = null, bool $incremental = true): void {
         if ($id) {
             $query = $this->query()->equals('id', $id);
-            $data = $this->indexObject($query->first());
-            $query->batchUpdate($data);
+            $data = $this->indexObject($query, $query->first());
+            $query->doUpdate($data);
 
             return;
         }
@@ -87,6 +88,10 @@ class ScopeIndexer extends TableIndexer
         $query = query(Scope::class)
             ->select(...$this->depends_on);
 
+        if ($this->updates_data) {
+            $query->selectData($this->properties);
+        }
+
         if ($source) {
             $query->raw(fn(Scopes $q) =>
                 $this->changed($q, $source, "{$source}__changed"));
@@ -102,7 +107,8 @@ class ScopeIndexer extends TableIndexer
             "{$alias}.id", '=', "{$source}.id");
     }
 
-    protected function indexObject(\stdClass $object): \stdClass
+    protected function indexObject(TableQuery $query, \stdClass $object):
+        \stdClass
     {
         $id = $object->id;
         $data = new \stdClass();
@@ -130,6 +136,14 @@ class ScopeIndexer extends TableIndexer
                 $this->{"index_{$property->name}"}(...$arguments);
         }
 
+        if ($this->updates_data) {
+            $data = $query->mergeData($data, $object);
+        }
+
         return $data;
+    }
+
+    protected function get_updates_data(): bool {
+        return query(Scope::class)->updatesData($this->properties);
     }
 }

@@ -3,9 +3,17 @@
 namespace Osm\Admin\Tables;
 
 use Osm\Admin\Indexing\Indexer;
+use Osm\Admin\Indexing\Source;
 use Osm\Admin\Queries\Query;
+use Osm\Admin\Tables\IndexingSources\To;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Attributes\Serialized;
 
+/**
+ * @property ?Source $to
+ * @property ?Table $table
+ */
 class TableIndexer extends Indexer
 {
     /**

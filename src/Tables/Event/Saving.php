@@ -15,11 +15,18 @@ class Saving extends Event
 {
     public bool $notify_inserted = true;
     public bool $notify_updated = true;
+    public ?int $record_id;
 
     public function create(): void {
     }
 
     protected function handle(int $id): void {
-        $this->indexer->index(id: $id);
+        $this->record_id = $id;
+        try {
+            $this->indexer->index($this);
+        }
+        finally {
+            $this->record_id = null;
+        }
     }
 }

@@ -6,8 +6,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Indexing\Event;
 use Osm\Core\Attributes\Type;
 
-#[Type('subtree_deleted')]
-class SubtreeDeleted extends Event
+#[Type('tree_deleted')]
+class TreeDeleted extends Event
 {
     public bool $notify_deleting = true;
 

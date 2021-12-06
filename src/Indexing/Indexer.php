@@ -22,7 +22,7 @@ use function Osm\sort_by_dependency;
  */
 class Indexer extends Object_
 {
-    public function index(int $id = null, Event $event = null): void {
+    public function index(Event $event = null): void {
         throw new NotImplemented($this);
     }
 

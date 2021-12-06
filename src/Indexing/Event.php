@@ -15,7 +15,6 @@ use function Osm\__;
 /**
  * @property Indexer $indexer
  * @property ?int $id #[Serialized]
- * @property string $name #[Serialized]
  * @property string $table #[Serialized]
  * @property bool $notify_inserted
  * @property bool $notify_updated
@@ -28,6 +27,9 @@ use function Osm\__;
 class Event extends Object_
 {
     use SubTypes;
+
+    #[Serialized]
+    public string $alias = '';
 
     public function create(): void {
         throw new NotImplemented($this);
@@ -63,12 +65,12 @@ class Event extends Object_
         $dependsOn = [];
 
         foreach ($this->indexer->depends_on as $formula) {
-            if ($this->name != 'this') {
-                if (!str_starts_with($formula, "{$this->name}.")) {
+            if ($this->alias != 'this') {
+                if (!str_starts_with($formula, "{$this->alias}.")) {
                     continue;
                 }
 
-                $formula = mb_substr($formula, mb_strlen("{$this->name}."));
+                $formula = mb_substr($formula, mb_strlen("{$this->alias}."));
             }
 
             if (mb_strpos($formula, '.') !== false) {

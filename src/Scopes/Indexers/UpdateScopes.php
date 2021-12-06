@@ -21,7 +21,7 @@ use Osm\Core\Attributes\Serialized;
  * @property Db $db
  * @property bool $updates_data #[Serialized]
  */
-#[On\Saving('scopes'), On\Saved('scopes', name: 'parent')]
+#[On\Saving('scopes'), On\Saved('scopes', alias: 'parent')]
 class UpdateScopes extends TableIndexer
 {
     protected function index_level(?int $parent__level): int {
@@ -38,7 +38,7 @@ class UpdateScopes extends TableIndexer
         return $osm_app->db;
     }
 
-    public function index(int $id = null, Event $source = null): void {
+    public function index(int $id = null, Event $event = null): void {
         if ($id) {
             $query = $this->query()->equals('id', $id);
             $data = $this->indexObject($query, $query->first());
@@ -52,12 +52,12 @@ class UpdateScopes extends TableIndexer
             ->max('level') + 1;
 
         for ($level = 0; $level < $count; $level++) {
-            $this->indexLevel($level, $source);
+            $this->indexLevel($level, $event);
         }
     }
 
-    protected function indexLevel(int $level, Event $source = null): void {
-        $query = $this->query($source)
+    protected function indexLevel(int $level, Event $event = null): void {
+        $query = $this->query($event)
             ->equals('parent.level', $level)
             ->orderBy('id');
 
@@ -69,7 +69,7 @@ class UpdateScopes extends TableIndexer
         });
     }
 
-    protected function query(Event $source = null): Scopes|Query
+    protected function query(Event $event = null): Scopes|Query
     {
         $query = query(Scope::class)
             ->select(...$this->depends_on);
@@ -78,29 +78,21 @@ class UpdateScopes extends TableIndexer
             $query->selectData($this->properties);
         }
 
-        if ($source) {
+        if ($event) {
             $query->raw(fn(Scopes $q) =>
-                $q->db_query->join("{$source->notification_table} AS " .
-                    "{$source->name}__notification",
-                    "{$source->name}__notification.id", '=',
-                    "{$source->name}.id")
+                $q->db_query->join("{$event->notification_table} AS " .
+                    "{$event->alias}__notification",
+                    "{$event->alias}__notification.id", '=',
+                    "{$event->alias}.id")
             );
         }
 
         return $query;
     }
 
-    protected function changed(Scopes $query, string $source, string $alias)
-        : QueryBuilder
-    {
-        return $query->db_query->join("changed__{$this->index} AS {$alias}",
-            "{$alias}.id", '=', "{$source}.id");
-    }
-
     protected function indexObject(TableQuery $query, \stdClass $object):
         \stdClass
     {
-        $id = $object->id;
         $data = new \stdClass();
 
         foreach ($this->properties as $property) {

@@ -73,10 +73,10 @@ class Storage extends Object_
     protected function get_notifies(): array {
         $notifies = [];
 
-        foreach ($this->notifies_names as $indexerName => $sourceNames) {
+        foreach ($this->notifies_names as $indexerName => $eventAliases) {
             $indexer = $this->indexing->indexers[$indexerName];
-            foreach ($sourceNames as $sourceName) {
-                $notifies[] = $indexer->events[$sourceName];
+            foreach ($eventAliases as $eventAlias) {
+                $notifies[] = $indexer->events[$eventAlias];
             }
         }
 
@@ -87,8 +87,8 @@ class Storage extends Object_
         $names = [];
 
         foreach ($this->indexing->indexers as $indexer) {
-            foreach ($indexer->events as $source) {
-                if ($this->name !== $source->table) {
+            foreach ($indexer->events as $event) {
+                if ($this->name !== $event->table) {
                     continue;
                 }
 
@@ -96,7 +96,7 @@ class Storage extends Object_
                     $names[$indexer->name] = [];
                 }
 
-                $names[$indexer->name][] = $source->name;
+                $names[$indexer->name][] = $event->alias;
             }
         }
 

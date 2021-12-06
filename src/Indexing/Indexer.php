@@ -22,7 +22,7 @@ use function Osm\sort_by_dependency;
  */
 class Indexer extends Object_
 {
-    public function index(int $id = null, Event $source = null): void {
+    public function index(int $id = null, Event $event = null): void {
         throw new NotImplemented($this);
     }
 
@@ -33,7 +33,7 @@ class Indexer extends Object_
     protected function get_events(): array {
         global $osm_app; /* @var App $osm_app */
 
-        $sources = [];
+        $events = [];
 
         foreach ($this->__class->attributes as
             $attributeClassName => $attributes)
@@ -55,18 +55,17 @@ class Indexer extends Object_
                 ->getTypeClassName($marker->type ?? null)}::new";
 
             foreach ($attributes as $attribute) {
-                $sources[$attribute->name] = $new(array_merge(
-                    [
-                        'indexer' => $this,
-                        'id' => $this->indexing->indexer_source_ids
-                            ["{$this->name}|{$attribute->name}"] ?? null,
-                    ],
-                    (array)$attribute)
-                );
+                $event = $new(array_merge(['indexer' => $this],
+                    (array)$attribute));
+
+                $event->id = $this->indexing->event_ids
+                    ["{$this->name}|{$event->alias}"] ?? null;
+
+                $events[$event->alias] = $event;
             }
         }
 
-        return $sources;
+        return $events;
     }
 
     protected function get_properties(): array {
@@ -111,8 +110,8 @@ class Indexer extends Object_
             $property->indexer = $this;
         }
 
-        foreach ($this->events as $source) {
-            $source->indexer = $this;
+        foreach ($this->events as $event) {
+            $event->indexer = $this;
         }
     }
 

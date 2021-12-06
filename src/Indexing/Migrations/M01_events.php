@@ -24,9 +24,9 @@ class M01_events extends Migration
         $this->db->create('events', function (Blueprint $table) {
             $table->increments('id');
             $table->string('indexer');
-            $table->string('source');
+            $table->string('alias');
             $table->string('table');
-            $table->unique(['indexer', 'source']);
+            $table->unique(['indexer', 'alias']);
             $table->boolean('changed')->default(false);
             $table->boolean('dirty')->default(true);
         });

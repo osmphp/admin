@@ -16,7 +16,7 @@ use Osm\Framework\Db\Db;
 
 /**
  * @property Indexer[] $indexers #[Cached('indexers')]
- * @property int[] $indexer_source_ids #[Cached('indexer_source_ids')]
+ * @property int[] $event_ids #[Cached('event_ids')]
  * @property Db $db
  * @property Cache $cache
  */
@@ -28,14 +28,14 @@ class Module extends BaseModule
 
     protected bool $indexing = false;
 
-    protected function get_indexer_source_ids(): array {
-        $items = $this->db->table('events')
-            ->get(['id', 'indexer', 'source']);
+    protected function get_event_ids(): array {
+        $events = $this->db->table('events')
+            ->get(['id', 'indexer', 'alias']);
 
         $ids = [];
 
-        foreach($items as $item) {
-            $ids["{$item->indexer}|{$item->source}"] = $item->id;
+        foreach($events as $event) {
+            $ids["{$event->indexer}|{$event->alias}"] = $event->id;
         }
 
         return $ids;
@@ -84,14 +84,14 @@ class Module extends BaseModule
 
         $ids = [];
         foreach ($this->indexers as $indexer) {
-            foreach ($indexer->events as $source) {
+            foreach ($indexer->events as $event) {
                 $id = $this->db->table('events')
                     ->where('indexer', $indexer->__class->name)
-                    ->where('source', $source->name)
+                    ->where('alias', $event->alias)
                     ->value('id');
 
                 if (!$id) {
-                    $id = $this->migrateUp($source);
+                    $id = $this->migrateUp($event);
                 }
 
                 if ($id) {
@@ -110,25 +110,25 @@ class Module extends BaseModule
 
         unset($this->indexers);
         $this->cache->deleteItem('indexers');
-        unset($this->indexer_source_ids);
-        $this->cache->deleteItem('indexer_source_ids');
+        unset($this->event_ids);
+        $this->cache->deleteItem('event_ids');
     }
 
-    protected function migrateUp(Event $source): ?int
+    protected function migrateUp(Event $event): ?int
     {
-        if (!$this->db->exists($source->table)) {
+        if (!$this->db->exists($event->table)) {
             return null;
         }
 
-        $source->id = $this->db->table('events')->insertGetId([
-            'indexer' => $source->indexer->__class->name,
-            'source' => $source->name,
-            'table' => $source->table,
+        $event->id = $this->db->table('events')->insertGetId([
+            'indexer' => $event->indexer->__class->name,
+            'alias' => $event->alias,
+            'table' => $event->table,
         ]);
 
-        $source->create();
+        $event->create();
 
-        return $source->id;
+        return $event->id;
     }
 
     protected function migrateDown(int $id): void
@@ -137,11 +137,6 @@ class Module extends BaseModule
         $this->db->table('events')
             ->where('id', $id)
             ->delete();
-    }
-
-    protected function sources(Class_ $class): array
-    {
-        throw new NotImplemented($this);
     }
 
     public function index(bool $incremental = true): void {
@@ -162,18 +157,18 @@ class Module extends BaseModule
                     $this->db->transaction(function () use ($indexer) {
                         $indexer->index();
                         $indexer->clearDirtyFlag();
-                        foreach ($indexer->events as $source) {
-                            $source->clearChangedFlag();
+                        foreach ($indexer->events as $event) {
+                            $event->clearChangedFlag();
                         }
                     });
                     continue;
                 }
 
-                foreach ($indexer->events as $source) {
-                    if ($source->changed()) {
-                        $this->db->transaction(function () use ($source) {
-                            $source->indexer->index(source: $source);
-                            $source->clearChangedFlag();
+                foreach ($indexer->events as $event) {
+                    if ($event->changed()) {
+                        $this->db->transaction(function () use ($event) {
+                            $event->indexer->index(event: $event);
+                            $event->clearChangedFlag();
                         });
                     }
                 }

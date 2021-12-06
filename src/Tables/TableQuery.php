@@ -227,9 +227,9 @@ class TableQuery extends Query
     }
 
     protected function inserted(\stdClass $data): void {
-        foreach ($this->storage->notifies as $source) {
-            if ($source->notify_inserted) {
-                $source->trigger($data);
+        foreach ($this->storage->notifies as $event) {
+            if ($event->notify_inserted) {
+                $event->trigger($data);
             }
         }
     }
@@ -311,9 +311,9 @@ class TableQuery extends Query
     }
 
     protected function updated(\stdClass $data): void {
-        foreach ($this->storage->notifies as $source) {
-            if ($source->notify_updated) {
-                $source->trigger($data);
+        foreach ($this->storage->notifies as $event) {
+            if ($event->notify_updated) {
+                $event->trigger($data);
             }
         }
     }
@@ -339,9 +339,9 @@ class TableQuery extends Query
     protected function get_notify_updates_with(): array {
         $notifyWith = ['id'];
 
-        foreach ($this->storage->notifies as $source) {
-            if ($source->notify_updated) {
-                $notifyWith = array_merge($notifyWith, $source->notified_with);
+        foreach ($this->storage->notifies as $event) {
+            if ($event->notify_updated) {
+                $notifyWith = array_merge($notifyWith, $event->notified_with);
             }
         }
 
@@ -351,9 +351,9 @@ class TableQuery extends Query
     protected function get_notify_deletes_with(): array {
         $notifyWith = ['id'];
 
-        foreach ($this->storage->notifies as $source) {
-            if ($source->notify_deleting) {
-                $notifyWith = array_merge($notifyWith, $source->notified_with);
+        foreach ($this->storage->notifies as $event) {
+            if ($event->notify_deleting) {
+                $notifyWith = array_merge($notifyWith, $event->notified_with);
             }
         }
 
@@ -381,9 +381,9 @@ class TableQuery extends Query
     }
 
     protected function deleting(\stdClass $data): void {
-        foreach ($this->storage->notifies as $source) {
-            if ($source->notify_deleting) {
-                $source->trigger($data);
+        foreach ($this->storage->notifies as $event) {
+            if ($event->notify_deleting) {
+                $event->trigger($data);
             }
         }
     }

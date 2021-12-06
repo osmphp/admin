@@ -10,6 +10,6 @@ use Osm\Admin\Base\Attributes\Markers\On;
 ]
 final class Saved
 {
-    public function __construct(public string $table, public string $name) {
+    public function __construct(public string $table, public string $alias) {
     }
 }

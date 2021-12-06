@@ -11,7 +11,7 @@ use Osm\Framework\Db\Db;
 /**
  * @property Db $db
  */
-#[On\SubtreeDeleted('scopes', name: 'scopes')]
+#[On\SubtreeDeleted('scopes')]
 class RemoveScopeTables extends TableIndexer
 {
     protected function get_db(): Db {
@@ -20,18 +20,18 @@ class RemoveScopeTables extends TableIndexer
         return $osm_app->db;
     }
 
-    public function index(int $id = null, Event $source = null): void {
+    public function index(int $id = null, Event $event = null): void {
         global $osm_app; /* @var App $osm_app */
 
         if ($id) {
             return;
         }
 
-        if (!$source) {
+        if (!$event) {
             return;
         }
 
-        $ids = $this->db->table($source->notification_table)->pluck('id');
+        $ids = $this->db->table($event->notification_table)->pluck('id');
         foreach ($ids as $id) {
             $osm_app->schema->migrateScopeDown($id);
         }

@@ -80,4 +80,8 @@ class ScopedTable extends Storage implements HasColumns
     public function alterScope(int $scopeId, Storage $current): void {
         throw new NotImplemented($this);
     }
+
+    public function dropScope(int $scopeId): void {
+        $this->db->drop("s{$scopeId}__{$this->name}");
+    }
 }

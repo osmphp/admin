@@ -22,12 +22,12 @@ trait IdentifierTrait
         string $joinMethod = 'leftJoin'): string
     {
         /* @var Formula\Identifier|static $this */
-        $alias = 'this';
+        $alias = $query->name;
 
         if (!empty($this->accessors)) {
             foreach ($this->accessors as $accessor) {
                 $from = $alias;
-                $alias = $alias == 'this'
+                $alias = $alias == $query->name
                     ? $accessor->name
                     : "{$alias}__{$accessor->name}";
 

@@ -102,6 +102,10 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
+    public function delete(): void {
+        throw new NotImplemented($this);
+    }
+
     public function hydrate(): static {
         $this->hydrate = true;
         return $this;

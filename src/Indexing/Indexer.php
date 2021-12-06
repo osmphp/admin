@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Indexing;
 
-use Osm\Admin\Base\Attributes\Markers\IndexerSource;
+use Osm\Admin\Base\Attributes\Markers\On;
 use Osm\Core\App;
 use Osm\Core\BaseModule;
 use Osm\Core\Exceptions\NotImplemented;
@@ -14,7 +14,7 @@ use function Osm\sort_by_dependency;
 
 /**
  * @property string $name #[Serialized]
- * @property Source[] $sources #[Serialized]
+ * @property Event[] $events #[Serialized]
  * @property Property[] $properties #[Serialized]
  * @property string[] $depends_on #[Serialized]
  *
@@ -22,7 +22,7 @@ use function Osm\sort_by_dependency;
  */
 class Indexer extends Object_
 {
-    public function index(int $id = null, bool $incremental = true): void {
+    public function index(int $id = null, Event $source = null): void {
         throw new NotImplemented($this);
     }
 
@@ -30,7 +30,7 @@ class Indexer extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_sources(): array {
+    protected function get_events(): array {
         global $osm_app; /* @var App $osm_app */
 
         $sources = [];
@@ -42,8 +42,8 @@ class Indexer extends Object_
                 continue;
             }
 
-            /* @var IndexerSource $marker */
-            if (!($marker = $class->attributes[IndexerSource::class] ?? null)) {
+            /* @var On $marker */
+            if (!($marker = $class->attributes[On::class] ?? null)) {
                 continue;
             }
 
@@ -51,7 +51,7 @@ class Indexer extends Object_
                 $attributes = [$attributes];
             }
 
-            $new = "{$osm_app->classes[Source::class]
+            $new = "{$osm_app->classes[Event::class]
                 ->getTypeClassName($marker->type ?? null)}::new";
 
             foreach ($attributes as $attribute) {
@@ -111,7 +111,7 @@ class Indexer extends Object_
             $property->indexer = $this;
         }
 
-        foreach ($this->sources as $source) {
+        foreach ($this->events as $source) {
             $source->indexer = $this;
         }
     }
@@ -134,5 +134,19 @@ class Indexer extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->modules[Module::class];
+    }
+
+    public function dirty(): bool {
+        return (bool)$this->db->table('events')
+            ->where('indexer', $this->name)
+            ->where('dirty', true)
+            ->value('dirty');
+    }
+
+    public function clearDirtyFlag(): void
+    {
+        $this->db->table('events')
+            ->where('indexer', $this->name)
+            ->update(['dirty' => false]);
     }
 }

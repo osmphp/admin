@@ -30,4 +30,20 @@ trait SchemaTrait
             }
         }
     }
+
+    public function migrateScopeDown(int $scopeId, ?Schema $current = null): void {
+        /* @var Schema|\Osm\Admin\Storages\Traits\SchemaTrait $this */
+
+        foreach (array_reverse($this->classes) as $class) {
+            if (!($scopedTable = $class->storage)) {
+                continue;
+            }
+
+            if (!($scopedTable instanceof ScopedTable)) {
+                continue;
+            }
+
+            $scopedTable->dropScope($scopeId);
+        }
+    }
 }

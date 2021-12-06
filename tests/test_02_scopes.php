@@ -13,7 +13,6 @@ use function Osm\query;
 class test_02_scopes extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
-    public bool $use_db = true;
 
     public function test_inserts() {
         // GIVEN a database with the schema migrated, and the root scope created
@@ -35,6 +34,9 @@ class test_02_scopes extends TestCase
         $this->assertTrue($this->app->db->table('scopes')
                 ->where('id', $retailId)
                 ->value('id_path') === "{$rootId}/{$retailId}");
+
+        // clear the database
+        query(Scope::class)->equals('id', $retailId)->delete();
     }
 
     public function test_joins() {
@@ -71,6 +73,9 @@ class test_02_scopes extends TestCase
         $this->assertTrue($scope->parent->id === $child1);
         $this->assertTrue($scope->parent->parent->id === $root);
         $this->assertTrue(!isset($scope->parent->parent->parent));
+
+        // clear the database
+        query(Scope::class)->equals('id', $child1)->delete();
     }
 
     public function test_updates() {
@@ -102,6 +107,10 @@ class test_02_scopes extends TestCase
         $this->assertTrue($this->app->db->table('scopes')
                 ->where('id', $englishId)
                 ->value('id_path') === "{$rootId}/{$englishId}");
+
+        // clear the database
+        query(Scope::class)->equals('id', $retailId)->delete();
+        query(Scope::class)->equals('id', $englishId)->delete();
     }
 
     public function test_cascade_updates() {
@@ -136,6 +145,10 @@ class test_02_scopes extends TestCase
         $this->assertTrue($this->app->db->table('scopes')
                 ->where('id', $child3)
                 ->value('id_path') === "{$root}/{$child2}/{$child3}");
+
+        // clear the database
+        query(Scope::class)->equals('id', $child1)->delete();
+        query(Scope::class)->equals('id', $child2)->delete();
     }
 
 }

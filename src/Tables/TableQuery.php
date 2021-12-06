@@ -19,6 +19,8 @@ use function Osm\merge;
  * @property string $name
  *
  * @property QueryBuilder $db_query Execution-phase property.
+ * @property string[] $notify_updates_with
+ * @property string[] $notify_deletes_with
  */
 class TableQuery extends Query
 {
@@ -136,7 +138,7 @@ class TableQuery extends Query
     }
 
     public function prepareSelect(): QueryBuilder {
-        $this->db_query = $this->db->table("{$this->name} as this");
+        $this->db_query = $this->db->table($this->name);
 
         foreach ($this->filters as $filter) {
             $filter->tables_filter($this, $this->db_query);
@@ -159,7 +161,7 @@ class TableQuery extends Query
 
     protected function prepareBatch(): void
     {
-        $this->db_query = $this->db->table("{$this->name} as this");
+        $this->db_query = $this->db->table($this->name);
 
         foreach ($this->filters as $filter) {
             $filter->tables_filter($this, $this->db_query);
@@ -227,7 +229,7 @@ class TableQuery extends Query
     protected function inserted(\stdClass $data): void {
         foreach ($this->storage->notifies as $source) {
             if ($source->notify_inserted) {
-                $source->notify($data);
+                $source->trigger($data);
             }
         }
     }
@@ -239,6 +241,8 @@ class TableQuery extends Query
     protected function save(\stdClass $data): array {
         $data = (array)$data;
         $values = [];
+
+        unset($data['id']);
 
         foreach ($data as $propertyName => $value) {
             if (!isset($this->class->properties[$propertyName])) {
@@ -261,7 +265,7 @@ class TableQuery extends Query
     }
 
     public function doUpdate(\stdClass|array $data): void {
-        $this->db_query->update($this->save($data));
+        $this->db_query->update($this->aliased($this->save($data)));
     }
 
     public function update(\stdClass|array $data): void {
@@ -281,19 +285,17 @@ class TableQuery extends Query
                 return;
             }
 
-            $this->select('*')->orderBy('id');
-            $modified = array_map(fn() => true, array_keys((array)$data));
+            $this->select(...$this->notify_updates_with)->orderBy('id');
 
-            $this->chunk(function (\stdClass $item) use ($data, $modified) {
-                $item = merge($item, $data);
-                $this->updating($item, $modified);
+            $this->chunk(function (\stdClass $item) use ($data) {
+                $data = merge($item, $data);
+                $this->updating($data);
 
-                if (!empty($modified)) {
-                    $this->db->table($this->name)
-                        ->where('id', $item->id)
-                        ->update($this->save($item));
-                }
-                $this->updated($item);
+                $this->db->table($this->name)
+                    ->where('id', $data->id)
+                    ->update($this->save($data));
+
+                $this->updated($data);
             });
         });
     }
@@ -305,13 +307,91 @@ class TableQuery extends Query
     protected function batchUpdated(\stdClass $data): void {
     }
 
-    protected function updating(\stdClass $data, array &$modified): void {
-        $this->index?->updating($this, $data, $modified);
+    protected function updating(\stdClass $data): void {
     }
 
     protected function updated(\stdClass $data): void {
+        foreach ($this->storage->notifies as $source) {
+            if ($source->notify_updated) {
+                $source->trigger($data);
+            }
+        }
     }
 
     protected function updateCommitted(\stdClass $data): void {
+        $this->indexing->index();
+    }
+
+    protected function aliased(array $values): array {
+        if (empty($this->joins)) {
+            return $values;
+        }
+
+        $aliased = [];
+
+        foreach ($values as $key => $value) {
+            $aliased["{$this->name}.{$key}"] = $value;
+        }
+
+        return $aliased;
+    }
+
+    protected function get_notify_updates_with(): array {
+        $notifyWith = ['id'];
+
+        foreach ($this->storage->notifies as $source) {
+            if ($source->notify_updated) {
+                $notifyWith = array_merge($notifyWith, $source->notified_with);
+            }
+        }
+
+        return array_unique($notifyWith);
+    }
+
+    protected function get_notify_deletes_with(): array {
+        $notifyWith = ['id'];
+
+        foreach ($this->storage->notifies as $source) {
+            if ($source->notify_deleting) {
+                $notifyWith = array_merge($notifyWith, $source->notified_with);
+            }
+        }
+
+        return array_unique($notifyWith);
+    }
+
+    public function delete(): void {
+        $this->db->transaction(function() {
+            $this->db->committed(function () {
+                $this->deleteCommitted();
+            });
+
+            $this->select(...$this->notify_deletes_with)->orderBy('id');
+
+            $this->chunk(function (\stdClass $data) {
+                $this->deleting($data);
+
+                $this->db->table($this->name)
+                    ->where('id', $data->id)
+                    ->delete();
+
+                $this->deleted($data);
+            });
+        });
+    }
+
+    protected function deleting(\stdClass $data): void {
+        foreach ($this->storage->notifies as $source) {
+            if ($source->notify_deleting) {
+                $source->trigger($data);
+            }
+        }
+    }
+
+    protected function deleted(\stdClass $data): void {
+    }
+
+    protected function deleteCommitted(): void {
+        $this->indexing->index();
     }
 }

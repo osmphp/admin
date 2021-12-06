@@ -3,8 +3,8 @@
 namespace Osm\Admin\Scopes\Indexers;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Osm\Admin\Base\Attributes\Indexer\From;
-use Osm\Admin\Base\Attributes\Indexer\To;
+use Osm\Admin\Base\Attributes\On;
+use Osm\Admin\Indexing\Event;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Scopes\Scope;
 use Osm\Admin\Scopes\Scopes;
@@ -21,15 +21,15 @@ use Osm\Core\Attributes\Serialized;
  * @property Db $db
  * @property bool $updates_data #[Serialized]
  */
-#[To('scopes'), From('scopes', name: 'parent')]
-class ScopeIndexer extends TableIndexer
+#[On\Saving('scopes'), On\Saved('scopes', name: 'parent')]
+class UpdateScopes extends TableIndexer
 {
     protected function index_level(?int $parent__level): int {
-        return $parent__level ? $parent__level + 1 : 0;
+        return $parent__level !== null ? $parent__level + 1 : 0;
     }
 
     protected function index_id_path(?string $parent__id_path, int $id): string {
-        return $parent__id_path ? "{$parent__id_path}/{$id}" : "{$id}";
+        return $parent__id_path !== null ? "{$parent__id_path}/{$id}" : "{$id}";
     }
 
     protected function get_db(): Db {
@@ -38,7 +38,7 @@ class ScopeIndexer extends TableIndexer
         return $osm_app->db;
     }
 
-    public function index(int $id = null, bool $incremental = true): void {
+    public function index(int $id = null, Event $source = null): void {
         if ($id) {
             $query = $this->query()->equals('id', $id);
             $data = $this->indexObject($query, $query->first());
@@ -47,43 +47,29 @@ class ScopeIndexer extends TableIndexer
             return;
         }
 
-        $this->db->transaction(function() use ($incremental) {
-            $count = query(Scope::class)
-                ->prepareSelect()
-                ->max('level') + 1;
+        $count = query(Scope::class)
+            ->prepareSelect()
+            ->max('level') + 1;
 
-            for ($level = 0; $level < $count; $level++) {
-                if ($incremental) {
-                    foreach ($this->sources as $source) {
-                        $this->indexLevel($level, $source);
-                    }
-                }
-                else {
-                    $this->indexLevel($level);
-                }
-            }
-        });
+        for ($level = 0; $level < $count; $level++) {
+            $this->indexLevel($level, $source);
+        }
     }
 
-    protected function indexLevel(int $level, string $source = null): void {
+    protected function indexLevel(int $level, Event $source = null): void {
         $query = $this->query($source)
-            ->equals('parent.level', $level);
+            ->equals('parent.level', $level)
+            ->orderBy('id');
 
-        $query->chunk(function (\stdClass $object) {
-            $this->indexObject($object);
+        $query->chunk(function (\stdClass $object) use ($query) {
+            $data = $this->indexObject($query, $object);
+            query(Scope::class)
+                ->equals('id', $object->id)
+                ->update($data);
         });
     }
 
-    public function update(callable $filter): void {
-        $query = $this->query();
-        $filter($query);
-
-        $query->chunk(function (\stdClass $object) {
-            $this->indexObject($object);
-        });
-    }
-
-    protected function query(string $source = null): Scopes|Query
+    protected function query(Event $source = null): Scopes|Query
     {
         $query = query(Scope::class)
             ->select(...$this->depends_on);
@@ -94,7 +80,11 @@ class ScopeIndexer extends TableIndexer
 
         if ($source) {
             $query->raw(fn(Scopes $q) =>
-                $this->changed($q, $source, "{$source}__changed"));
+                $q->db_query->join("{$source->notification_table} AS " .
+                    "{$source->name}__notification",
+                    "{$source->name}__notification.id", '=',
+                    "{$source->name}.id")
+            );
         }
 
         return $query;

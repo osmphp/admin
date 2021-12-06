@@ -25,7 +25,7 @@ use function Osm\__;
  * @property string $notification_table
  * @property Db $db
  */
-class Source extends Object_
+class Event extends Object_
 {
     use SubTypes;
 
@@ -33,15 +33,30 @@ class Source extends Object_
         throw new NotImplemented($this);
     }
 
-    public function notify(\stdClass $data): void
+    public function trigger(\stdClass $data): void
     {
         $arguments = [];
         foreach ($this->notified_with as $property) {
             $arguments[] = $data->{$property} ?? null;
         }
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->handle(...$arguments);
+    }
+
+    public function changed(): bool
+    {
+        return (bool)$this->db->table('events')
+            ->where('id', $this->id)
+            ->value('changed');
+    }
+
+    public function clearChangedFlag(): void
+    {
+        $this->clear();
+
+        $this->db->table('events')
+            ->where('id', $this->id)
+            ->update(['changed' => false]);
     }
 
     protected function get_depends_on(): array {
@@ -96,5 +111,8 @@ class Source extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function clear(): void {
     }
 }

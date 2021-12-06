@@ -1,13 +1,13 @@
 <?php
 
-namespace Osm\Admin\Tables\IndexingSources;
+namespace Osm\Admin\Tables\Event;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Indexing\Source;
+use Osm\Admin\Indexing\Event;
 use Osm\Core\Attributes\Type;
 
-#[Type('from')]
-class From extends Source
+#[Type('saved')]
+class Saved extends Event
 {
     public bool $notify_inserted = true;
     public bool $notify_updated = true;
@@ -26,5 +26,13 @@ class From extends Source
         $this->db->table($this->notification_table)->insertOrIgnore([
             'id' => $id,
         ]);
+
+        $this->db->table('events')
+            ->where('id', $this->id)
+            ->update(['changed' => true]);
+    }
+
+    protected function clear(): void {
+        $this->db->table($this->notification_table)->delete();
     }
 }

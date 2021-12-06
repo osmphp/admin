@@ -12,7 +12,7 @@ use Osm\Framework\Migrations\Migration;
 /**
  * @property Db $db
  */
-class M01_indexer_sources extends Migration
+class M01_events extends Migration
 {
     protected function get_db(): Db {
         global $osm_app; /* @var App $osm_app */
@@ -21,7 +21,7 @@ class M01_indexer_sources extends Migration
     }
 
     public function create(): void {
-        $this->db->create('indexer_sources', function (Blueprint $table) {
+        $this->db->create('events', function (Blueprint $table) {
             $table->increments('id');
             $table->string('indexer');
             $table->string('source');
@@ -33,6 +33,6 @@ class M01_indexer_sources extends Migration
     }
 
     public function drop(): void {
-        $this->db->drop('indexer_sources');
+        $this->db->drop('events');
     }
 }

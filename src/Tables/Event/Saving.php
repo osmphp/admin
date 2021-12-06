@@ -1,17 +1,17 @@
 <?php
 
-namespace Osm\Admin\Tables\IndexingSources;
+namespace Osm\Admin\Tables\Event;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Indexing\Source;
+use Osm\Admin\Indexing\Event;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Attributes\Serialized;
 
 /**
  * @property ?string $type_name #[Serialized]
  */
-#[Type('to')]
-class To extends Source
+#[Type('saving')]
+class Saving extends Event
 {
     public bool $notify_inserted = true;
     public bool $notify_updated = true;

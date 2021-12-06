@@ -22,7 +22,7 @@ use function Osm\__;
  * @property int $version #[Serialized]
  * @property ?string $query_class_name #[Serialized]
  * @property array $notifies_names #[Serialized]
- * @property Indexing\Source[] $notifies
+ * @property Indexing\Event[] $notifies
  * @property Indexing\Module $indexing
  */
 class Storage extends Object_
@@ -76,7 +76,7 @@ class Storage extends Object_
         foreach ($this->notifies_names as $indexerName => $sourceNames) {
             $indexer = $this->indexing->indexers[$indexerName];
             foreach ($sourceNames as $sourceName) {
-                $notifies[] = $indexer->sources[$sourceName];
+                $notifies[] = $indexer->events[$sourceName];
             }
         }
 
@@ -87,7 +87,7 @@ class Storage extends Object_
         $names = [];
 
         foreach ($this->indexing->indexers as $indexer) {
-            foreach ($indexer->sources as $source) {
+            foreach ($indexer->events as $source) {
                 if ($this->name !== $source->table) {
                     continue;
                 }

@@ -3,9 +3,9 @@
 namespace Osm\Admin\Indexing;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Base\Attributes\Indexer\From;
-use Osm\Admin\Base\Attributes\Indexer\To;
-use Osm\Admin\Base\Attributes\Markers\IndexerSource;
+use Osm\Admin\Base\Attributes\On\Saved;
+use Osm\Admin\Base\Attributes\On\Saving;
+use Osm\Admin\Base\Attributes\Markers\On;
 use Osm\Core\App;
 use Osm\Core\BaseModule;
 use Osm\Core\Class_;
@@ -26,8 +26,10 @@ class Module extends BaseModule
         \Osm\Admin\Base\Module::class,
     ];
 
+    protected bool $indexing = false;
+
     protected function get_indexer_source_ids(): array {
-        $items = $this->db->table('indexer_sources')
+        $items = $this->db->table('events')
             ->get(['id', 'indexer', 'source']);
 
         $ids = [];
@@ -52,7 +54,7 @@ class Module extends BaseModule
                 'name' => $class->name,
             ]);
 
-            if (!empty($indexer->sources)) {
+            if (!empty($indexer->events)) {
                 $indexers[$class->name] = $indexer;
             }
         }
@@ -74,7 +76,7 @@ class Module extends BaseModule
 
     public function migrate(bool $fresh = false): void {
         if ($fresh) {
-            $query = $this->db->table('indexer_sources');
+            $query = $this->db->table('events');
             foreach ($query->pluck('id') as $id) {
                 $this->migrateDown($id);
             }
@@ -82,8 +84,8 @@ class Module extends BaseModule
 
         $ids = [];
         foreach ($this->indexers as $indexer) {
-            foreach ($indexer->sources as $source) {
-                $id = $this->db->table('indexer_sources')
+            foreach ($indexer->events as $source) {
+                $id = $this->db->table('events')
                     ->where('indexer', $indexer->__class->name)
                     ->where('source', $source->name)
                     ->value('id');
@@ -98,7 +100,7 @@ class Module extends BaseModule
             }
         }
 
-        $query = $this->db->table('indexer_sources');
+        $query = $this->db->table('events');
         if (!empty($ids)) {
             $query->whereNotIn('id', $ids);
         }
@@ -112,13 +114,13 @@ class Module extends BaseModule
         $this->cache->deleteItem('indexer_source_ids');
     }
 
-    protected function migrateUp(Source $source): ?int
+    protected function migrateUp(Event $source): ?int
     {
         if (!$this->db->exists($source->table)) {
             return null;
         }
 
-        $source->id = $this->db->table('indexer_sources')->insertGetId([
+        $source->id = $this->db->table('events')->insertGetId([
             'indexer' => $source->indexer->__class->name,
             'source' => $source->name,
             'table' => $source->table,
@@ -132,7 +134,7 @@ class Module extends BaseModule
     protected function migrateDown(int $id): void
     {
         $this->db->dropIfExists("notifications__{$id}");
-        $this->db->table('indexer_sources')
+        $this->db->table('events')
             ->where('id', $id)
             ->delete();
     }
@@ -143,6 +145,42 @@ class Module extends BaseModule
     }
 
     public function index(bool $incremental = true): void {
-        throw new NotImplemented($this);
+        if ($this->indexing) {
+            return;
+        }
+
+        $this->indexing = true;
+
+        try {
+            if (!$incremental) {
+                $this->db->table('events')
+                    ->update(['dirty' => true]);
+            }
+
+            foreach ($this->indexers as $indexer) {
+                if ($indexer->dirty()) {
+                    $this->db->transaction(function () use ($indexer) {
+                        $indexer->index();
+                        $indexer->clearDirtyFlag();
+                        foreach ($indexer->events as $source) {
+                            $source->clearChangedFlag();
+                        }
+                    });
+                    continue;
+                }
+
+                foreach ($indexer->events as $source) {
+                    if ($source->changed()) {
+                        $this->db->transaction(function () use ($source) {
+                            $source->indexer->index(source: $source);
+                            $source->clearChangedFlag();
+                        });
+                    }
+                }
+            }
+        }
+        finally {
+            $this->indexing = false;
+        }
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace Osm\Admin\Base\Attributes\Indexer;
+namespace Osm\Admin\Base\Attributes\On;
 
-use Osm\Admin\Base\Attributes\Markers\IndexerSource;
+use Osm\Admin\Base\Attributes\Markers\On;
 
 #[
     \Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE),
-    IndexerSource('from'),
+    On('saved'),
 ]
-final class From
+final class Saved
 {
     public function __construct(public string $table, public string $name) {
     }

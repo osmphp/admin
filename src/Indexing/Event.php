@@ -65,7 +65,7 @@ class Event extends Object_
         $dependsOn = [];
 
         foreach ($this->indexer->depends_on as $formula) {
-            if ($this->alias != 'this') {
+            if ($this->alias != '') {
                 if (!str_starts_with($formula, "{$this->alias}.")) {
                     continue;
                 }

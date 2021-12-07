@@ -60,7 +60,7 @@ class Grid extends Object_
         return [
             $this->area_class_name => [
                 "GET {$this->url}" => [ Routes\Admin\RenderGridPage::class => [
-                    'data_class_name' => $this->class->name,
+                    'class_name' => $this->class->name,
                     'grid_name' => $this->name,
                 ]],
             ],

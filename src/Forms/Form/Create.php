@@ -22,7 +22,7 @@ class Create extends Form
 
     protected function get_routes(): array {
         $data = [
-            'data_class_name' => $this->class->name,
+            'class_name' => $this->class->name,
             'form_name' => $this->name,
         ];
 

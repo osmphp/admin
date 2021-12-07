@@ -16,6 +16,7 @@ use Osm\Admin\Base\Traits\Id;
  * @property ?int $parent_id #[
  *      Serialized,
  *      Table\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
+ *      Form\Int_(10, 'Parent Scope'),
  * ]
  * @property ?int $level #[
  *      Serialized,
@@ -28,7 +29,7 @@ use Osm\Admin\Base\Traits\Id;
  * @property ?string $title #[
  *      Serialized,
  *      Grid\String_('Title'),
- *      Form\String_(10, 'Title'),
+ *      Form\String_(20, 'Title'),
  * ]
  * @property string $prefix
  * @property Scope $parent #[Serialized(not_having: 'children')]

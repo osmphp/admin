@@ -9,6 +9,7 @@ use Osm\Admin\Forms\Routes;
 
 /**
  * @property string $title
+ * @property string $edit_url
  * @property string $save_url
  */
 #[Type('create')]
@@ -36,5 +37,9 @@ class Create extends Form
 
     protected function get_save_url(): string {
         return mb_substr($this->url, 0, mb_strrpos($this->url, '/')) . '/save';
+    }
+
+    protected function get_edit_url(): string {
+        return mb_substr($this->url, 0, mb_strrpos($this->url, '/')) . '/edit';
     }
 }

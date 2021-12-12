@@ -5,6 +5,7 @@ namespace Osm\Admin\Scopes;
 use Osm\Admin\Base\Attributes\Form;
 use Osm\Admin\Base\Attributes\Grid;
 use Osm\Admin\Base\Attributes\Icon;
+use Osm\Admin\Base\Attributes\Interface_;
 use Osm\Admin\Tables\TableQuery;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
@@ -37,6 +38,7 @@ use Osm\Admin\Base\Traits\Id;
  */
 #[
     Storage\Scopes,
+    Interface_\Admin('/scopes'),
     Icon('/scopes/', 'Scopes'),
     Grid('/scopes/', 'Scopes', select: ['id', 'title']),
     Form\Create('/scopes/create', 'New Scope'),

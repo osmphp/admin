@@ -7,7 +7,6 @@ use Osm\Core\Attributes\UseIn;
 use Osm\Framework\Http\Module;
 use function Osm\merge;
 
-#[UseIn(Module::class)]
 trait HttpModuleTrait
 {
     protected function around_loadRoutes(callable $proceed): void {

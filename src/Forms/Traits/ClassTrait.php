@@ -13,7 +13,6 @@ use Osm\Core\Attributes\Serialized;
 /**
  * @property Form[] $forms #[Serialized]
  */
-#[UseIn(Class_::class)]
 trait ClassTrait
 {
     protected function get_forms(): array {

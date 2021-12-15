@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Interfaces\Traits;
 
-use Osm\Admin\Base\Attributes\Route\Class_;
+use Osm\Admin\Base\Attributes\Class_;
 use Osm\Admin\Base\Attributes\Route\Interface_ as InterfaceAttribute;
 use Osm\Admin\Base\Attributes\Route\Operation;
 use Osm\Admin\Interfaces\Interface_;
@@ -10,10 +10,8 @@ use Osm\Admin\Interfaces\Route;
 use Osm\Core\App;
 use Osm\Core\Attributes\Name;
 use Osm\Core\Attributes\UseIn;
-use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Areas\Attributes\Area;
 use Osm\Framework\Http\Module;
-use function Osm\merge;
 
 #[UseIn(Module::class)]
 trait HttpModuleTrait

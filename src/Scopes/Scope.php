@@ -6,12 +6,12 @@ use Osm\Admin\Base\Attributes\Form;
 use Osm\Admin\Base\Attributes\Grid;
 use Osm\Admin\Base\Attributes\Icon;
 use Osm\Admin\Base\Attributes\Interface_;
+use Osm\Admin\Base\Traits\Id;
+use Osm\Admin\Scopes\Attributes\Storage;
 use Osm\Admin\Tables\TableQuery;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Admin\Base\Attributes\Table;
-use Osm\Admin\Scopes\Attributes\Storage;
-use Osm\Admin\Base\Traits\Id;
 
 /**
  * @property ?int $parent_id #[
@@ -38,11 +38,9 @@ use Osm\Admin\Base\Traits\Id;
  */
 #[
     Storage\Scopes,
-    Interface_\Admin('/scopes'),
+    Interface_\Table\Admin('/scopes', 'Scope'),
     Icon('/scopes/', 'Scopes'),
     Grid('/scopes/', 'Scopes', select: ['id', 'title']),
-    Form\Create('/scopes/create', 'New Scope'),
-    Form\Edit('/scopes/edit', ":title - Scope"),
 ]
 class Scope extends Object_
 {

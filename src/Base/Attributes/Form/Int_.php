@@ -10,7 +10,7 @@ final class Int_
     public function __construct(
         public int $sort_order,
         public string $title,
-        public string $group_name = 'implicit',
+        public string $in = '//',
     )
     {
     }

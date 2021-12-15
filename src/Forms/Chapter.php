@@ -11,12 +11,13 @@ use Osm\Core\Attributes\Serialized;
  * @property Form $form
  * @property int $sort_order #[Serialized]
  * @property string $name #[Serialized]
- * @property string $title #[Serialized]
+ * @property ?string $title #[Serialized]
  * @property Section[] $sections #[Serialized]
- * @property string $template #[Serialized]
  */
 class Chapter extends Object_
 {
+    public string $template = 'forms::chapter';
+
     protected function get_form(): string {
         throw new Required(__METHOD__);
     }
@@ -29,16 +30,14 @@ class Chapter extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_title(): string {
-        throw new Required(__METHOD__);
-    }
-
     protected function get_sections(): array {
-        return array_filter($this->form->sections, fn(Section $section) =>
-            $section->chapter_name === $this->name);
+        throw new Required(__METHOD__);
     }
 
-    protected function get_template(): string {
-        throw new Required(__METHOD__);
+    public function __wakeup(): void
+    {
+        foreach ($this->sections as $section) {
+            $section->chapter = $this;
+        }
     }
 }

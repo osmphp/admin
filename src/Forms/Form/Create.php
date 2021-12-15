@@ -13,7 +13,7 @@ use Osm\Admin\Forms\Routes;
  * @property string $save_url
  */
 #[Type('create')]
-class Create extends Form
+class Create //extends Form
 {
     public string $template = 'forms::form.create';
 

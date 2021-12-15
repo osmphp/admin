@@ -6,7 +6,7 @@ use Osm\Admin\Forms\Form;
 use Osm\Core\Attributes\Type;
 
 #[Type('edit')]
-class Edit extends Form
+class Edit //extends Form
 {
     public string $template = 'forms::form.edit';
 

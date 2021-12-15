@@ -3,6 +3,7 @@
 namespace Osm\Admin\Interfaces;
 
 use Osm\Admin\Schema\Class_;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -25,6 +26,16 @@ class Interface_ extends Object_
             substr($routeName, $pos);
     }
 
+    public function url(string $routeName): string {
+        global $osm_app; /* @var App $osm_app */
+
+        if (($pos = strpos($routeName, ' ')) !== false) {
+            $routeName = substr($routeName, $pos + 1);
+        }
+
+        return "{$osm_app->area_url}{$this->url}{$routeName}";
+    }
+
     protected function get_class(): Class_ {
         throw new Required(__METHOD__);
     }
@@ -35,5 +46,9 @@ class Interface_ extends Object_
 
     protected function get_area_class_name(): string {
         throw new Required(__METHOD__);
+    }
+
+    public function __wakeup(): void
+    {
     }
 }

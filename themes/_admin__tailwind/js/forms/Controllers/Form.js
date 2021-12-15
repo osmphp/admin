@@ -19,12 +19,15 @@ export default register('form', class Form extends Controller {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.data),
-            message: 'Saving new scope ...',
+            message: this.options.s_saving_new_object,
         })
         .then(response => {
-            notice('Scope saved successfully.');
+            notice(this.options.s_new_object_saved);
 
-            throw 'not implemented';
+            return response.json();
+        })
+        .then(json => {
+            location.href = json.url;
         })
         .catch(() => null);
     }

@@ -40,8 +40,10 @@ trait ClassTrait
             $new = "{$osm_app->classes[Interface_::class]
                 ->getTypeClassName($marker->type ?? null)}::new";
 
+            $data = array_filter((array)$attribute, fn($item) => $item !== null);
+
             /* @var Interface_ $interface */
-            $interface = $new(array_merge(['class' => $this], (array)$attribute));
+            $interface = $new(array_merge(['class' => $this], $data));
             $interfaces[$interface->type] = $interface;
         }
 

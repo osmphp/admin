@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Admin\Base\Attributes\Markers\Form;
+namespace Osm\Admin\Base\Attributes\Markers;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class Chapter
+final class Filter
 {
     public function __construct(public string $type)
     {

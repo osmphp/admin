@@ -13,6 +13,7 @@ use Osm\Core\Traits\SubTypes;
 /**
  * @property Class_ $class
  * @property string $url #[Serialized]
+ * @property Parameter[] $parameters
  */
 class Interface_ extends Object_
 {
@@ -50,5 +51,12 @@ class Interface_ extends Object_
 
     public function __wakeup(): void
     {
+        foreach ($this->parameters as $parameter) {
+            $parameter->interface = $this;
+        }
+    }
+
+    protected function get_parameters(): array {
+        return [];
     }
 }

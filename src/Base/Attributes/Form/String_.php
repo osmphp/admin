@@ -2,9 +2,9 @@
 
 namespace Osm\Admin\Base\Attributes\Form;
 
-use Osm\Admin\Base\Attributes\Markers\Form\Field;
+use Osm\Admin\Base\Attributes\Markers\FormField;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY), Field('string')]
+#[\Attribute(\Attribute::TARGET_PROPERTY), FormField('string')]
 final class String_
 {
     public function __construct(

@@ -107,6 +107,16 @@ class TableQuery extends Query
             ->toArray();
     }
 
+    public function count(): int {
+        $query = $this->db->table($this->name);
+
+        foreach ($this->filters as $filter) {
+            $filter->tables_filter($this, $query);
+        }
+
+        return $query->count();
+    }
+
     public function chunkRaw(callable $callback,
         int $size = self::DEFAULT_CHUNK_SIZE): void
     {

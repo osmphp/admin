@@ -3,7 +3,6 @@
 namespace Osm\Admin\Storages\Traits;
 
 use Osm\Admin\Indexing;
-use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Schema;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;

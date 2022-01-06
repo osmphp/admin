@@ -156,7 +156,7 @@ class test_01_schema_hydration extends TestCase
     }
 
     protected function assertFormHydrated(Form $original,
-        Form $hydrated, Schema $hydratedSchema): void
+                                          Form $hydrated, Schema $hydratedSchema): void
     {
         $this->assertTrue($original::class === $hydrated::class);
 

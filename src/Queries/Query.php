@@ -62,6 +62,10 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
+    public function count(): int {
+        throw new NotImplemented($this);
+    }
+
     public function chunk(callable $callback,
         int $size = self::DEFAULT_CHUNK_SIZE): void
     {

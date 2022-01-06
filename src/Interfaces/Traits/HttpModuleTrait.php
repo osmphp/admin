@@ -92,6 +92,7 @@ trait HttpModuleTrait
 
             $self->routes[$area->class_name][$interface->route($routeName)] = [
                 $routeClassName => [
+                    'route_name' => $routeName,
                     'class_name' => $interface->class->name,
                     'interface_type' => $interface->type,
                 ],

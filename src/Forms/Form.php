@@ -7,24 +7,17 @@ use Osm\Admin\Schema\Class_;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Core\Traits\SubTypes;
-use function Osm\__;
 
 /**
  * @property Interface_ $interface
  * @property Class_ $class
  * @property Chapter[] $chapters #[Serialized]
+ * @property array $http_query
+ * @property string $mode
  */
 class Form extends Object_
 {
     public string $template = 'forms::form';
-
-    public const EDIT_MODE = 'edit';
-    public const CREATE_MODE = 'create';
-    public const MASS_EDIT_MODE = 'mass_edit';
-    public const VIEW_MODE = 'view';
-
-    use SubTypes;
 
     protected function get_interface(): Interface_ {
         throw new Required(__METHOD__);
@@ -82,12 +75,5 @@ class Form extends Object_
         foreach ($this->chapters as $chapter) {
             $chapter->form = $this;
         }
-    }
-
-    public function options(): array {
-        return [
-            's_saving_new_object' => __($this->interface->s_saving_new_object),
-            's_new_object_saved' => __($this->interface->s_new_object_saved),
-        ];
     }
 }

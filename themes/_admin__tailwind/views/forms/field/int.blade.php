@@ -1,6 +1,11 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
+/* @var \Osm\Admin\Forms\Form $form */
+/* @var \Osm\Admin\Forms\Chapter $chapter */
+/* @var \Osm\Admin\Forms\Section $section */
+/* @var \Osm\Admin\Forms\Fieldset $fieldset */
 /* @var \Osm\Admin\Forms\Field\Int_ $field */
+/* @var string $id */
 ?>
 <div class="field grid grid-cols-12 mb-6" data-js-int-field>
     <label for="{{ "{$id}{$field->name}" }}"

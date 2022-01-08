@@ -6,6 +6,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var \Osm\Admin\Forms\Fieldset $fieldset */
 /* @var \Osm\Admin\Forms\Field\Int_ $field */
 /* @var string $id */
+/* @var \stdClass $object */
 ?>
 <div class="field grid grid-cols-12 mb-6" data-js-int-field>
     <label for="{{ "{$id}{$field->name}" }}"
@@ -22,6 +23,9 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
             class="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-40
                 text-gray-900 sm:text-sm
                 focus:ring-blue-500 focus:border-blue-500"
+            @if (property_exists($object, $field->name))
+                value="{{ $object->{$field->name} }}"
+            @endif
         >
     </div>
 </div>

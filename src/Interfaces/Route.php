@@ -126,22 +126,7 @@ class Route extends BaseRoute
         return $this->query->get();
     }
 
-    protected function get_object(): ?\stdClass {
-        if (!$this->object_count) {
-            return null;
-        }
-
-        if ($this->object_count === 1) {
-            return $this->objects[0];
-        }
-
-        $object = new \stdClass();
-
-        if (!$this->objects) {
-            return $object;
-        }
-
-        // merge fetched objects into one
+    protected function get_object(): \stdClass {
         throw new NotImplemented($this);
     }
 

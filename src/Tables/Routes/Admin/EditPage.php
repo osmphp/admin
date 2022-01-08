@@ -3,9 +3,11 @@
 namespace Osm\Admin\Tables\Routes\Admin;
 
 use Osm\Admin\Base\Attributes\Route\Interface_;
-use Osm\Admin\Forms\Route;
+use Osm\Admin\Interfaces\Route;
 use Osm\Admin\Tables\Interface_\Admin;
 use Osm\Core\Attributes\Name;
+use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\NotSupported;
 use Symfony\Component\HttpFoundation\Response;
 use function Osm\__;
 use function Osm\view_response;
@@ -27,4 +29,38 @@ class EditPage extends Route
             'object' => $this->object,
         ]);
     }
+
+    protected function get_columns() :array {
+        $columns = ['id' => true];
+        if (isset($this->class->properties['title'])) {
+            $columns['title'] = true;
+        }
+
+        // request columns for fields
+        foreach ($this->form->fields() as $field) {
+            $field->columns($columns);
+        }
+
+        return array_keys($columns);
+    }
+
+    protected function get_object(): \stdClass {
+        if (!$this->object_count) {
+            throw new NotSupported(__("Edit form should not be rendered for empty data set."));
+        }
+
+        if ($this->object_count === 1) {
+            return $this->objects[0];
+        }
+
+        $object = new \stdClass();
+
+        if (!$this->objects) {
+            return $object;
+        }
+
+        // merge fetched objects into one
+        throw new NotImplemented($this);
+    }
+
 }

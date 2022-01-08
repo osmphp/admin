@@ -3,7 +3,7 @@
 namespace Osm\Admin\Tables\Routes\Admin;
 
 use Osm\Admin\Base\Attributes\Route\Interface_;
-use Osm\Admin\Forms\Route;
+use Osm\Admin\Interfaces\Route;
 use Osm\Admin\Tables\Interface_\Admin;
 use Osm\Core\Attributes\Name;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +18,11 @@ class CreatePage extends Route
             'form' => $this->form,
             'route_name' => $this->route_name,
             'title' => __($this->interface->s_new_object),
+            'object' => $this->object,
         ]);
+    }
+
+   protected function get_object(): \stdClass {
+        return new \stdClass();
     }
 }

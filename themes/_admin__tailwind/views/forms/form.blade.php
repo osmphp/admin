@@ -2,7 +2,10 @@
 global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var \Osm\Admin\Forms\Form $form */
 /* @var string $route_name */
+/* @var int $object_id */
 /* @var int $object_count */
+/* @var string $title */
+/* @var \stdClass $object */
 ?>
 <x-std-pages::layout :title='\Osm\__($form->interface->s_new_object) . " | {$osm_app->http->title}"'>
     <div class="container mx-auto px-4 grid grid-cols-12">
@@ -12,7 +15,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 
                 @if ($route_name === 'GET /create')
                     <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
-                        {{ \Osm\__($form->interface->s_new_object) }}
+                        {{ $title }}
                     </h1>
                     <div>
                         <button type="submit"
@@ -26,8 +29,11 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                         <?php throw new \Osm\Core\Exceptions\NotImplemented('1'); ?>
                     @else
                         <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
-                            <?php throw new \Osm\Core\Exceptions\NotImplemented('2'); ?>
+                            {{ $title }}
                         </h1>
+                        <p class="text-sm md:pl-4">
+                            {{ \Osm\__($form->interface->s_object_id, ['id' => $object->id] )}}
+                        </p>
                         <div>
                             <button type="submit"
                                 class="text-white bg-blue-700

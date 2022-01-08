@@ -76,4 +76,19 @@ class Form extends Object_
             $chapter->form = $this;
         }
     }
+
+    /**
+     * @return \Generator|Field[]
+     */
+    public function fields(): \Generator|array {
+        foreach ($this->chapters as $chapter) {
+            foreach ($chapter->sections as $section) {
+                foreach ($section->fieldsets as $fieldset) {
+                    foreach ($fieldset->fields as $field) {
+                        yield $field;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -13,6 +13,8 @@ use function Osm\__;
  * @property string $s_new_object #[Serialized]
  * @property string $s_saving_new_object #[Serialized]
  * @property string $s_new_object_saved #[Serialized]
+ * @property string $s_n_objects #[Serialized]
+ * @property string $s_object_id #[Serialized]
  */
 class Admin extends Interface_
 {
@@ -36,5 +38,13 @@ class Admin extends Interface_
     protected function get_s_new_object_saved(): string {
         $object = mb_strtolower($this->s_object);
         return "New {$object} saved successfully.";
+    }
+
+    protected function get_s_n_objects(): string {
+        return ":count {$this->s_objects}";
+    }
+
+    protected function get_s_object_id(): string {
+        return "{$this->s_object} #:id";
     }
 }

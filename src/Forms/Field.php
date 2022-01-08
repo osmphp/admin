@@ -38,4 +38,8 @@ class Field extends Object_
     protected function get_template(): string {
         throw new Required(__METHOD__);
     }
+
+    public function columns(array &$columns): void {
+        $columns[$this->name] = true;
+    }
 }

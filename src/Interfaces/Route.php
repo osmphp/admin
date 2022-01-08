@@ -24,9 +24,14 @@ use Osm\Framework\Http\Route as BaseRoute;
  *      search criteria
  * @property FilterModule $filter_module
  * @property AppliedFilters[] $applied_filters
+ * @property \stdClass[]|null $objects
+ * @property \stdClass $object
+ * @property string[] $columns
  */
 class Route extends BaseRoute
 {
+    public const MAX_MERGED_OBJECTS = 10;
+
     protected function get_class_name(): string {
         throw new Required(__METHOD__);
     }
@@ -53,6 +58,8 @@ class Route extends BaseRoute
         $query = $this->class->storage->query();
 
         $this->applyFilters($query);
+
+        $query->select(...$this->columns);
 
         return $query;
     }
@@ -110,4 +117,34 @@ class Route extends BaseRoute
 
         return $appliedFilters;
     }
-}
+
+    protected function get_objects(): ?array {
+        if ($this->object_count > static::MAX_MERGED_OBJECTS) {
+            return null;
+        }
+
+        return $this->query->get();
+    }
+
+    protected function get_object(): ?\stdClass {
+        if (!$this->object_count) {
+            return null;
+        }
+
+        if ($this->object_count === 1) {
+            return $this->objects[0];
+        }
+
+        $object = new \stdClass();
+
+        if (!$this->objects) {
+            return $object;
+        }
+
+        // merge fetched objects into one
+        throw new NotImplemented($this);
+    }
+
+    protected function get_columns() :array {
+        throw new NotImplemented($this);
+    }}

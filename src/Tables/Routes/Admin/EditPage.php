@@ -27,7 +27,8 @@ class EditPage extends Route
             'title' => $this->title,
             'object' => $this->object,
             'form_url' => $this->form_url,
-            'form_options' => $this->form_options,
+            'options' => $this->options,
+            'field_options' => $this->field_options,
         ]);
     }
 
@@ -83,8 +84,8 @@ class EditPage extends Route
         return $this->interface->filterUrl($url, $this->applied_filters);
     }
 
-    protected function get_form_options(): array {
-        return array_merge(parent::get_form_options(), [
+    protected function get_options(): array {
+        return array_merge(parent::get_options(), [
             's_saving' => __("Saving :title ...", ['title' => $this->title]),
             's_saved' => __(":title saved successfully.", ['title' => $this->title]),
         ]);

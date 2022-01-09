@@ -5,6 +5,7 @@ namespace Osm\Admin\Interfaces;
 use Osm\Admin\Filters\AppliedFilter;
 use Osm\Admin\Filters\Hints\AppliedFilters;
 use Osm\Admin\Filters\Module as FilterModule;
+use Osm\Admin\Forms\Field;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Class_;
 use Osm\Core\App;
@@ -28,7 +29,8 @@ use Osm\Framework\Http\Route as BaseRoute;
  * @property \stdClass $object
  * @property string[] $columns
  * @property string $form_url
- * @property array $form_options
+ * @property array $options
+ * @property array $field_options
  */
 class Route extends BaseRoute
 {
@@ -140,9 +142,28 @@ class Route extends BaseRoute
         throw new NotImplemented($this);
     }
 
-    protected function get_form_options(): array {
+    protected function get_options(): array {
         return [
             'route_name' => $this->route_name,
         ];
+    }
+
+    protected function get_field_options(): array {
+        $fieldOptions = [];
+
+        foreach ($this->form->fields() as $field) {
+            $valueExists = property_exists($this->object, $field->name);
+            $options = [
+                'initial_value_exists' => $valueExists,
+            ];
+
+            if ($valueExists) {
+                $options['initial_value'] = $this->object->{$field->name};
+            }
+
+            $fieldOptions[$field->name] = $options;
+        }
+
+        return $fieldOptions;
     }
 }

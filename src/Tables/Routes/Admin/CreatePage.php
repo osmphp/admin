@@ -20,7 +20,8 @@ class CreatePage extends Route
             'title' => __($this->interface->s_new_object),
             'object' => $this->object,
             'form_url' => $this->form_url,
-            'form_options' => $this->form_options,
+            'options' => $this->options,
+            'field_options' => $this->field_options,
         ]);
     }
 
@@ -32,8 +33,8 @@ class CreatePage extends Route
         return $this->interface->url('POST /create');
     }
 
-    protected function get_form_options(): array {
-        return array_merge(parent::get_form_options(), [
+    protected function get_options(): array {
+        return array_merge(parent::get_options(), [
             's_saving' => $this->interface->s_saving_new_object,
             's_saved' => $this->interface->s_new_object_saved,
         ]);

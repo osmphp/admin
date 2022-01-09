@@ -19,6 +19,8 @@ class Field extends Object_
 {
     use SubTypes;
 
+    public const NEW_ = 'new';
+
     protected function get_group(): Fieldset {
         throw new Required(__METHOD__);
     }

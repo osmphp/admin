@@ -8,13 +8,14 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var string $title */
 /* @var \stdClass $object */
 /* @var string $form_url */
-/* @var array $form_options */
+/* @var array $options */
+/* @var array $field_options */
 ?>
 <x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
     <div class="container mx-auto px-4 grid grid-cols-12">
         <section class="col-start-1 col-span-12">
             <form method="POST" action="{{ $form_url }}"
-                data-js-form='{!! \Osm\js($form_options) !!}'>
+                data-js-form='{!! \Osm\js($options) !!}'>
 
                 @if ($route_name === 'GET /create')
                     <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">

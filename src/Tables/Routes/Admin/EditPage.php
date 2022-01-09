@@ -54,14 +54,27 @@ class EditPage extends Route
             return $this->objects[0];
         }
 
-        $object = new \stdClass();
+        $mergedObject = new \stdClass();
 
         if (!$this->objects) {
-            return $object;
+            return $mergedObject;
         }
 
-        // merge fetched objects into one
-        throw new NotImplemented($this);
+        foreach ($this->columns as $column) {
+            foreach ($this->objects as $key => $object) {
+                if ($key === 0) {
+                    $mergedObject->{$column} = $object->{$column};
+                    continue;
+                }
+
+                if ($mergedObject->{$column} !== $object->{$column}) {
+                    unset($mergedObject->{$column});
+                    break;
+                }
+            }
+        }
+
+        return $mergedObject;
     }
 
     protected function get_form_url(): string {

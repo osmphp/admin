@@ -29,7 +29,16 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     </div>
                 @elseif ($route_name === 'GET /edit')
                     @if ($object_count > 1)
-                        <?php throw new \Osm\Core\Exceptions\NotImplemented('1'); ?>
+                        <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
+                            {{ $title }}
+                        </h1>
+                        <div>
+                            <button type="submit"
+                                class="text-white bg-blue-700
+                                    hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                                    mr-3 mb-3">{{ \Osm\__("Save")}}</button>
+                        </div>
                     @else
                         <h1 class="text-2xl sm:text-4xl pt-6 border-t border-gray-300">
                             {{ $title }}

@@ -25,6 +25,8 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                 focus:ring-blue-500 focus:border-blue-500"
             @if (property_exists($object, $field->name))
                 value="{{ $object->{$field->name} }}"
+            @elseif ($route_name === 'GET /edit' && $object_count > 1)
+                placeholder="{{ \Osm\__("<multiple values>")}}"
             @endif
         >
     </div>

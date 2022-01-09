@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Filters;
 
+use Osm\Admin\Filters\Hints\AppliedFilters;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Class_;
 use Osm\Admin\Schema\Property;
@@ -75,5 +76,16 @@ class Filter extends Object_
 
     protected function get_property(): Property {
         return $this->class->properties[$this->name];
+    }
+
+    public function url(\stdClass|AppliedFilters $appliedFilters): string {
+        return match ($appliedFilters->operator) {
+            static::EQUALS => $this->url_equals($appliedFilters),
+            default => throw new NotSupported(),
+        };
+    }
+
+    public function url_equals(\stdClass|AppliedFilters $appliedFilters): string {
+        throw new NotImplemented($this);
     }
 }

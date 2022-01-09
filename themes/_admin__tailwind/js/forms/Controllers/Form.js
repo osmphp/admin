@@ -19,15 +19,17 @@ export default register('form', class Form extends Controller {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.data),
-            message: this.options.s_saving_new_object,
+            message: this.options.s_saving,
         })
         .then(response => {
-            notice(this.options.s_new_object_saved);
+            notice(this.options.s_saved);
 
             return response.json();
         })
         .then(json => {
-            location.href = json.url;
+            if (json.url) {
+                location.href = json.url;
+            }
         })
         .catch(() => null);
     }

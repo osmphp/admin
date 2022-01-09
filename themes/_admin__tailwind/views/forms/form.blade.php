@@ -4,14 +4,17 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var string $route_name */
 /* @var int $object_id */
 /* @var int $object_count */
+/* @var string $page_title */
 /* @var string $title */
 /* @var \stdClass $object */
+/* @var string $form_url */
+/* @var array $form_options */
 ?>
-<x-std-pages::layout :title='\Osm\__($form->interface->s_new_object) . " | {$osm_app->http->title}"'>
+<x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
     <div class="container mx-auto px-4 grid grid-cols-12">
         <section class="col-start-1 col-span-12">
-            <form method="POST" action="{{ $form->interface->url('/create') }}"
-                data-js-form="{{ json_encode((object)$form->options) }}">
+            <form method="POST" action="{{ $form_url }}"
+                data-js-form='{!! \Osm\js($form_options) !!}'>
 
                 @if ($route_name === 'GET /create')
                     <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
@@ -28,11 +31,15 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     @if ($object_count > 1)
                         <?php throw new \Osm\Core\Exceptions\NotImplemented('1'); ?>
                     @else
-                        <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
+                        <h1 class="text-2xl sm:text-4xl pt-6 border-t border-gray-300">
                             {{ $title }}
                         </h1>
-                        <p class="text-sm md:pl-4">
-                            {{ \Osm\__($form->interface->s_object_id, ['id' => $object->id] )}}
+                        <p class="text-sm mb-6">
+                            @if (isset($object->title))
+                                {{ \Osm\__($form->interface->s_object_id, [
+                                    'id' => $object->id,
+                                ]) }}
+                            @endif
                         </p>
                         <div>
                             <button type="submit"

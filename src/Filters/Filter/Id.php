@@ -4,6 +4,7 @@ namespace Osm\Admin\Filters\Filter;
 
 use Osm\Admin\Filters\Filter;
 use Osm\Admin\Filters\AppliedFilter;
+use Osm\Admin\Filters\Hints\AppliedFilters;
 use Osm\Admin\Queries\Query;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
@@ -53,5 +54,12 @@ class Id extends Filter
             $query->in($this->name,
                 array_map(fn($value) => $value->value, $values));
         }
+    }
+
+    public function url_equals(\stdClass|AppliedFilters $appliedFilters): string {
+        return "{$this->name}=" . implode('+', array_map(
+            fn(AppliedFilter\Id $value) => $value->value,
+            $appliedFilters->values)
+        );
     }
 }

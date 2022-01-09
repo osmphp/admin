@@ -7,6 +7,7 @@ use Osm\Admin\Interfaces\Route;
 use Osm\Admin\Tables\Interface_\Admin;
 use Osm\Core\Attributes\Name;
 use Symfony\Component\HttpFoundation\Response;
+use function Osm\__;
 use function Osm\json_response;
 use function Osm\plain_response;
 use function Osm\query;
@@ -18,7 +19,7 @@ class Create extends Route
     {
         $item = json_decode($this->http->content, flags: JSON_THROW_ON_ERROR);
         if (!is_object($item)) {
-            return plain_response('Object expected', 500);
+            return plain_response(__("Object expected"), 500);
         }
 
         $id = query($this->class_name)->insert($item);

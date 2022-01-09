@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use function Osm\__;
 use function Osm\view_response;
 
+/**
+ * @property string $title
+ */
 #[Interface_(Admin::class), Name('GET /edit')]
 class EditPage extends Route
 {
@@ -21,12 +24,10 @@ class EditPage extends Route
             'form' => $this->form,
             'route_name' => $this->route_name,
             'object_count' => $this->object_count,
-            'title' => $this->object_count === 1
-                ? $this->object->title ?? "#{$this->object->id}"
-                : __($this->interface->s_n_objects, [
-                    'count' => $this->object_count,
-                ]),
+            'title' => $this->title,
             'object' => $this->object,
+            'form_url' => $this->form_url,
+            'form_options' => $this->form_options,
         ]);
     }
 
@@ -63,4 +64,26 @@ class EditPage extends Route
         throw new NotImplemented($this);
     }
 
+    protected function get_form_url(): string {
+        $url = $this->interface->url('POST /');
+
+        return $this->interface->filterUrl($url, $this->applied_filters);
+    }
+
+    protected function get_form_options(): array {
+        return array_merge(parent::get_form_options(), [
+            's_saving' => __("Saving :title ...", ['title' => $this->title]),
+            's_saved' => __(":title saved successfully.", ['title' => $this->title]),
+        ]);
+    }
+
+    protected function get_title(): string {
+        return $this->object_count === 1
+            ? $this->object->title ?? __($this->interface->s_object_id, [
+                'id' => $this->object->id,
+            ])
+            : __($this->interface->s_n_objects, [
+                'count' => $this->object_count,
+            ]);
+    }
 }

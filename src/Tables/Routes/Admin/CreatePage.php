@@ -19,10 +19,23 @@ class CreatePage extends Route
             'route_name' => $this->route_name,
             'title' => __($this->interface->s_new_object),
             'object' => $this->object,
+            'form_url' => $this->form_url,
+            'form_options' => $this->form_options,
         ]);
     }
 
    protected function get_object(): \stdClass {
         return new \stdClass();
+    }
+
+    protected function get_form_url(): string {
+        return $this->interface->url('POST /create');
+    }
+
+    protected function get_form_options(): array {
+        return array_merge(parent::get_form_options(), [
+            's_saving' => $this->interface->s_saving_new_object,
+            's_saved' => $this->interface->s_new_object_saved,
+        ]);
     }
 }

@@ -37,6 +37,18 @@ class Interface_ extends Object_
         return "{$osm_app->area_url}{$this->url}{$routeName}";
     }
 
+    public function filterUrl(string $url, array $appliedFilters): string {
+        $delimiter = mb_strpos($url, '?') !== false ? '&' : '?';
+
+        foreach ($appliedFilters as $propertyName => $appliedFilter) {
+            $url .= $delimiter;
+            $url .= $this->class->filters[$propertyName]->url($appliedFilter);
+            $delimiter = '&';
+        }
+
+        return $url;
+    }
+
     protected function get_class(): Class_ {
         throw new Required(__METHOD__);
     }

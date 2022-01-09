@@ -27,6 +27,8 @@ use Osm\Framework\Http\Route as BaseRoute;
  * @property \stdClass[]|null $objects
  * @property \stdClass $object
  * @property string[] $columns
+ * @property string $form_url
+ * @property array $form_options
  */
 class Route extends BaseRoute
 {
@@ -130,6 +132,17 @@ class Route extends BaseRoute
         throw new NotImplemented($this);
     }
 
-    protected function get_columns() :array {
+    protected function get_columns(): array {
+        return [];
+    }
+
+    protected function get_form_url(): string {
         throw new NotImplemented($this);
-    }}
+    }
+
+    protected function get_form_options(): array {
+        return [
+            'route_name' => $this->route_name,
+        ];
+    }
+}

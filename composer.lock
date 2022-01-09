@@ -254,16 +254,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.2.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "5d54f63541d7bed1156cb5c9b79274ced61890e4"
+                "reference": "4caf37acf14b513a91dd4f087f7eda424fa25542"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/5d54f63541d7bed1156cb5c9b79274ced61890e4",
-                "reference": "5d54f63541d7bed1156cb5c9b79274ced61890e4",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/4caf37acf14b513a91dd4f087f7eda424fa25542",
+                "reference": "4caf37acf14b513a91dd4f087f7eda424fa25542",
                 "shasum": ""
             },
             "require": {
@@ -278,14 +278,14 @@
             "require-dev": {
                 "doctrine/coding-standard": "9.0.0",
                 "jetbrains/phpstorm-stubs": "2021.1",
-                "phpstan/phpstan": "1.2.0",
+                "phpstan/phpstan": "1.3.0",
                 "phpstan/phpstan-strict-rules": "^1.1",
-                "phpunit/phpunit": "9.5.10",
+                "phpunit/phpunit": "9.5.11",
                 "psalm/plugin-phpunit": "0.16.1",
-                "squizlabs/php_codesniffer": "3.6.1",
+                "squizlabs/php_codesniffer": "3.6.2",
                 "symfony/cache": "^5.2|^6.0",
                 "symfony/console": "^2.0.5|^3.0|^4.0|^5.0|^6.0",
-                "vimeo/psalm": "4.13.0"
+                "vimeo/psalm": "4.16.1"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -345,7 +345,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.2.0"
+                "source": "https://github.com/doctrine/dbal/tree/3.2.1"
             },
             "funding": [
                 {
@@ -361,7 +361,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-26T21:00:12+00:00"
+            "time": "2022-01-05T08:52:06+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -1792,16 +1792,16 @@
         },
         {
             "name": "osmphp/framework",
-            "version": "v0.14.7",
+            "version": "v0.14.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/framework.git",
-                "reference": "dcdb68a25d1ab2b56f0558d28e8bf3d2b5b2a60a"
+                "reference": "23d9cf1c604bbd4d1c90de6d65137ac6c33dc97d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/framework/zipball/dcdb68a25d1ab2b56f0558d28e8bf3d2b5b2a60a",
-                "reference": "dcdb68a25d1ab2b56f0558d28e8bf3d2b5b2a60a",
+                "url": "https://api.github.com/repos/osmphp/framework/zipball/23d9cf1c604bbd4d1c90de6d65137ac6c33dc97d",
+                "reference": "23d9cf1c604bbd4d1c90de6d65137ac6c33dc97d",
                 "shasum": ""
             },
             "require": {
@@ -1834,6 +1834,7 @@
                     "src/Blade/functions.php",
                     "src/Cache/functions.php",
                     "src/Http/functions.php",
+                    "src/Js/functions.php",
                     "src/Logs/functions.php",
                     "src/Translations/functions.php",
                     "src/Themes/functions.php"
@@ -1857,9 +1858,9 @@
             "description": "Osm Framework is an open-source, insanely fast, unprecedentedly extensible, and fun to work with PHP 8 framework for creating modern Web applications. It's built on top of tried and tested Symfony and Laravel components.",
             "support": {
                 "issues": "https://github.com/osmphp/framework/issues",
-                "source": "https://github.com/osmphp/framework/tree/v0.14.7"
+                "source": "https://github.com/osmphp/framework/tree/v0.14.8"
             },
-            "time": "2022-01-02T19:41:03+00:00"
+            "time": "2022-01-09T09:39:41+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

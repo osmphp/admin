@@ -47,35 +47,65 @@ class EditPage extends Route
     }
 
     protected function get_object(): \stdClass {
+        $this->merge();
+
+        return $this->object;
+    }
+
+    protected function get_multiple(): array {
+        $this->merge();
+
+        return $this->multiple;
+    }
+
+    protected function merge(): void {
         if (!$this->object_count) {
             throw new NotSupported(__("Edit form should not be rendered for empty data set."));
         }
 
+        $this->multiple = [];
+
         if ($this->object_count === 1) {
-            return $this->objects[0];
+            $this->object = $this->objects[0];
+            return;
         }
 
-        $mergedObject = new \stdClass();
+        $this->object = new \stdClass();
 
         if (!$this->objects) {
-            return $mergedObject;
+            // if there are too many objects to merge
+            foreach ($this->columns as $column) {
+                $this->multiple[$column] = true;
+            }
+
+            return;
         }
 
         foreach ($this->columns as $column) {
             foreach ($this->objects as $key => $object) {
                 if ($key === 0) {
-                    $mergedObject->{$column} = $object->{$column};
+                    if (isset($object->{$column})) {
+                        $this->object->{$column} = $object->{$column};
+                    }
                     continue;
                 }
 
-                if ($mergedObject->{$column} !== $object->{$column}) {
-                    unset($mergedObject->{$column});
+                if (!isset($object->{$column})) {
+                    if (isset($this->object->{$column})) {
+                        unset($this->object->{$column});
+                        $this->multiple[$column] = true;
+                        break;
+                    }
+                    continue;
+                }
+
+                if (($this->object->{$column} ?? null) !== $object->{$column}) {
+                    unset($this->object->{$column});
+                    $this->multiple[$column] = true;
                     break;
                 }
             }
         }
-
-        return $mergedObject;
     }
 
     protected function get_form_url(): string {

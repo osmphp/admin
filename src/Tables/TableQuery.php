@@ -268,7 +268,13 @@ class TableQuery extends Query
         }
 
         if (!empty($data)) {
-            $values['data'] = json_encode((object)$data);
+            foreach ($data as $propertyName => $value) {
+                if ($value === null) {
+                    unset($data[$propertyName]);
+                }
+            }
+
+            $values['data'] = !empty($data) ? json_encode((object)$data) : null;
         }
 
         return $values;

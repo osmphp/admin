@@ -27,6 +27,7 @@ use Osm\Framework\Http\Route as BaseRoute;
  * @property AppliedFilters[] $applied_filters
  * @property \stdClass[]|null $objects
  * @property \stdClass $object
+ * @property array $multiple
  * @property string[] $columns
  * @property string $form_url
  * @property array $options
@@ -134,6 +135,10 @@ class Route extends BaseRoute
         throw new NotImplemented($this);
     }
 
+    protected function get_multiple(): array {
+        return [];
+    }
+
     protected function get_columns(): array {
         return [];
     }
@@ -152,16 +157,10 @@ class Route extends BaseRoute
         $fieldOptions = [];
 
         foreach ($this->form->fields() as $field) {
-            $valueExists = property_exists($this->object, $field->name);
-            $options = [
-                'initial_value_exists' => $valueExists,
+            $fieldOptions[$field->name] = [
+                'value' => $this->object->{$field->name} ?? null,
+                'multiple' => $this->multiple[$field->name] ?? false,
             ];
-
-            if ($valueExists) {
-                $options['initial_value'] = $this->object->{$field->name};
-            }
-
-            $fieldOptions[$field->name] = $options;
         }
 
         return $fieldOptions;

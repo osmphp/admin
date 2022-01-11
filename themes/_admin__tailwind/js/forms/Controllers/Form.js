@@ -27,6 +27,7 @@ export default register('form', class Form extends Controller {
             return response.json();
         })
         .then(json => {
+            this.accept();
             if (json.url) {
                 location.href = json.url;
             }
@@ -72,5 +73,9 @@ export default register('form', class Form extends Controller {
         this.fields.forEach(field => field.data(data));
 
         return data;
+    }
+
+    accept() {
+        this.fields.forEach(field => field.accept());
     }
 });

@@ -39,8 +39,8 @@ export default class Input extends Field {
 
         this.input_element.value = this.initial_value;
         this.input_element.placeholder = cleared
-            ? '<empty>'
-            : '<multiple values>';
+            ? this.options.s_empty
+            : this.options.s_multiple_values;
     }
 
     reset() {

@@ -13,6 +13,7 @@ use Osm\Core\BaseModule;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Framework\Http\Route as BaseRoute;
+use function Osm\__;
 
 /**
  * @property string $class_name
@@ -161,6 +162,13 @@ class Route extends BaseRoute
                 'value' => $this->object->{$field->name} ?? null,
                 'multiple' => $this->multiple[$field->name] ?? false,
             ];
+
+            if ($fieldOptions[$field->name]['multiple']) {
+                $fieldOptions[$field->name]['s_multiple_values'] =
+                    __("<multiple values>");
+                $fieldOptions[$field->name]['s_empty'] =
+                    __("<empty>");
+            }
         }
 
         return $fieldOptions;

@@ -12,8 +12,8 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var callable $editUrl */
 ?>
 <x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
-    <div class="grid_ container mx-auto px-4 grid grid-cols-12">
-        <div class="col-start-1 col-span-12"
+    <div class="container mx-auto px-4 grid grid-cols-12">
+        <div class="grid_ col-start-1 col-span-12"
             data-js-grid='{!! \Osm\js($options) !!}'
         >
             <section>

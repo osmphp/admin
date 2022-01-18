@@ -1,6 +1,6 @@
-<div class="table-cell py-3 px-6 text-xs font-medium
+<div class="grid__row-handle table-cell py-3 px-6 text-xs font-medium
     tracking-wider text-left text-gray-700 uppercase
-    dark:text-gray-400 text-center w-10"
+    dark:text-gray-400 text-center w-10 cursor-pointer"
 >
     <input type="checkbox"
         class="w-4 h-4 bg-gray-50 rounded border

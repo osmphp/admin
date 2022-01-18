@@ -72,7 +72,7 @@ class EditPage extends Route
 
         $this->object = new \stdClass();
 
-        if (!$this->objects) {
+        if ($this->object_count > static::MAX_MERGED_OBJECTS) {
             // if there are too many objects to merge
             foreach ($this->columns as $column) {
                 $this->multiple[$column] = true;

@@ -2,6 +2,8 @@
 
 namespace Osm\Admin\Grids;
 
+use Osm\Admin\Base\Attributes\Markers\Grid\Column as ColumnMarker;
+use Osm\Admin\Interfaces\Interface_;
 use Osm\Admin\Schema\Class_;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
@@ -11,63 +13,72 @@ use Osm\Core\Attributes\Serialized;
 use Osm\Core\Traits\SubTypes;
 
 /**
+ * @property Interface_ $interface
  * @property Class_ $class
- * @property string $area_class_name #[Serialized]
- * @property ?string $name #[Serialized]
- * @property string $url #[Serialized]
- * @property Column[] $columns
+ * @property Column[] $columns #[Serialized]
  * @property string[] $select #[Serialized]
- * @property array $routes #[Serialized]
- * @property bool $multiselect #[Serialized]
- * @property bool $editable #[Serialized]
- * @property bool $can_create #[Serialized]
  */
 class Grid extends Object_
 {
-    use SubTypes;
+    public string $template = 'grids::grid';
+
+    protected function get_interface(): Interface_ {
+        throw new Required(__METHOD__);
+    }
 
     protected function get_class(): Class_ {
-        throw new Required(__METHOD__);
-    }
-
-    protected function get_area_class_name(): string {
-        throw new Required(__METHOD__);
-    }
-
-    protected function get_url(): string {
-        throw new Required(__METHOD__);
+        return $this->interface->class;
     }
 
     protected function get_columns(): array {
-        $columns = [];
+        global $osm_app; /* @var App $osm_app */
 
-        foreach ($this->select as $name) {
-            $property = $this->class->properties[$name];
+        $fields = [];
 
-            if ($property->grid_column) {
-                $columns[$property->name] = $property->grid_column;
+        foreach ($this->select as $identifier) {
+            $property = $this->interface->class->properties[$identifier];
+
+            foreach ($property->reflection->attributes as
+                     $attributeClassName => $attribute)
+            {
+                if (!($attributeClass = $osm_app->classes[$attributeClassName]
+                    ?? null))
+                {
+                    continue;
+                }
+
+                /* @var ColumnMarker $marker */
+                if (!($marker = $attributeClass->attributes[ColumnMarker::class]
+                    ?? null))
+                {
+                    continue;
+                }
+
+                $data = (array)$attribute;
+
+                $new = $osm_app->classes[Column::class]
+                        ->getTypeClassName($marker->type) . "::new";
+
+                $fields[$property->name] = $new(array_merge([
+                    'grid' => $this,
+                    'name' => $property->name,
+                ], $data));
+
+                break;
             }
         }
 
-        return $columns;
+        return $fields;
     }
 
     protected function get_select(): array {
         throw new Required(__METHOD__);
     }
 
-    protected function get_routes(): array {
-        return [
-            $this->area_class_name => [
-                "GET {$this->url}" => [ Routes\Admin\RenderGridPage::class => [
-                    'class_name' => $this->class->name,
-                    'grid_name' => $this->name,
-                ]],
-            ],
-        ];
-    }
-
-    protected function get_name(): string {
-        return "{$this->area_class_name}:{$this->url}";
+    public function __wakeup(): void
+    {
+        foreach ($this->columns as $column) {
+            $column->grid = $this;
+        }
     }
 }

@@ -14,7 +14,7 @@ use Osm\Framework\Areas\Admin;
 /**
  * @property Grid[] $grids #[Serialized]
  */
-#[UseIn(Class_::class)]
+//#[UseIn(Class_::class)]
 trait ClassTrait
 {
     protected function get_grids(): array {

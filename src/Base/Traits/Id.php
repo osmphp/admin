@@ -11,7 +11,7 @@ use Osm\Admin\Base\Attributes\Filter;
  * @property int $id #[
  *      Serialized,
  *      Table\Increments,
- *      Grid\PrimaryKey('ID'),
+ *      Grid\Int_('ID'),
  *      Filter\Id
  * ]
  */

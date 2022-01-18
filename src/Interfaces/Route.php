@@ -125,10 +125,6 @@ class Route extends BaseRoute
     }
 
     protected function get_objects(): ?array {
-        if ($this->object_count > static::MAX_MERGED_OBJECTS) {
-            return null;
-        }
-
         return $this->query->get();
     }
 

@@ -4,7 +4,6 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var string $route_name */
 /* @var int $object_id */
 /* @var int $object_count */
-/* @var string $page_title */
 /* @var string $title */
 /* @var \stdClass $object */
 /* @var string $form_url */

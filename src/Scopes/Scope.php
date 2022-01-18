@@ -17,6 +17,7 @@ use Osm\Admin\Base\Attributes\Table;
  * @property ?int $parent_id #[
  *      Serialized,
  *      Table\Int_(unsigned: true, references: 'scopes.id', on_delete: 'cascade'),
+ *      Grid\Int_('Parent Scope'),
  *      Form\Int_(10, 'Parent Scope'),
  * ]
  * @property ?int $level #[
@@ -40,7 +41,7 @@ use Osm\Admin\Base\Attributes\Table;
     Storage\Scopes,
     Interface_\Table\Admin('/scopes', 'Scope'),
     Icon('/scopes/', 'Scopes'),
-    Grid('/scopes/', 'Scopes', select: ['id', 'title']),
+    Grid(['id', 'parent_id', 'title']),
 ]
 class Scope extends Object_
 {

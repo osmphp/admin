@@ -24,7 +24,7 @@ class test_15_grids extends TestCase
 
         // THEN it has columns specified in PHP attributes
         $this->assertArrayHasKey('id', $grid->columns);
-        $this->assertInstanceOf(Column\PrimaryKey::class,
+        $this->assertInstanceOf(Column\Id::class,
             $grid->columns['id']);
         $this->assertArrayHasKey('title', $grid->columns);
         $this->assertInstanceOf(Column\String_::class,

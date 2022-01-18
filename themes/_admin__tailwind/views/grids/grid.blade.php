@@ -1,0 +1,74 @@
+<?php
+global $osm_app; /* @var \Osm\Core\App $osm_app */
+/* @var \Osm\Admin\Grids\Grid $grid */
+/* @var string $route_name */
+/* @var int $object_count */
+/* @var string $title */
+/* @var \stdClass[] $objects */
+/* @var array $options */
+/* @var string $create_url */
+?>
+<x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
+    <div class="grid_ container mx-auto px-4 grid grid-cols-12">
+        <div class="col-start-1 col-span-12"
+            data-js-grid='{!! \Osm\js($options) !!}'
+        >
+            <section>
+                <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
+                    {{ $title }}
+                </h1>
+                <div class="my-4">
+                    <a href="{{ $create_url }}"
+                        class="text-white bg-blue-700
+                            hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
+                            font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                            mr-3 mb-3">{{ \Osm\__("Create")}}</a>
+                </div>
+            </section>
+            <section class="overflow-hidden shadow-md sm:rounded-lg">
+                <div class="table min-w-full border-collapse">
+                    <div class="table-header-group bg-gray-50 dark:bg-gray-700">
+                        <div class="table-row">
+                            @include('grids::header.handle')
+                            @foreach ($grid->columns as $column)
+                                @include($column->header_template, [
+                                    'column' => $column,
+                                ])
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="table-row-group">
+                        @forelse($objects as $object)
+                            <div class="grid__row table-row bg-white border-b
+                                dark:bg-gray-800 dark:border-gray-700"
+                                data-js-row='{"id": {{ $object->id }}}'
+                            >
+                            <div class="table-cell py-3 px-6 text-xs font-medium
+                                tracking-wider text-left text-gray-700 uppercase
+                                dark:text-gray-400"
+                            >
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox"
+                                            class="w-4 h-4 bg-gray-50 rounded border
+                                                border-gray-300 focus:ring-3
+                                                focus:ring-blue-300 dark:bg-gray-700
+                                                dark:border-gray-600 dark:focus:ring-blue-600
+                                                dark:ring-offset-gray-800">
+                                    </div>
+                                </div>
+                                @foreach ($grid->columns as $column)
+                                    @include($column->template, [
+                                        'column' => $column,
+                                        'object' => $object,
+                                    ])
+                                @endforeach
+                            </div>
+                        @empty
+                            No objects.
+                        @endforelse
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</x-std-pages::layout>

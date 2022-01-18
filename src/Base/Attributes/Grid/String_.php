@@ -7,7 +7,10 @@ use Osm\Admin\Base\Attributes\Markers\Grid\Column;
 #[\Attribute(\Attribute::TARGET_PROPERTY), Column('string')]
 final class String_
 {
-    public function __construct(public string $title)
+    public function __construct(
+        public string $title,
+        public bool $edit_link = false,
+    )
     {
     }
 }

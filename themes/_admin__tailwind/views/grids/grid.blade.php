@@ -1,12 +1,15 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var \Osm\Admin\Grids\Grid $grid */
+/* @var \Osm\Admin\Interfaces\Interface_ $interface */
 /* @var string $route_name */
 /* @var int $object_count */
 /* @var string $title */
 /* @var \stdClass[] $objects */
 /* @var array $options */
 /* @var string $create_url */
+/* @var string $edit_url */
+/* @var callable $editUrl */
 ?>
 <x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
     <div class="grid_ container mx-auto px-4 grid grid-cols-12">
@@ -43,19 +46,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                 dark:bg-gray-800 dark:border-gray-700"
                                 data-js-row='{"id": {{ $object->id }}}'
                             >
-                            <div class="table-cell py-3 px-6 text-xs font-medium
-                                tracking-wider text-left text-gray-700 uppercase
-                                dark:text-gray-400"
-                            >
-                                    <div class="flex items-center h-5">
-                                        <input type="checkbox"
-                                            class="w-4 h-4 bg-gray-50 rounded border
-                                                border-gray-300 focus:ring-3
-                                                focus:ring-blue-300 dark:bg-gray-700
-                                                dark:border-gray-600 dark:focus:ring-blue-600
-                                                dark:ring-offset-gray-800">
-                                    </div>
-                                </div>
+                                @include ('grids::cell.handle')
                                 @foreach ($grid->columns as $column)
                                     @include($column->template, [
                                         'column' => $column,

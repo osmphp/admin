@@ -30,7 +30,7 @@ use Osm\Admin\Base\Attributes\Table;
  * ]
  * @property ?string $title #[
  *      Serialized,
- *      Grid\String_('Title'),
+ *      Grid\String_('Title', edit_link: true),
  *      Form\String_(20, 'Title'),
  * ]
  * @property string $prefix

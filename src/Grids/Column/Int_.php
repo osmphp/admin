@@ -10,5 +10,6 @@ use Osm\Core\Attributes\Type;
 class Int_ extends Column
 {
     public string $header_template = 'grids::header.int';
+    public string $template = 'grids::cell.int';
 
 }

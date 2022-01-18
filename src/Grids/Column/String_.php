@@ -10,5 +10,6 @@ use Osm\Core\Attributes\Type;
 class String_ extends Column
 {
     public string $header_template = 'grids::header.string';
+    public string $template = 'grids::cell.string';
 
 }

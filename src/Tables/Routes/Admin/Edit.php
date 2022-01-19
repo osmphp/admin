@@ -22,10 +22,6 @@ class Edit extends Route
             return plain_response(__("Object expected"), 500);
         }
 
-        if (empty($this->query->filters)) {
-            return plain_response(__("Filter(s) expected"), 500);
-        }
-
         $this->query->update($item);
 
         return json_response((object)[]);

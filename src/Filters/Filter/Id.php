@@ -8,6 +8,7 @@ use Osm\Admin\Filters\Hints\AppliedFilters;
 use Osm\Admin\Queries\Query;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\NotSupported;
 
 #[Type('id')]
 class Id extends Filter
@@ -43,23 +44,43 @@ class Id extends Filter
 
     /**
      * @param Query $query
+     * @param string $operator
      * @param AppliedFilter[] $values
      * @return void
      */
-    protected function apply_equals(Query $query, array $values): void {
-        if (count($values) === 1) {
-            $query->equals($this->name, $values[0]->value);
-        }
-        else {
-            $query->in($this->name,
-                array_map(fn($value) => $value->value, $values));
+    protected function apply_equals(Query $query, string $operator,
+        array $values): void
+    {
+        switch ($operator) {
+            case static::EQUALS:
+                if (count($values) === 1) {
+                    $query->equals($this->name, $values[0]->value);
+                }
+                else {
+                    $query->in($this->name,
+                        array_map(fn($value) => $value->value, $values));
+                }
+                break;
+            case static::NOT_EQUALS:
+                if (count($values) === 1) {
+                    $query->notEquals($this->name, $values[0]->value);
+                }
+                else {
+                    $query->notIn($this->name,
+                        array_map(fn($value) => $value->value, $values));
+                }
+                break;
+            default:
+                throw new NotSupported();
         }
     }
 
     public function url_equals(\stdClass|AppliedFilters $appliedFilters): string {
-        return "{$this->name}=" . implode('+', array_map(
-            fn(AppliedFilter\Id $value) => $value->value,
-            $appliedFilters->values)
+        return "{$this->name}{$this->operatorUrl($appliedFilters->operator)}=" .
+            implode('+', array_map(
+                fn(AppliedFilter\Id $value) => $value->value,
+                $appliedFilters->values
+            )
         );
     }
 }

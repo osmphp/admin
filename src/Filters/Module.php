@@ -17,6 +17,7 @@ class Module extends BaseModule
 
     protected function get_operators(): array {
         return [
+            '-' => Filter::NOT_EQUALS,
             '' => Filter::EQUALS,
         ];
     }

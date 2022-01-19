@@ -6,6 +6,7 @@ use Osm\Admin\Filters\AppliedFilter;
 use Osm\Admin\Filters\Hints\AppliedFilters;
 use Osm\Admin\Filters\Module as FilterModule;
 use Osm\Admin\Forms\Field;
+use Osm\Admin\Interfaces\Exceptions\FilterExpected;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Class_;
 use Osm\Core\App;
@@ -119,6 +120,12 @@ class Route extends BaseRoute
 
                 break;
             }
+        }
+
+        if (empty($appliedFilters)
+            && ($this->http->query['all'] ?? null) !== true)
+        {
+            throw new FilterExpected(__("Filter(s) expected"));
         }
 
         return $appliedFilters;

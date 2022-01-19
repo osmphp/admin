@@ -28,7 +28,6 @@ class GridPage extends Route
             'objects' => $this->objects,
             'options' => $this->options,
             'create_url' => $this->create_url,
-            'edit_url' => $this->edit_url,
             'editUrl' => fn ($object) => $this->editUrl($object),
         ]);
     }
@@ -53,6 +52,7 @@ class GridPage extends Route
         return [
             's_selected' => $this->interface->s_n_m_objects_selected,
             'count' => $this->object_count,
+            'edit_url' => $this->edit_url,
         ];
     }
 }

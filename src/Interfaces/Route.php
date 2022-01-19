@@ -145,9 +145,7 @@ class Route extends BaseRoute
     }
 
     protected function get_options(): array {
-        return [
-            'route_name' => $this->route_name,
-        ];
+        throw new NotImplemented($this);
     }
 
     protected function get_field_options(): array {

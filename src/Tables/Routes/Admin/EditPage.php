@@ -115,10 +115,11 @@ class EditPage extends Route
     }
 
     protected function get_options(): array {
-        return array_merge(parent::get_options(), [
+        return [
+            'route_name' => $this->route_name,
             's_saving' => __("Saving :title ...", ['title' => $this->title]),
             's_saved' => __(":title saved successfully.", ['title' => $this->title]),
-        ]);
+        ];
     }
 
     protected function get_title(): string {

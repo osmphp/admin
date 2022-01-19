@@ -10,11 +10,13 @@ use function Osm\__;
 /**
  * @property string $s_object #[Serialized]
  * @property string $s_objects #[Serialized]
+ * @property string $s_object_s #[Serialized]
  * @property string $s_new_object #[Serialized]
  * @property string $s_saving_new_object #[Serialized]
  * @property string $s_new_object_saved #[Serialized]
  * @property string $s_n_objects #[Serialized]
  * @property string $s_object_id #[Serialized]
+ * @property string $s_n_m_objects_selected #[Serialized]
  */
 class Admin extends Interface_
 {
@@ -24,6 +26,10 @@ class Admin extends Interface_
 
     protected function get_s_objects(): string {
         return "{$this->s_object}s";
+    }
+
+    protected function get_s_object_s(): string {
+        return "{$this->s_object}(s)";
     }
 
     protected function get_s_new_object(): string {
@@ -46,5 +52,11 @@ class Admin extends Interface_
 
     protected function get_s_object_id(): string {
         return "{$this->s_object} #:id";
+    }
+
+    protected function get_s_n_m_objects_selected(): string {
+        $object_s = mb_strtolower($this->s_object_s);
+
+        return ":selected / :count {$object_s} selected";
     }
 }

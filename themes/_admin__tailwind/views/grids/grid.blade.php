@@ -20,6 +20,14 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                 <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
                     {{ $title }}
                 </h1>
+                <p class="text-sm mb-6">
+                    <span class="grid__selected">
+                        {{ \Osm\__($interface->s_n_m_objects_selected, [
+                            'selected' => 0,
+                            'count' => $object_count,
+                        ]) }}
+                    </span>
+                </p>
                 <div class="my-4">
                     <a href="{{ $create_url }}"
                         class="text-white bg-blue-700

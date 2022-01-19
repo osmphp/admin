@@ -48,4 +48,11 @@ class GridPage extends Route
     protected function editUrl(\stdClass $object): string {
         return "{$this->edit_url}?id={$object->id}";
     }
+
+    protected function get_options(): array {
+        return [
+            's_selected' => $this->interface->s_n_m_objects_selected,
+            'count' => $this->object_count,
+        ];
+    }
 }

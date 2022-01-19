@@ -34,9 +34,10 @@ class CreatePage extends Route
     }
 
     protected function get_options(): array {
-        return array_merge(parent::get_options(), [
+        return [
+            'route_name' => $this->route_name,
             's_saving' => $this->interface->s_saving_new_object,
             's_saved' => $this->interface->s_new_object_saved,
-        ]);
+        ];
     }
 }

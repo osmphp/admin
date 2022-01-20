@@ -34,6 +34,7 @@ use function Osm\__;
  * @property string $form_url
  * @property array $options
  * @property array $field_options
+ * @property bool $can_show_all
  */
 class Route extends BaseRoute
 {
@@ -101,6 +102,10 @@ class Route extends BaseRoute
                     $propertyName = $key;
                 }
 
+                if ($this->can_show_all && $propertyName === 'id') {
+                    continue;
+                }
+
                 if (!($filter = $this->class->filters[$propertyName] ?? null)) {
                     continue;
                 }
@@ -123,6 +128,7 @@ class Route extends BaseRoute
         }
 
         if (empty($appliedFilters)
+            && !$this->can_show_all
             && ($this->http->query['all'] ?? null) !== true)
         {
             throw new FilterExpected(__("Filter(s) expected"));

@@ -18,6 +18,8 @@ use function Osm\view_response;
 #[Interface_(Admin::class), Name('GET /')]
 class GridPage extends Route
 {
+    public bool $can_show_all = true;
+
     public function run(): Response {
         return view_response($this->grid->template, [
             'grid' => $this->grid,

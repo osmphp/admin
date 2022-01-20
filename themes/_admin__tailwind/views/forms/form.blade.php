@@ -48,6 +48,11 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                     hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
                                     font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                     mr-3 mb-3">{{ \Osm\__("Save")}}</button>
+                            <button type="button"
+                                class="form__action -delete text-white bg-red-700
+                                    hover:bg-red-800 focus:ring-4 focus:ring-red-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                                    mr-3 mb-3">{{ \Osm\__("Delete")}}</button>
                         </div>
                     @else
                         <h1 class="text-2xl sm:text-4xl pt-6 border-t border-gray-300">
@@ -71,6 +76,11 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                     hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
                                     font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                     mr-3 mb-3">{{ \Osm\__("Save")}}</button>
+                            <button type="button"
+                                class="form__action -delete text-white bg-red-700
+                                    hover:bg-red-800 focus:ring-4 focus:ring-red-300
+                                    font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                                    mr-3 mb-3">{{ \Osm\__("Delete")}}</button>
                         </div>
                     @endif
                 @else

@@ -7,6 +7,7 @@ export default register('form', class Form extends Controller {
     get events() {
         return Object.assign({}, super.events, {
             'submit': 'onSubmit',
+            'click .form__action.-delete': 'onDelete',
         });
     }
 
@@ -31,6 +32,22 @@ export default register('form', class Form extends Controller {
             if (json.url) {
                 location.href = json.url;
             }
+        })
+        .catch(() => null);
+    }
+
+    onDelete() {
+        fetch(this.options.delete_url, {
+            method: 'DELETE',
+            message: this.options.s_deleting,
+        })
+        .then(response => {
+            notice(this.options.s_deleted);
+
+            return response.json();
+        })
+        .then(json => {
+            location.href = json.url;
         })
         .catch(() => null);
     }

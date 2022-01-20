@@ -14,6 +14,7 @@ use function Osm\view_response;
 
 /**
  * @property string $title
+ * @property string $delete_url
  */
 #[Interface_(Admin::class), Name('GET /edit')]
 class EditPage extends Route
@@ -115,11 +116,20 @@ class EditPage extends Route
         return $this->interface->filterUrl($url, $this->applied_filters);
     }
 
+    protected function get_delete_url(): string {
+        $url = $this->interface->url('DELETE /');
+
+        return $this->interface->filterUrl($url, $this->applied_filters);
+    }
+
     protected function get_options(): array {
         return [
             'route_name' => $this->route_name,
             's_saving' => __("Saving :title ...", ['title' => $this->title]),
             's_saved' => __(":title saved successfully.", ['title' => $this->title]),
+            'delete_url' => $this->delete_url,
+            's_deleting' => __("Deleting :title ...", ['title' => $this->title]),
+            's_deleted' => __(":title deleted.", ['title' => $this->title]),
         ];
     }
 

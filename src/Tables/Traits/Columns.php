@@ -10,6 +10,7 @@ use Osm\Core\Attributes\Serialized;
 
 /**
  * @property Column[] $columns #[Serialized]
+ * @property string[] $data_property_names #[Serialized]
  */
 trait Columns
 {
@@ -55,5 +56,17 @@ trait Columns
         foreach ($this->columns as $column) {
             $column->table = $this;
         }
+    }
+
+    protected function get_data_property_names(): array {
+        $propertyNames = [];
+
+        foreach ($this->class->properties as $property) {
+            if (!isset($this->columns[$property->name])) {
+                $propertyNames[] = $property->name;
+            }
+        }
+
+        return $propertyNames;
     }
 }

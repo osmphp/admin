@@ -16,19 +16,16 @@ use Osm\Admin\Base\Attributes\Table;
 /**
  * @property string $sku #[
  *      Serialized,
- *      Table\String_,
  *      Grid\String_('SKU', edit_link: true),
  *      Form\String_(10, 'SKU'),
  * ]
  * @property string $title #[
  *      Serialized,
- *      Table\String_,
  *      Grid\String_('Title', edit_link: true),
  *      Form\String_(20, 'Title'),
  * ]
  * @property ?string $description #[
  *      Serialized,
- *      Table\String_,
  *      Grid\String_('Description'),
  *      Form\String_(30, 'Description'),
  * ]

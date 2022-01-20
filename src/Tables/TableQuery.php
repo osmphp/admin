@@ -306,7 +306,13 @@ class TableQuery extends Query
                 return;
             }
 
-            $this->select(...$this->notify_updates_with)->orderBy('id');
+            $this
+                ->select(...$this->notify_updates_with)
+                ->orderBy('id');
+
+            if ($this->savingDataProperties($data)) {
+                $this->select(...$this->storage->data_property_names);
+            }
 
             $this->chunk(function (\stdClass $item) use ($data) {
                 $data = merge($item, $data);
@@ -414,5 +420,16 @@ class TableQuery extends Query
 
     protected function deleteCommitted(): void {
         $this->indexing->index();
+    }
+
+    protected function savingDataProperties(\stdClass $data): bool
+    {
+        foreach ($data as $propertyName => $value) {
+            if (in_array($propertyName, $this->storage->data_property_names)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

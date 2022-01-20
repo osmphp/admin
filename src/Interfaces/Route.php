@@ -190,7 +190,8 @@ class Route extends BaseRoute
         $appliedFilters = $this->applied_filters;
         unset($appliedFilters['id']);
 
-        return $this->interface->filterUrl($url, $appliedFilters);
+        return $this->interface->filterUrl($url, $appliedFilters,
+            canShowAll: true);
     }
 
     protected function get_delete_url(): string {

@@ -37,7 +37,13 @@ class Interface_ extends Object_
         return "{$osm_app->area_url}{$this->url}{$routeName}";
     }
 
-    public function filterUrl(string $url, array $appliedFilters): string {
+    public function filterUrl(string $url, array $appliedFilters,
+        bool $canShowAll = false): string
+    {
+        if (empty($appliedFilters) && !$canShowAll) {
+            return "{$url}?all";
+        }
+
         $delimiter = mb_strpos($url, '?') !== false ? '&' : '?';
 
         foreach ($appliedFilters as $propertyName => $appliedFilter) {

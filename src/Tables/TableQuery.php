@@ -261,7 +261,7 @@ class TableQuery extends Query
         }
 
         foreach ($this->storage->columns as $column) {
-            if (isset($data[$column->name])) {
+            if (array_key_exists($column->name, $data)) {
                 $values[$column->name] = $data[$column->name];
                 unset($data[$column->name]);
             }
@@ -288,6 +288,11 @@ class TableQuery extends Query
         $this->db->transaction(function() use ($data) {
             if (is_array($data)) {
                 $data = (object)$data;
+            }
+
+            // don't do anything if there are no properties to update
+            if ($data == new \stdClass()) {
+                return;
             }
 
             $this->db->committed(function () use ($data) {

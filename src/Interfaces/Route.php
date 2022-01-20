@@ -35,6 +35,7 @@ use function Osm\__;
  * @property array $options
  * @property array $field_options
  * @property bool $can_show_all
+ * @property string $grid_url
  */
 class Route extends BaseRoute
 {
@@ -179,5 +180,15 @@ class Route extends BaseRoute
         }
 
         return $fieldOptions;
+    }
+
+
+    protected function get_grid_url(): string {
+        $url = $this->interface->url('GET /');
+
+        $appliedFilters = $this->applied_filters;
+        unset($appliedFilters['id']);
+
+        return $this->interface->filterUrl($url, $appliedFilters);
     }
 }

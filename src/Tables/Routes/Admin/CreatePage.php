@@ -13,6 +13,8 @@ use function Osm\view_response;
 #[Interface_(Admin::class), Name('GET /create')]
 class CreatePage extends Route
 {
+    public bool $can_show_all = true;
+
     public function run(): Response {
         return view_response($this->form->template, [
             'form' => $this->form,
@@ -22,6 +24,7 @@ class CreatePage extends Route
             'form_url' => $this->form_url,
             'options' => $this->options,
             'field_options' => $this->field_options,
+            'grid_url' => $this->grid_url,
         ]);
     }
 

@@ -29,6 +29,7 @@ class EditPage extends Route
             'form_url' => $this->form_url,
             'options' => $this->options,
             'field_options' => $this->field_options,
+            'grid_url' => $this->grid_url,
         ]);
     }
 

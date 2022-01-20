@@ -29,11 +29,16 @@ use Osm\Admin\Base\Attributes\Table;
  *      Grid\String_('Description'),
  *      Form\String_(30, 'Description'),
  * ]
+ * @property int $qty #[
+ *      Serialized,
+ *      Grid\Int_('Quantity'),
+ *      Form\Int_(40, 'Quantity'),
+ * ]
  */
 #[
     Storage\Table('products'),
     Interface_\Table\Admin('/products', 'Product'),
-    Grid(['sku', 'title']),
+    Grid(['sku', 'title', 'qty']),
 ]
 class Product extends Object_
 {

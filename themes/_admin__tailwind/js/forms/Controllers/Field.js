@@ -65,6 +65,9 @@ export default class Field extends Controller {
                 this.clear_element.classList.add('hidden');
             }
         }
+        else if (this.clear_element) {
+            this.clear_element.classList.add('hidden');
+        }
 
         if (this._cleared || this.changed) {
             this.reset_element.classList.remove('hidden');

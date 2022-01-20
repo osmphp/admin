@@ -1,5 +1,6 @@
 import Controller from "../../js/Controller";
 import {register, controller} from '../../js/scripts';
+import {notice, fetch} from '../../messages/var/messages';
 
 export default register('grid', class Grid extends Controller {
     _inverse_selection = false;
@@ -9,6 +10,7 @@ export default register('grid', class Grid extends Controller {
             // event selector
             'click .grid__row-handle': 'onRowHandleClick',
             'change .grid__row-handle input': 'onRowHandleChange',
+            'click .grid__action.-delete': 'onDelete',
         });
     }
 
@@ -76,10 +78,14 @@ export default register('grid', class Grid extends Controller {
         this.updateSelected();
     }
 
-    updateSelected() {
-        const selected = this._inverse_selection
+    get selected_count() {
+        return this._inverse_selection
             ? this.options.count - this.deselected_row_count
             : this.selected_row_count;
+    }
+
+    updateSelected() {
+        const selected = this.selected_count;
 
         this.selected_element.innerText = this.options.s_selected
             .replace(':selected', selected)
@@ -89,7 +95,7 @@ export default register('grid', class Grid extends Controller {
             this.action_elements.forEach(element => {
                 element.classList.remove('hidden');
             });
-            this.updateEditLink();
+            this.edit_action_element.href = this.filterUrl(this.options.edit_url);
         }
         else {
             this.action_elements.forEach(element => {
@@ -99,18 +105,34 @@ export default register('grid', class Grid extends Controller {
         }
     }
 
-    updateEditLink() {
+    filterUrl(url) {
         if (this._inverse_selection) {
             const ids = this.ids(false);
-            this.edit_action_element.href = this.options.edit_url +
-                (ids.length
-                    ? `?id-=${this.ids(false).join('+')}`
-                    : '?all'
-                );
+            return url + (ids.length
+                ? `?id-=${this.ids(false).join('+')}`
+                : '?all'
+            );
         }
         else {
-            this.edit_action_element.href = this.options.edit_url +
-                `?id=${this.ids(true).join('+')}`;
+            return url + `?id=${this.ids(true).join('+')}`;
         }
+    }
+
+    onDelete() {
+        fetch(this.filterUrl(this.options.delete_url), {
+            method: 'DELETE',
+            message: this.options.s_deleting
+                .replace(':selected', this.selected_count),
+        })
+        .then(response => {
+            notice(this.options.s_deleted
+                .replace(':selected', this.selected_count));
+
+            return response.json();
+        })
+        .then(json => {
+            location.href = json.url;
+        })
+        .catch(() => null);
     }
 });

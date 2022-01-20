@@ -17,6 +17,8 @@ use function Osm\__;
  * @property string $s_n_objects #[Serialized]
  * @property string $s_object_id #[Serialized]
  * @property string $s_n_m_objects_selected #[Serialized]
+ * @property string $s_deleting_n_objects #[Serialized]
+ * @property string $s_n_objects_deleted #[Serialized]
  */
 class Admin extends Interface_
 {
@@ -58,5 +60,17 @@ class Admin extends Interface_
         $object_s = mb_strtolower($this->s_object_s);
 
         return ":selected / :count {$object_s} selected";
+    }
+
+    protected function get_s_deleting_n_objects(): string {
+        $object_s = mb_strtolower($this->s_object_s);
+
+        return "Deleting :selected {$object_s} ...";
+    }
+
+    protected function get_s_n_objects_deleted(): string {
+        $object_s = mb_strtolower($this->s_object_s);
+
+        return ":selected {$object_s} deleted.";
     }
 }

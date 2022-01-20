@@ -39,6 +39,11 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                             hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
                             font-medium rounded-lg text-sm px-5 py-2.5 text-center
                             mr-3 mb-3">{{ \Osm\__("Edit")}}</a>
+                    <button type="button"
+                        class="grid__action -delete hidden text-white bg-red-700
+                            hover:bg-red-800 focus:ring-4 focus:ring-red-300
+                            font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                            mr-3 mb-3">{{ \Osm\__("Delete")}}</button>
                 </div>
             </section>
             <section class="overflow-hidden shadow-md sm:rounded-lg">

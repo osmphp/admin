@@ -36,6 +36,7 @@ use function Osm\__;
  * @property array $field_options
  * @property bool $can_show_all
  * @property string $grid_url
+ * @property string $delete_url
  */
 class Route extends BaseRoute
 {
@@ -190,5 +191,11 @@ class Route extends BaseRoute
         unset($appliedFilters['id']);
 
         return $this->interface->filterUrl($url, $appliedFilters);
+    }
+
+    protected function get_delete_url(): string {
+        $url = $this->interface->url('DELETE /');
+
+        return $this->interface->filterUrl($url, $this->applied_filters);
     }
 }

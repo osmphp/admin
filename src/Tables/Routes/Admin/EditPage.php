@@ -14,7 +14,6 @@ use function Osm\view_response;
 
 /**
  * @property string $title
- * @property string $delete_url
  */
 #[Interface_(Admin::class), Name('GET /edit')]
 class EditPage extends Route
@@ -112,12 +111,6 @@ class EditPage extends Route
 
     protected function get_form_url(): string {
         $url = $this->interface->url('POST /');
-
-        return $this->interface->filterUrl($url, $this->applied_filters);
-    }
-
-    protected function get_delete_url(): string {
-        $url = $this->interface->url('DELETE /');
 
         return $this->interface->filterUrl($url, $this->applied_filters);
     }

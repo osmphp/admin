@@ -52,9 +52,12 @@ class GridPage extends Route
 
     protected function get_options(): array {
         return [
-            's_selected' => $this->interface->s_n_m_objects_selected,
+            's_selected' => __($this->interface->s_n_m_objects_selected),
             'count' => $this->object_count,
             'edit_url' => $this->edit_url,
+            'delete_url' => $this->delete_url,
+            's_deleting' => __($this->interface->s_deleting_n_objects),
+            's_deleted' => __($this->interface->s_n_objects_deleted),
         ];
     }
 }

@@ -14,6 +14,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
     <div class="container mx-auto px-4 grid grid-cols-12">
         <section class="col-start-1 col-span-12">
             <form method="POST" action="{{ $form_url }}"
+                autocomplete="off"
                 data-js-form='{!! \Osm\js($options) !!}'>
 
                 @if ($route_name === 'GET /create')

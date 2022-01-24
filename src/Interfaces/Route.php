@@ -197,6 +197,9 @@ class Route extends BaseRoute
     protected function get_delete_url(): string {
         $url = $this->interface->url('DELETE /');
 
-        return $this->interface->filterUrl($url, $this->applied_filters);
+        // JS adds `?id=...` or `?all` to this URL, so `canShowAll: true`
+        // is used to prevent adding `?all` on the server-side
+        return $this->interface->filterUrl($url, $this->applied_filters,
+            canShowAll: true);
     }
 }

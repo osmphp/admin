@@ -6,4 +6,4 @@
 
 ## Application Programming Interface (API)
 
-## `query()` Function
+## Queries

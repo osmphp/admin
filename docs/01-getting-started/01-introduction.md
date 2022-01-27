@@ -1,12 +1,12 @@
 # Introduction
 
-Osm Admin is the admin area, and the API for your next PHP application that has simple configuration, is optimized for mass-editing and is incredibly customizable.
+Osm Admin is the admin area, and the API for your next PHP application that is optimized for mass-editing, with simple configuration and incredibly customizable.
 
 {{ toc }}
 
 ### meta.abstract
 
-Osm Admin is the admin area, and the API for your next PHP application that is optimized for mass-editing, has simple configuration and is incredibly customizable.
+Osm Admin is the admin area, and the API for your next PHP application that is optimized for mass-editing, with simple configuration and incredibly customizable.
 
 ## Your Workflow
 

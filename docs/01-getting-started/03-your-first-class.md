@@ -1,4 +1,4 @@
-# Your First Data Class
+# Your First Class
 
 {{ toc }}
 

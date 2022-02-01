@@ -1,4 +1,4 @@
-# Data Interfaces
+# Interfaces
 
 {{ toc }}
 

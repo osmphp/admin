@@ -11,6 +11,5 @@ class Module extends BaseModule
 
     public static array $requires = [
         \Osm\Admin\All\Module::class,
-        \Osm\Admin\Samples\FontAwesome\Module::class,
     ];
 }

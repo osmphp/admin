@@ -15,7 +15,6 @@ try {
         $app->cache->clear();
         $app->migrations()->fresh();
         $app->migrations()->up();
-        $app->schema->migrate();
     });
 }
 catch (Throwable $e) {

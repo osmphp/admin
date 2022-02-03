@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Samples\Products;
 
-use Osm\Admin\Base\Record;
+use Osm\Admin\Schema\Record;
 
 /**
  * @property string $name

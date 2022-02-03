@@ -3,8 +3,8 @@
 namespace Osm\Admin\Samples\Products;
 
 use Carbon\Carbon;
-use Osm\Admin\Base\Record;
-use Osm\Admin\Base\Attributes\Default_;
+use Osm\Admin\Schema\Record;
+use Osm\Admin\Schema\Attributes\Default_;
 
 /**
  * @property ?string $name

@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Samples\Orders;
 
-use Osm\Admin\Base\Record;
+use Osm\Admin\Schema\Record;
 
 /**
  * @property Order $order

@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Admin\Samples\All;
+namespace Osm\Admin\Samples\Products;
 
 use Osm\Admin\Samples\App;
 use Osm\Core\BaseModule;
@@ -11,7 +11,5 @@ class Module extends BaseModule
 
     public static array $requires = [
         \Osm\Admin\All\Module::class,
-        \Osm\Admin\Samples\Orders\Module::class,
-        \Osm\Admin\Samples\Products\Module::class,
     ];
 }

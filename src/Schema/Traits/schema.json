@@ -9,7 +9,7 @@
                     "type": "int",
                     "unsigned": true,
                     "explicit": true,
-                    "control_type": "system"
+                    "control_type": "hidden"
                 }
             }
         }

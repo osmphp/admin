@@ -1,8 +1,8 @@
 <?php
 
-namespace Osm\Admin\Schema\Control;
+namespace Osm\Admin\Interfaces\Control;
 
-use Osm\Admin\Schema\Control;
+use Osm\Admin\Interfaces\Control;
 use Osm\Core\Attributes\Type;
 
 #[Type('input')]

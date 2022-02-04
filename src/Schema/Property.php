@@ -18,10 +18,6 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $virtual #[Serialized]
  * @property ?string $formula #[Serialized]
  * @property bool $overridable #[Serialized]
- * @property string $control_type #[Serialized]
- * @property string[] $before #[Serialized]
- * @property string[] $after #[Serialized]
- * @property string $in #[Serialized]
  */
 class Property extends Object_
 {
@@ -58,21 +54,5 @@ class Property extends Object_
 
     protected function get_virtual(): bool {
         return false;
-    }
-
-    protected function get_control_type(): string {
-        return 'input';
-    }
-
-    protected function get_before(): array {
-        return [];
-    }
-
-    protected function get_after(): array {
-        return [];
-    }
-
-    protected function get_in(): string {
-        return '///';
     }
 }

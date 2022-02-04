@@ -2,6 +2,10 @@
 
 {{ toc }}
 
+## Overview
+
+![Overview](index.png)
+
 ## Schema
 
 ![Schema](schema.png)

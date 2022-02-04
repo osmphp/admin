@@ -1,0 +1,14 @@
+{
+    "classes": {
+        "Osm\\Admin\\Samples\\Generics\\Item": {
+            "name": "Osm\\Admin\\Samples\\Generics\\Item",
+            "properties": {
+                "id": {
+                    "name": "id",
+                    "explicit": true,
+                    "control_class_name": "Osm\\Admin\\Schema\\Control\\System"
+                }
+            }
+        }
+    }
+}

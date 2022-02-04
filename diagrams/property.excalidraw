@@ -25,7 +25,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "text",
@@ -55,6 +56,7 @@
         }
       ],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Property",
@@ -87,6 +89,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -105,8 +108,8 @@
     },
     {
       "type": "text",
-      "version": 1104,
-      "versionNonce": 396306086,
+      "version": 1187,
+      "versionNonce": 2025324483,
       "isDeleted": false,
       "id": "KXvESvq3UR9jHcIWKmUnh",
       "fillStyle": "hachure",
@@ -119,21 +122,22 @@
       "y": -61.750000000000114,
       "strokeColor": "#000000",
       "backgroundColor": "transparent",
-      "width": 441,
-      "height": 340,
+      "width": 439,
+      "height": 320,
       "seed": 1948106918,
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643888586991,
+      "updated": 1643958193527,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
-      "text": "class: Class_\nreflection: CoreProperty\nname: string\ntype: string // #[Type], inferred from \n            // @property type\nnullable: bool // has ?\narray: bool // has []\nexplicit: bool // #[Explicit]\nvirtual: bool // #[Virtual]\nformula: ?string // #[Virtual, Computed, Overridable]\noverridable: bool\ncontrol_type: string // #[System, Input, Date, Switch, \n                    // Relation, Multiselect, File, \n                    // Image]\nbefore: string[] // #[Before]\nafter: string[] // #[After]\nin: string // #[In_]",
-      "baseline": 334,
+      "text": "class: Class_\nreflection: CoreProperty\nname: string\ntype: string // #[Type], inferred from \n            // @property type\nnullable: bool // has ?\narray: bool // has []\nexplicit: bool // #[Explicit]\nvirtual: bool // #[Virtual]\nformula: ?string // #[Virtual, Computed, Overridable]\noverridable: bool\ncontrol_class_name: string // #[System, Input, Date, \n    // Switch, Relation, Multiselect, File, Image]\nbefore: string[] // #[Before]\nafter: string[] // #[After]\nin: string // #[In_]",
+      "baseline": 314,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "class: Class_\nreflection: CoreProperty\nname: string\ntype: string // #[Type], inferred from \n            // @property type\nnullable: bool // has ?\narray: bool // has []\nexplicit: bool // #[Explicit]\nvirtual: bool // #[Virtual]\nformula: ?string // #[Virtual, Computed, Overridable]\noverridable: bool\ncontrol_type: string // #[System, Input, Date, Switch, \n                    // Relation, Multiselect, File, \n                    // Image]\nbefore: string[] // #[Before]\nafter: string[] // #[After]\nin: string // #[In_]"
+      "originalText": "class: Class_\nreflection: CoreProperty\nname: string\ntype: string // #[Type], inferred from \n            // @property type\nnullable: bool // has ?\narray: bool // has []\nexplicit: bool // #[Explicit]\nvirtual: bool // #[Virtual]\nformula: ?string // #[Virtual, Computed, Overridable]\noverridable: bool\ncontrol_class_name: string // #[System, Input, Date, \n    // Switch, Relation, Multiselect, File, Image]\nbefore: string[] // #[Before]\nafter: string[] // #[After]\nin: string // #[In_]"
     },
     {
       "type": "text",
@@ -158,6 +162,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "1",
@@ -195,6 +200,7 @@
         }
       ],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "0..*",
@@ -227,6 +233,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "properties",
@@ -258,7 +265,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "text",
@@ -283,6 +291,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886335536,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Class_",
@@ -319,7 +328,8 @@
           "type": "arrow"
         }
       ],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "arrow",
@@ -344,6 +354,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "startBinding": {
         "elementId": "_2w_dl9vdD1eTQ8DtacUh",
         "focus": -0.19371190367822047,
@@ -390,7 +401,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "text",
@@ -420,6 +432,7 @@
         }
       ],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Scalar",
@@ -452,6 +465,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -490,7 +504,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "text",
@@ -520,6 +535,7 @@
         }
       ],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Compound",
@@ -552,6 +568,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332495,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -590,7 +607,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332495
+      "updated": 1643886332495,
+      "link": null
     },
     {
       "type": "text",
@@ -620,6 +638,7 @@
         }
       ],
       "updated": 1643886332495,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Int_",
@@ -652,6 +671,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -690,7 +710,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -720,6 +741,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Float_",
@@ -752,6 +774,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -790,7 +813,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -820,6 +844,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "String_",
@@ -852,6 +877,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -890,7 +916,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -920,6 +947,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Bool_",
@@ -952,6 +980,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -990,7 +1019,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -1020,6 +1050,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "DateTime",
@@ -1052,6 +1083,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1090,7 +1122,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -1120,6 +1153,7 @@
         }
       ],
       "updated": 1643887448378,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Mixed_",
@@ -1152,6 +1186,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1190,7 +1225,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -1220,6 +1256,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Record",
@@ -1252,6 +1289,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1290,7 +1328,8 @@
       "groupIds": [],
       "strokeSharpness": "sharp",
       "boundElements": [],
-      "updated": 1643886332496
+      "updated": 1643886332496,
+      "link": null
     },
     {
       "type": "text",
@@ -1320,6 +1359,7 @@
         }
       ],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Object",
@@ -1352,6 +1392,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1393,6 +1434,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1434,6 +1476,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1475,6 +1518,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1514,6 +1558,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1553,6 +1598,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332496,
+      "link": null,
       "fontSize": 28,
       "fontFamily": 1,
       "text": "...",
@@ -1585,6 +1631,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1626,6 +1673,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1667,6 +1715,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1708,6 +1757,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1749,6 +1799,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1790,6 +1841,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1831,6 +1883,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1870,6 +1923,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1909,6 +1963,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1948,6 +2003,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -1987,6 +2043,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2026,6 +2083,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2065,6 +2123,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2104,6 +2163,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2143,6 +2203,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2182,6 +2243,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2221,6 +2283,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2262,6 +2325,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2303,6 +2367,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2344,6 +2409,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2383,6 +2449,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2422,6 +2489,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2461,6 +2529,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2500,6 +2569,7 @@
       "strokeSharpness": "round",
       "boundElements": [],
       "updated": 1643886332497,
+      "link": null,
       "startBinding": null,
       "endBinding": null,
       "lastCommittedPoint": null,
@@ -2539,6 +2609,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332498,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "max_length: ?int // #[Length]",
@@ -2571,6 +2642,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332498,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "unsigned: bool // #[Unsigned]\nsize: string // #[Tiny, Small, Medium, Long]",
@@ -2603,6 +2675,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332498,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "precision: int // #[Precision]\nscale: int // #[Scale]",
@@ -2635,6 +2708,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332498,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "default: mixed // #[Default_]\n",
@@ -2667,6 +2741,7 @@
       "strokeSharpness": "sharp",
       "boundElements": [],
       "updated": 1643886332498,
+      "link": null,
       "fontSize": 16,
       "fontFamily": 1,
       "text": "on_delete: string #[OnDelete...]",

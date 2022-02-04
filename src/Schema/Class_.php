@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Core\App;
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
@@ -26,7 +27,9 @@ class Class_ extends Object_
     }
 
     protected function get_reflection(): CoreClass {
-        throw new NotImplemented($this);
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->classes[$this->name];
     }
 
     protected function get_name(): string {
@@ -38,7 +41,7 @@ class Class_ extends Object_
     }
 
     protected function get_type_class_names(): array {
-        throw new NotImplemented($this);
+        return [];
     }
 
     protected function get_types(): array {
@@ -49,4 +52,10 @@ class Class_ extends Object_
         throw new NotImplemented($this);
     }
 
+    public function __wakeup(): void
+    {
+        foreach ($this->properties as $property) {
+            $property->class = $this;
+        }
+    }
 }

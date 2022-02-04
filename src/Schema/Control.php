@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Admin\Ui;
+namespace Osm\Admin\Schema;
 
 use Osm\Core\Object_;
 use Osm\Core\Traits\SubTypes;

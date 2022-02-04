@@ -19,4 +19,10 @@ class Schema extends Object_
     protected function get_tables(): array {
         throw new NotImplemented($this);
     }
+
+    public function __wakeup(): void {
+        foreach ($this->classes as $class) {
+            $class->schema = $this;
+        }
+    }
 }

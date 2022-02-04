@@ -2,12 +2,13 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\App;
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
-use Osm\Core\Traits\SubTypes;
 
 /**
  * @property Schema $schema
@@ -17,13 +18,17 @@ use Osm\Core\Traits\SubTypes;
  * @property string[] $type_class_names #[Serialized]
  * @property Class_\Type[] $types
  * @property Object_ $instance
+ * @property string $s_object #[Serialized]
+ * @property string $s_objects #[Serialized]
+ * @property string $s_object_lowercase #[Serialized]
+ * @property string $s_objects_lowercase #[Serialized]
  */
 class Class_ extends Object_
 {
-    use SubTypes;
+    use RequiredSubTypes;
 
     protected function get_schema(): Schema {
-        throw new NotImplemented($this);
+        throw new Required(__METHOD__);
     }
 
     protected function get_reflection(): CoreClass {
@@ -33,7 +38,7 @@ class Class_ extends Object_
     }
 
     protected function get_name(): string {
-        throw new NotImplemented($this);
+        throw new Required(__METHOD__);
     }
 
     protected function get_properties(): array {
@@ -57,5 +62,22 @@ class Class_ extends Object_
         foreach ($this->properties as $property) {
             $property->class = $this;
         }
+    }
+
+    protected function get_s_object(): string {
+        $segments = explode('\\', $this->reflection->name);
+        return $segments[count($segments) - 1];
+    }
+
+    protected function get_s_objects(): string {
+        return "{$this->s_object}s";
+    }
+
+    protected function get_s_object_lowercase(): string {
+        return mb_strtolower($this->s_object);
+    }
+
+    protected function get_s_objects_lowercase(): string {
+        return mb_strtolower($this->s_objects);
     }
 }

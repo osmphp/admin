@@ -2,11 +2,14 @@
     "classes": {
         "Osm\\Admin\\Samples\\Generics\\Item": {
             "name": "Osm\\Admin\\Samples\\Generics\\Item",
+            "type": "table",
             "properties": {
                 "id": {
                     "name": "id",
+                    "type": "int",
+                    "unsigned": true,
                     "explicit": true,
-                    "control_class_name": "Osm\\Admin\\Schema\\Control\\System"
+                    "control_type": "system"
                 }
             }
         }

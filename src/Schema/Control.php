@@ -2,10 +2,11 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Core\Traits\SubTypes;
 
 class Control extends Object_
 {
-    use SubTypes;
+    use RequiredSubTypes;
 }

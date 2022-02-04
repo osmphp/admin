@@ -2,10 +2,10 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
-use Osm\Core\Traits\SubTypes;
 use Osm\Core\Attributes\Serialized;
 
 /**
@@ -18,14 +18,19 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $virtual #[Serialized]
  * @property ?string $formula #[Serialized]
  * @property bool $overridable #[Serialized]
- * @property string $control_class_name #[Serialized]
+ * @property string $control_type #[Serialized]
  * @property string[] $before #[Serialized]
  * @property string[] $after #[Serialized]
  * @property string $in #[Serialized]
  */
 class Property extends Object_
 {
-    use SubTypes;
+    use RequiredSubTypes;
+
+    public const TINY = 'tiny';
+    public const SMALL = 'small';
+    public const MEDIUM = 'medium';
+    public const LONG = 'long';
 
     protected function get_class(): Class_ {
         throw new Required(__METHOD__);
@@ -55,8 +60,8 @@ class Property extends Object_
         return false;
     }
 
-    protected function get_control_class_name(): string {
-        return \Osm\Admin\Schema\Control\Input::class;
+    protected function get_control_type(): string {
+        return 'input';
     }
 
     protected function get_before(): array {

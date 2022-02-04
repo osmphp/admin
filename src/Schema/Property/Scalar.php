@@ -12,7 +12,7 @@ use Osm\Core\Exceptions\NotImplemented;
 class Scalar extends Property
 {
     protected function get_default(): mixed {
-        throw new NotImplemented($this);
+        return null;
     }
 
 }

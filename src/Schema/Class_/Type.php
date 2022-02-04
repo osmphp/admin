@@ -4,6 +4,7 @@ namespace Osm\Admin\Schema\Class_;
 
 use Osm\Admin\Schema\Class_;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Attributes\Type as TypeAttribute;
 use Osm\Core\Exceptions\NotImplemented;
 
 /**
@@ -11,6 +12,7 @@ use Osm\Core\Exceptions\NotImplemented;
  * @property Class_ $base_class
  * @property string $type_name #[Serialized]
  */
+#[TypeAttribute('type')]
 class Type extends Class_
 {
     protected function get_base_class_name(): string {

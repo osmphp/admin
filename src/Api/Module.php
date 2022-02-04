@@ -1,15 +1,13 @@
 <?php
 
-namespace Osm\Admin\All;
+namespace Osm\Admin\Api;
 
 use Osm\Core\BaseModule;
 
 class Module extends BaseModule
 {
     public static array $requires = [
-        \Osm\Admin\Api\Module::class,
         \Osm\Admin\Queries\Module::class,
-        \Osm\Admin\Schema\Module::class,
-        \Osm\Admin\Ui\Module::class,
     ];
+
 }

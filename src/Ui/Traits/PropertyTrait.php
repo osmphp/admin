@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Admin\Interfaces\Traits;
+namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Property;
 use Osm\Core\Attributes\UseIn;

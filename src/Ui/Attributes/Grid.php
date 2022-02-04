@@ -1,6 +1,6 @@
 <?php
 
-namespace Osm\Admin\Schema\Attributes;
+namespace Osm\Admin\Ui\Attributes;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class Grid

@@ -1,7 +1,7 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
 /* @var \Osm\Admin\Grids\Grid $grid */
-/* @var \Osm\Admin\Interfaces\Interface_ $interface */
+/* @var \Osm\Admin\Ui\Interface_ $interface */
 /* @var string $route_name */
 /* @var int $object_count */
 /* @var string $title */

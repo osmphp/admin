@@ -1,5 +1,5 @@
 <?php
-/* @var \Osm\Admin\Interfaces\Interface_ $interface */
+/* @var \Osm\Admin\Ui\Interface_ $interface */
 /* @var callable $editUrl */
 /* @var \Osm\Admin\Grids\Column\Int_ $column */
 /* @var \stdClass $object */

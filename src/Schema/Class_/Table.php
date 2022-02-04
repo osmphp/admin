@@ -21,7 +21,7 @@ use Osm\Framework\Db\Db;
 class Table extends Class_
 {
     protected function get_table_name(): string {
-        return $this->s_objects_lowercase;
+        return str_replace(' ', '_', $this->s_objects_lowercase);
     }
 
     protected function get_column_names(): array {

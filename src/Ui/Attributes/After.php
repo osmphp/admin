@@ -1,9 +1,9 @@
 <?php
 
-namespace Osm\Admin\Schema\Attributes;
+namespace Osm\Admin\Ui\Attributes;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Before
+final class After
 {
     public array $property_names;
 

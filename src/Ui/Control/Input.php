@@ -1,8 +1,8 @@
 <?php
 
-namespace Osm\Admin\Interfaces\Control;
+namespace Osm\Admin\Ui\Control;
 
-use Osm\Admin\Interfaces\Control;
+use Osm\Admin\Ui\Control;
 use Osm\Core\Attributes\Type;
 
 #[Type('input')]

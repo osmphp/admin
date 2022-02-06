@@ -15,8 +15,9 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $nullable #[Serialized]
  * @property bool $array #[Serialized]
  * @property bool $explicit #[Serialized]
- * @property bool $virtual #[Serialized]
  * @property ?string $formula #[Serialized]
+ * @property bool $virtual #[Serialized]
+ * @property bool $computed #[Serialized]
  * @property bool $overridable #[Serialized]
  */
 class Property extends Object_
@@ -53,6 +54,10 @@ class Property extends Object_
     }
 
     protected function get_virtual(): bool {
+        return false;
+    }
+
+    protected function get_computed(): bool {
         return false;
     }
 }

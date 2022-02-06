@@ -185,7 +185,7 @@ class Parser extends Object_
     protected int $token_pos;
     protected int $token_type;
     protected string $token_text;
-    protected int $parameter_index;
+    protected int $parameter_index = 0;
     protected int $parameter_count;
 
     protected function get_text(): string {

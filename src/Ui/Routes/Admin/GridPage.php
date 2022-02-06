@@ -3,17 +3,42 @@
 namespace Osm\Admin\Ui\Routes\Admin;
 
 use Osm\Admin\Ui\Attributes\Ui;
+use Osm\Admin\Ui\Query;
+use Osm\Admin\Ui\Routes\Route;
 use Osm\Core\Attributes\Name;
 use Osm\Framework\Areas\Admin;
-use Osm\Framework\Http\Route;
 use Symfony\Component\HttpFoundation\Response;
-use function Osm\plain_response;
+use function Osm\__;
+use function Osm\view_response;
 
+/**
+ * @property array $data
+ */
 #[Ui(Admin::class), Name('GET /')]
 class GridPage extends Route
 {
     public function run(): Response
     {
-        return plain_response('Hello');
+        return view_response('ui::grid', $this->data);
+    }
+
+    protected function get_data(): array {
+        return [
+            'title' => $this->table->s_objects,
+            'js' => [
+                's_selected' => __($this->table->s_n_m_objects_selected),
+                'count' => $this->query->count,
+                'edit_url' => $this->table->url('GET /edit'),
+                'delete_url' => $this->table->url('DELETE /'),
+                's_deleting' => __($this->table->s_deleting_n_objects),
+                's_deleted' => __($this->table->s_n_objects_deleted),
+            ],
+        ];
+    }
+
+    protected function get_query(): Query
+    {
+        return parent::get_query()
+            ->count();
     }
 }

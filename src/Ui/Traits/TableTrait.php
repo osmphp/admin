@@ -3,6 +3,7 @@
 namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Class_\Table;
+use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 
 /**
@@ -23,5 +24,15 @@ trait TableTrait
         /* @var Table|static $this */
         return '/' .
             str_replace(' ', '-', $this->s_objects_lowercase);
+    }
+
+    public function url(string $routeName): string {
+        global $osm_app; /* @var App $osm_app */
+
+        if (($pos = strpos($routeName, ' ')) !== false) {
+            $routeName = substr($routeName, $pos + 1);
+        }
+
+        return "{$osm_app->area_url}{$this->url}{$routeName}";
     }
 }

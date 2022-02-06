@@ -18,10 +18,21 @@ use Osm\Core\Attributes\Serialized;
  * @property string[] $type_class_names #[Serialized]
  * @property Class_\Type[] $types
  * @property Object_ $instance
+ *
  * @property string $s_object #[Serialized]
  * @property string $s_objects #[Serialized]
  * @property string $s_object_lowercase #[Serialized]
  * @property string $s_objects_lowercase #[Serialized]
+ * @property string $s_object_s #[Serialized]
+ * @property string $s_object_s_lowercase #[Serialized]
+ * @property string $s_new_object #[Serialized]
+ * @property string $s_saving_new_object #[Serialized]
+ * @property string $s_new_object_saved #[Serialized]
+ * @property string $s_n_objects #[Serialized]
+ * @property string $s_object_id #[Serialized]
+ * @property string $s_n_m_objects_selected #[Serialized]
+ * @property string $s_deleting_n_objects #[Serialized]
+ * @property string $s_n_objects_deleted #[Serialized]
  */
 class Class_ extends Object_
 {
@@ -79,5 +90,45 @@ class Class_ extends Object_
 
     protected function get_s_objects_lowercase(): string {
         return mb_strtolower($this->s_objects);
+    }
+
+    protected function get_s_object_s(): string {
+        return "{$this->s_object}(s)";
+    }
+
+    protected function get_s_object_s_lowercase(): string {
+        return mb_strtolower($this->s_object_s);
+    }
+
+    protected function get_s_new_object(): string {
+        return "New {$this->s_object}";
+    }
+
+    protected function get_s_saving_new_object(): string {
+        return "Saving new {$this->s_object_lowercase} ...";
+    }
+
+    protected function get_s_new_object_saved(): string {
+        return "New {$this->s_object_lowercase} saved successfully.";
+    }
+
+    protected function get_s_n_objects(): string {
+        return ":count {$this->s_objects}";
+    }
+
+    protected function get_s_object_id(): string {
+        return "{$this->s_object} #:id";
+    }
+
+    protected function get_s_n_m_objects_selected(): string {
+        return ":selected / :count {$this->s_object_s_lowercase} selected";
+    }
+
+    protected function get_s_deleting_n_objects(): string {
+        return "Deleting :selected {$this->s_object_s_lowercase} ...";
+    }
+
+    protected function get_s_n_objects_deleted(): string {
+        return ":selected {$this->s_object_s_lowercase} deleted.";
     }
 }

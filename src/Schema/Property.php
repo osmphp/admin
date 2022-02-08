@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema;
 
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
@@ -59,5 +60,9 @@ class Property extends Object_
 
     protected function get_computed(): bool {
         return false;
+    }
+
+    public function parse(): void {
+        throw new NotImplemented($this);
     }
 }

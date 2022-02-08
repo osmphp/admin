@@ -8,11 +8,11 @@
 
 ## Schema
 
-![Schema](schema.png)
+![Schema](schema_v2.png)
 
 ## Classes
 
-![Classes](class.png)
+![Classes](class_v2.png)
 
 ## Properties
 

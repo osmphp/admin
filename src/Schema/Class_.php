@@ -2,13 +2,14 @@
 
 namespace Osm\Admin\Schema;
 
-use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\App;
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Property as CoreProperty;
+use Osm\Core\Traits\SubTypes;
 
 /**
  * @property Schema $schema
@@ -36,7 +37,7 @@ use Osm\Core\Attributes\Serialized;
  */
 class Class_ extends Object_
 {
-    use RequiredSubTypes;
+    use SubTypes;
 
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
@@ -53,7 +54,7 @@ class Class_ extends Object_
     }
 
     protected function get_properties(): array {
-        throw new NotImplemented($this);
+        throw new Required(__METHOD__);
     }
 
     protected function get_type_class_names(): array {
@@ -130,5 +131,52 @@ class Class_ extends Object_
 
     protected function get_s_n_objects_deleted(): string {
         return ":selected {$this->s_object_s_lowercase} deleted.";
+    }
+
+    public function parse(): void {
+        $this->parseAttributes();
+
+        $this->properties = [];
+
+        foreach ($this->reflection->properties as $reflection) {
+            $this->parseProperty($reflection);
+        }
+
+        foreach ($this->properties as $property) {
+            $property->parse();
+        }
+    }
+
+    protected function parseAttributes(): void
+    {
+    }
+
+    protected function parseProperty(CoreProperty $reflection): void
+    {
+        if (isset($this->properties[$reflection->name])) {
+            return;
+        }
+
+        if (!$this->propertyBelongs($reflection)) {
+            return;
+        }
+
+        $new = "{$this->propertyClassName($reflection)}::new";
+
+        $this->properties[$reflection->name] = $new([
+            'class' => $this,
+            'name' => $reflection->name,
+            'reflection' => $reflection,
+        ]);
+    }
+
+    protected function propertyBelongs(CoreProperty $reflection): bool
+    {
+        throw new NotImplemented($this);
+    }
+
+    protected function propertyClassName(CoreProperty $reflection): string
+    {
+        throw new NotImplemented($this);
     }
 }

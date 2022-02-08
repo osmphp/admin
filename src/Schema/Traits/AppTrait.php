@@ -19,8 +19,9 @@ use function Osm\hydrate;
 trait AppTrait
 {
     protected function get_schema(): Schema {
-        return hydrate(Schema::class, json_decode(
-            file_get_contents(__DIR__ . '/schema.json'),
-            flags: JSON_THROW_ON_ERROR));
+        return Schema::new()->parse();
+//        return hydrate(Schema::class, json_decode(
+//            file_get_contents(__DIR__ . '/schema.json'),
+//            flags: JSON_THROW_ON_ERROR));
     }
 }

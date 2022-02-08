@@ -1667,16 +1667,16 @@
         },
         {
             "name": "osmphp/core",
-            "version": "v0.10.16",
+            "version": "v0.10.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/core.git",
-                "reference": "54270709f6395f1ee5d5e1431c8141db7cb29ad5"
+                "reference": "e0fb183189df217a756349ab02349bbb60254e18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/core/zipball/54270709f6395f1ee5d5e1431c8141db7cb29ad5",
-                "reference": "54270709f6395f1ee5d5e1431c8141db7cb29ad5",
+                "url": "https://api.github.com/repos/osmphp/core/zipball/e0fb183189df217a756349ab02349bbb60254e18",
+                "reference": "e0fb183189df217a756349ab02349bbb60254e18",
                 "shasum": ""
             },
             "require": {
@@ -1713,9 +1713,9 @@
             "description": "Enables modular software development in any PHP project",
             "support": {
                 "issues": "https://github.com/osmphp/core/issues",
-                "source": "https://github.com/osmphp/core/tree/v0.10.16"
+                "source": "https://github.com/osmphp/core/tree/v0.10.17"
             },
-            "time": "2022-02-06T09:21:55+00:00"
+            "time": "2022-02-08T11:19:46+00:00"
         },
         {
             "name": "osmphp/framework",
@@ -4330,16 +4330,16 @@
         },
         {
             "name": "phar-io/version",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "bae7c545bef187884426f042434e561ab1ddb182"
+                "reference": "15a90844ad40f127afd244c0cad228de2a80052a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/bae7c545bef187884426f042434e561ab1ddb182",
-                "reference": "bae7c545bef187884426f042434e561ab1ddb182",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/15a90844ad40f127afd244c0cad228de2a80052a",
+                "reference": "15a90844ad40f127afd244c0cad228de2a80052a",
                 "shasum": ""
             },
             "require": {
@@ -4375,9 +4375,9 @@
             "description": "Library for handling version information and constraints",
             "support": {
                 "issues": "https://github.com/phar-io/version/issues",
-                "source": "https://github.com/phar-io/version/tree/3.1.0"
+                "source": "https://github.com/phar-io/version/tree/3.1.1"
             },
-            "time": "2021-02-23T14:00:09+00:00"
+            "time": "2022-02-07T21:56:48+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -4826,11 +4826,11 @@
                 }
             },
             "autoload": {
-                "classmap": [
-                    "src/"
-                ],
                 "files": [
                     "src/Framework/Assert/Functions.php"
+                ],
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",

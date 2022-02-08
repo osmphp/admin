@@ -16,7 +16,7 @@
 
 ## Properties
 
-![Properties](property.png)
+![Properties](property_v2.png)
 
 ## Query
 

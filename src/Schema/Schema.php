@@ -85,7 +85,7 @@ class Schema extends Object_
         foreach ($this->descendants->classes(Record::class) as
             $reflection)
         {
-            $this->parseClass($reflection);
+            $this->parseRecord($reflection);
         }
 
         foreach ($this->classes as $class) {
@@ -95,7 +95,7 @@ class Schema extends Object_
         return $this;
     }
 
-    protected function parseClass(CoreClass $reflection): void {
+    protected function parseRecord(CoreClass $reflection): void {
         global $osm_app; /* @var App $osm_app */
 
         if (isset($this->classes[$reflection->name])) {
@@ -131,7 +131,7 @@ class Schema extends Object_
             if ($referencedReflection = $osm_app->classes[$property->type]
                     ?? null)
             {
-                $this->parseClass($referencedReflection);
+                $this->parseRecord($referencedReflection);
             }
         }
     }

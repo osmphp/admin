@@ -4,7 +4,7 @@
 
 ## Overview
 
-![Overview](index.png)
+![Overview](index_v2.png)
 
 ## Schema
 

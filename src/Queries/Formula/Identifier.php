@@ -13,6 +13,8 @@ use Osm\Core\Exceptions\Required;
  *
  * @property string $column #[Serialized]
  * @property string $table #[Serialized]
+ *
+ * @uses Serialized
  */
 class Identifier extends Formula
 {

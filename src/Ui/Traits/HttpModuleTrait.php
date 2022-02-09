@@ -2,12 +2,11 @@
 
 namespace Osm\Admin\Ui\Traits;
 
-use Osm\Admin\Schema\Class_\Table;
+use Osm\Admin\Schema\Table;
 use Osm\Admin\Ui\Attributes\Ui;
 use Osm\Core\App;
 use Osm\Core\Attributes\Name;
 use Osm\Core\Attributes\UseIn;
-use Osm\Framework\Areas\Attributes\Area;
 use Osm\Framework\Http\Module;
 use Osm\Framework\Http\Route;
 

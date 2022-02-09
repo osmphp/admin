@@ -2,7 +2,9 @@
 
 namespace Osm\Admin\Ui\Attributes;
 
+use Osm\Admin\Schema\Attribute;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Hidden
+final class Hidden extends Attribute
 {
 }

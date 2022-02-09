@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property Formula $expr #[Serialized]
  * @property bool $ascending #[Serialized]
+ *
+ * @uses Serialized
  */
 class SortExpr extends Formula
 {

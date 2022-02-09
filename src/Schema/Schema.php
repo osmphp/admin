@@ -5,20 +5,21 @@ namespace Osm\Admin\Schema;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Class_ as CoreClass;
-use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Cache\Descendants;
 use Osm\Framework\Db\Db;
 use function Osm\dehydrate;
 use function Osm\hydrate;
+use Osm\Core\Attributes\Serialized;
 
 /**
  * @property Class_[] $classes #[Serialized]
- * @property Class_\Table[] $tables
+ * @property Table[] $tables #[Serialized]
  * @property Db $db
  * @property Descendants $descendants
+ *
+ * @uses Serialized
  */
 class Schema extends Object_
 {
@@ -27,13 +28,16 @@ class Schema extends Object_
     }
 
     protected function get_tables(): array {
-        return array_filter($this->classes,
-            fn (Class_ $class) => $class->type == 'table');
+        throw new Required(__METHOD__);
     }
 
     public function __wakeup(): void {
         foreach ($this->classes as $class) {
             $class->schema = $this;
+        }
+
+        foreach ($this->tables as $table) {
+            $table->schema = $this;
         }
     }
 
@@ -80,12 +84,19 @@ class Schema extends Object_
     }
 
     public function parse(): static {
-        $this->classes = [];
+        global $osm_app; /* @var App $osm_app */
 
-        foreach ($this->descendants->classes(Record::class) as
-            $reflection)
-        {
-            $this->parseRecord($reflection);
+        $this->classes = [];
+        $this->tables = [];
+
+        $recordClass = $osm_app->classes[Record::class];
+
+        foreach ($recordClass->child_class_names as $baseClassName) {
+            $this->parseTable($osm_app->classes[$baseClassName]);
+        }
+
+        foreach ($this->tables as $table) {
+            $table->parse();
         }
 
         foreach ($this->classes as $class) {
@@ -95,43 +106,62 @@ class Schema extends Object_
         return $this;
     }
 
-    protected function parseRecord(CoreClass $reflection): void {
-        global $osm_app; /* @var App $osm_app */
+    protected function parseTable(CoreClass $reflection): void {
+        if (isset($this->tables[$reflection->name])) {
+            return;
+        }
 
+        $this->tables[$reflection->name] = $table = Table::new([
+            'schema' => $this,
+            'name' => $reflection->name,
+            'reflection' => $reflection,
+        ]);
+
+        $this->parseProperties($table);
+    }
+
+    protected function parseClass(CoreClass $reflection): void {
         if (isset($this->classes[$reflection->name])) {
             return;
         }
 
-        $data = [
+        $this->classes[$reflection->name] = $class = Class_::new([
             'schema' => $this,
             'name' => $reflection->name,
             'reflection' => $reflection,
-        ];
+        ]);
 
-        if ($reflection->parent_class_name === Record::class) {
-            $class = Class_\Table::new($data);
+        $this->parseProperties($class);
+    }
+
+    protected function parseProperties(Struct $struct): void {
+        foreach ($struct->reflection->properties as $property) {
+            if ($property->name != '__class') {
+                $this->parseType($property->type);
+            }
         }
-        elseif ($reflection->parent_class_name === Object_::class) {
-            $class = Class_\Struct::new($data);
-        }
-        elseif (isset($reflection->attributes[Type::class])) {
-            $class = Class_\Type::new($data);
-        }
-        else {
-            $class = Class_::new($data);
+    }
+
+    protected function parseType(?string $type): void {
+        global $osm_app; /* @var App $osm_app */
+
+        if (!$type) {
+            return;
         }
 
-        $this->classes[$reflection->name] = $class;
+        if (!($class = $osm_app->classes[$type] ?? null)) {
+            return;
+        }
 
-        foreach ($reflection->properties as $property) {
-            if ($property->class_name !== $reflection->name) {
-                continue;
+        for(; $class; $class = $class->parent_class) {
+            if ($class->parent_class_name == Record::class) {
+                $this->parseTable($class);
+                break;
             }
 
-            if ($referencedReflection = $osm_app->classes[$property->type]
-                    ?? null)
-            {
-                $this->parseRecord($referencedReflection);
+            if ($class->parent_class_name == Object_::class) {
+                $this->parseClass($class);
+                break;
             }
         }
     }

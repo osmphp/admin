@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Ui\Traits;
 
-use Osm\Admin\Schema\Class_\Table;
+use Osm\Admin\Schema\Table;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 

@@ -2,8 +2,10 @@
 
 namespace Osm\Admin\Ui\Attributes;
 
+use Osm\Admin\Schema\Attribute;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class After
+final class After extends Attribute
 {
     public array $property_names;
 

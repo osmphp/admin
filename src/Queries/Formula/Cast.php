@@ -8,6 +8,8 @@ use Osm\Core\Exceptions\Required;
 
 /**
  * @property Formula $expr #[Serialized]
+ *
+ * @uses Serialized
  */
 class Cast extends Formula
 {

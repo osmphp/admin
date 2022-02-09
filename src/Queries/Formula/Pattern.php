@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property Formula $value #[Serialized]
  * @property Formula $pattern #[Serialized]
+ *
+ * @uses Serialized
  */
 class Pattern extends Formula
 {

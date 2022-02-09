@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property Formula $value #[Serialized]
  * @property Formula[] $items #[Serialized]
+ *
+ * @uses Serialized
  */
 class In_ extends Formula
 {

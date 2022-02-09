@@ -8,6 +8,8 @@ use Osm\Core\Exceptions\Required;
 
 /**
  * @property Formula $operand #[Serialized]
+ *
+ * @uses Serialized
  */
 class Unary extends Formula
 {

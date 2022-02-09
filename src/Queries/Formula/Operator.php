@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property Formula[] $operands #[Serialized]
  * @property int[] $operators #[Serialized]
+ *
+ * @uses Serialized
  */
 class Operator extends Formula
 {

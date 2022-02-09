@@ -2,18 +2,15 @@
 
 namespace Osm\Admin\Schema\Traits;
 
-use Osm\Admin\Samples\Generics\Detail;
-use Osm\Admin\Samples\Generics\Item;
-use Osm\Admin\Samples\Generics\Master;
-use Osm\Admin\Samples\Generics\TreeItem;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
 use Osm\Admin\Schema\Schema;
 use Osm\Framework\Cache\Attributes\Cached;
-use function Osm\hydrate;
 
 /**
  * @property Schema $schema #[Cached('schema')]
+ *
+* @uses Cached
  */
 #[UseIn(App::class)]
 trait AppTrait

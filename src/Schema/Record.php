@@ -9,6 +9,8 @@ use Osm\Admin\Schema\Attributes\AutoIncrement;
 
 /**
  * @property int $id #[Explicit, Unsigned, AutoIncrement]
+ *
+ * @uses Unsigned, Explicit, AutoIncrement
  */
 class Record extends Object_
 {

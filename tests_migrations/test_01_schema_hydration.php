@@ -8,7 +8,7 @@ use Osm\Admin\Forms\Form;
 use Osm\Admin\Grids\Column;
 use Osm\Admin\Grids\Grid;
 use Osm\Admin\Icons\Icon;
-use Osm\Admin\Schema\Class_;
+use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Schema;
 use Osm\Admin\Scopes\Scope;
@@ -85,8 +85,8 @@ class test_01_schema_hydration extends TestCase
         }
     }
 
-    protected function assertClassHydrated(Class_ $original,
-        Class_ $hydrated, Schema $hydratedSchema): void
+    protected function assertClassHydrated(Struct $original,
+                                           Struct $hydrated, Schema $hydratedSchema): void
     {
         $this->assertTrue($original::class === $hydrated::class);
 
@@ -107,8 +107,8 @@ class test_01_schema_hydration extends TestCase
     {
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->class ===
-            $hydratedSchema->classes[$hydrated->class->name]);
+        $this->assertTrue($hydrated->struct ===
+            $hydratedSchema->classes[$hydrated->struct->name]);
         $this->assertPropertiesEqual($original, $hydrated,
             ['name', 'type', 'reflection', 'nullable', 'array', 'explicit',
                 'virtual', 'formula', 'overridable', 'control_class_name',

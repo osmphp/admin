@@ -36,6 +36,8 @@ use Osm\Admin\Schema\Attributes\Overridable;
  *
  * @property ?string $explicit_computed #[Explicit, Length(255), Computed("string")]
  * @property ?string $explicit_overridable #[Explicit, Length(255), Overridable("string")]
+ *
+ * @uses Explicit, Length, Virtual, Computed, Overridable
  */
 class Item extends Record
 {

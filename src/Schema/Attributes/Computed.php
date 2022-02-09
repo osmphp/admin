@@ -2,10 +2,21 @@
 
 namespace Osm\Admin\Schema\Attributes;
 
+use Osm\Admin\Schema\Attribute;
+use Osm\Admin\Schema\Struct;
+use Osm\Admin\Schema\Property;
+
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Computed
+final class Computed extends Attribute
 {
     public function __construct(public string $formula)
     {
+    }
+
+    public function parse(\stdClass|Struct|Property $data): void {
+        $data->computed = true;
+        $data->overridable = false;
+        $data->virtual = false;
+        $data->formula = $this->formula;
     }
 }

@@ -10,6 +10,8 @@ use Osm\Core\Exceptions\Required;
  * @property Formula $value #[Serialized]
  * @property Formula $from #[Serialized]
  * @property Formula $to #[Serialized]
+ *
+ * @uses Serialized
  */
 class Between extends Formula
 {

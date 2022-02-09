@@ -3,9 +3,8 @@
 namespace Osm\Admin\Ui;
 
 use Osm\Admin\Queries\Query as DbQuery;
-use Osm\Admin\Schema\Class_\Table;
+use Osm\Admin\Schema\Table;
 use Osm\Admin\Ui\Exceptions\InvalidQuery;
-use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use function Osm\__;

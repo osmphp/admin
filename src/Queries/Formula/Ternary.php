@@ -10,6 +10,8 @@ use Osm\Core\Exceptions\Required;
  * @property Formula $condition #[Serialized]
  * @property Formula $then #[Serialized]
  * @property Formula $else_ #[Serialized]
+ *
+ * @uses Serialized
  */
 class Ternary extends Formula
 {

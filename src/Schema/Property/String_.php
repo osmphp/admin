@@ -7,12 +7,14 @@ use Osm\Core\Exceptions\NotImplemented;
 
 /**
  * @property ?int $max_length #[Serialized]
+ *
+ * @uses Serialized
  */
 #[Type('string')]
 class String_ extends Scalar
 {
     protected function get_max_length(): ?int {
-        throw new NotImplemented($this);
+        return null;
     }
 
 }

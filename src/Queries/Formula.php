@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Queries;
 
-use Osm\Admin\Schema\Class_\Table;
+use Osm\Admin\Schema\Table;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -18,6 +18,8 @@ use Osm\Core\Attributes\Serialized;
  * Resolved properties:
  *
  * @property string $data_type #[Serialized]
+ *
+ * @uses Serialized
  */
 class Formula extends Object_
 {

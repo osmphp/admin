@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property string $value #[Serialized]
  * @property int $token #[Serialized]
+ *
+ * @uses Serialized
  */
 class Literal extends Formula
 {

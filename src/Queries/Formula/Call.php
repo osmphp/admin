@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property string $function #[Serialized]
  * @property Formula[] $args #[Serialized]
+ *
+ * @uses Serialized
  */
 class Call extends Formula
 {

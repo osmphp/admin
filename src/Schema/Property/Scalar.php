@@ -8,6 +8,8 @@ use Osm\Core\Exceptions\NotImplemented;
 
 /**
  * @property mixed $default #[Serialized]
+ *
+ * @uses Serialized
  */
 class Scalar extends Property
 {

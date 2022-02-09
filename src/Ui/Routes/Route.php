@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Ui\Routes;
 
-use Osm\Admin\Schema\Class_\Table;
+use Osm\Admin\Schema\Table;
 use Osm\Admin\Ui\Query;
 use Osm\Core\App;
 use Osm\Core\Exceptions\Required;

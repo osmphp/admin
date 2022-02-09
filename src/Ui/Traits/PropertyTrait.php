@@ -11,6 +11,8 @@ use Osm\Core\Attributes\Serialized;
  * @property string[] $before #[Serialized]
  * @property string[] $after #[Serialized]
  * @property string $in #[Serialized]
+ *
+ * @uses Serialized
  */
 #[UseIn(Property::class)]
 trait PropertyTrait

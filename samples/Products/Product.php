@@ -12,6 +12,8 @@ use Osm\Admin\Schema\Attributes\Default_;
  * @property float $price #[Default_(0.0)]
  * @property bool $enabled #[Default_(true)]
  * @property Carbon $created_at
+ *
+ * @uses Default_
  */
 class Product extends Record
 {

@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property Formula $expr #[Serialized]
  * @property string $alias #[Serialized]
+ *
+ * @uses Serialized
  */
 class SelectExpr extends Formula
 {

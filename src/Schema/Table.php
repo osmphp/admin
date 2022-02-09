@@ -1,24 +1,24 @@
 <?php
 
-namespace Osm\Admin\Schema\Class_;
+namespace Osm\Admin\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Schema\Class_;
-use Osm\Admin\Schema\Property;
 use Osm\Core\App;
-use Osm\Core\Attributes\Serialized;
-use Osm\Core\Attributes\Type as TypeAttribute;
+use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Db\Db;
+use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string $table_name #[Serialized]
  * @property string[] $column_names #[Serialized]
  * @property Property[] $columns
  * @property Db $db
+ *
+ * @uses Serialized
  */
-#[TypeAttribute('table')]
-class Table extends Class_
+#[Type('table')]
+class Table extends Struct
 {
     protected function get_table_name(): string {
         return str_replace(' ', '_', $this->s_objects_lowercase);

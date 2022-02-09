@@ -9,6 +9,8 @@ use Osm\Core\Exceptions\Required;
 /**
  * @property mixed $parameter
  * @property int $index #[Serialized]
+ *
+ * @uses Serialized
  */
 class Parameter extends Formula
 {

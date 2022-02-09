@@ -40,35 +40,45 @@ class Query extends Object_
     }
 
     public function where(string|array $formula, mixed ...$args): static {
-        throw new NotImplemented($this);
+        $this->filters[] = $this->parse(empty($args)
+            ? $formula
+            : [$formula => $args]
+        );
+
+        return $this;
     }
 
     public function select(string|array ...$formulas): static {
         foreach ($formulas as $formula) {
-            $this->selects[$formula] = $this->parse($formula);
+            $this->selects[] = $this->parse($formula,
+                Formula::SELECT_EXPR);
         }
 
         return $this;
     }
 
     public function orderBy(string|array $formula, bool $desc = false): static {
-        throw new NotImplemented($this);
+        $this->orders[] = $this->parse($formula, Formula::SORT_EXPR);
+
+        return $this;
     }
 
     public function limit(?int $limit): static {
-        throw new NotImplemented($this);
+        $this->limit = $limit;
+
+        return $this;
     }
 
     public function offset(?int $offset): static {
-        throw new NotImplemented($this);
+        $this->offset = $offset;
+
+        return $this;
     }
 
     public function hydrate(bool $hydrate = false): static {
-        throw new NotImplemented($this);
-    }
+        $this->hydrate = $hydrate;
 
-    public function query(string $propertyName, callable $callback): static {
-        throw new NotImplemented($this);
+        return $this;
     }
 
     /**
@@ -125,7 +135,8 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    protected function parse(array|string $formula): Formula
+    protected function parse(array|string $formula, string $as = Formula::EXPR)
+        : Formula
     {
         $parameters = [];
         if (is_array($formula)) {
@@ -137,8 +148,8 @@ class Query extends Object_
         }
 
         return Parser::new(['text' => $formula, 'parameters' => $parameters])
-            ->parse()
-            ->resolve($this->table);
+            ->parse($as);
+            //->resolve($this->table);
     }
 
 }

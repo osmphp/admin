@@ -9,5 +9,4 @@ class Module extends BaseModule
     public static array $requires = [
         \Osm\Admin\Schema\Module::class,
     ];
-
 }

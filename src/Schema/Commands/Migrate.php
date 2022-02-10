@@ -15,6 +15,10 @@ class Migrate extends Command
 
     public function run(): void
     {
+        global $osm_app; /* @var App $osm_app */
+        $osm_app->migrations()->fresh();
+        $osm_app->migrations()->up();
+
         $this->schema->migrate();
     }
 

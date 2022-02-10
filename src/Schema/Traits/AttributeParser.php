@@ -13,15 +13,18 @@ trait AttributeParser
 {
     public function parseAttributes(): void
     {
-        foreach ($this->parseAttributeData() as $key => $value) {
+        foreach ($this->parseAttributeData($this->reflection) as $key => $value)
+        {
             $this->$key = $value;
         }
     }
 
-    protected function parseAttributeData(): \stdClass {
+    protected function parseAttributeData(Class_|Property $reflection)
+        : \stdClass
+    {
         $data = new \stdClass();
 
-        foreach ($this->reflection->attributes as $attributes) {
+        foreach ($reflection->attributes as $attributes) {
             if (!is_array($attributes)) {
                 $attributes = [$attributes];
             }

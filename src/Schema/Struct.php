@@ -21,7 +21,7 @@ use function Osm\__;
  * @property CoreClass $reflection
  * @property string $name #[Serialized]
  * @property Property[] $properties #[Serialized]
- * @property string[] $type_class_names #[Serialized]
+ * @property string[]|null $type_class_names #[Serialized]
  * @property Object_ $instance
  *
  * @property string $s_object #[Serialized]
@@ -45,6 +45,9 @@ class Struct extends Object_
 {
     use RequiredSubTypes, AttributeParser;
 
+    public const SCHEMA_PROPERTY = null;
+    public const ROOT_CLASS_NAME = null;
+
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
     }
@@ -63,8 +66,28 @@ class Struct extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_type_class_names(): array {
-        return [];
+    protected function get_type_class_names(): ?array {
+        return $this->parseTypeClassNames($this->reflection);
+    }
+
+    public function parseTypeClassNames(CoreClass $reflection): array
+    {
+        global $osm_app; /* @var App $osm_app */
+
+        $types = [];
+
+        /* @var Type $type */
+        if ($type = $reflection->attributes[Type::class] ?? null) {
+            $types[$type->name] = $reflection->name;
+        }
+
+        foreach ($reflection->child_class_names as $childClassName) {
+            $types = array_merge($types, $this->parseTypeClassNames(
+                $osm_app->classes[$childClassName]));
+        }
+
+        ksort($types);
+        return $types;
     }
 
     protected function get_instance(): Object_ {
@@ -74,7 +97,7 @@ class Struct extends Object_
     public function __wakeup(): void
     {
         foreach ($this->properties as $property) {
-            $property->struct = $this;
+            $property->parent = $this;
         }
     }
 
@@ -143,13 +166,11 @@ class Struct extends Object_
         $this->parsePropertiesRecursively($this->reflection);
 
         foreach ($this->properties as $property) {
-            $property->parseAttributes();
+            $property->parse();
         }
     }
 
-    protected function parsePropertiesRecursively(CoreClass $reflection,
-        bool $base = true): void
-    {
+    protected function parsePropertiesRecursively(CoreClass $reflection): void {
         global $osm_app; /* @var App $osm_app */
 
         /* @var ?Type $type */
@@ -157,40 +178,41 @@ class Struct extends Object_
         $typeName = $type?->name;
 
         foreach ($reflection->properties as $property) {
-            $this->parseProperty($property, $reflection, $base);
+            $this->parseProperty($property, $reflection);
         }
 
         foreach ($reflection->child_class_names as $childClassName) {
             $this->parsePropertiesRecursively(
-                $osm_app->classes[$childClassName], false);
+                $osm_app->classes[$childClassName]);
         }
     }
 
     protected function parseProperty(CoreProperty $reflection,
-        CoreClass $classReflection, bool $base): void
+        CoreClass $classReflection): void
     {
         if ($reflection->name == '__class') {
             return;
         }
 
-        $new = "{$this->propertyClassName($reflection)}::new";
-        $types = $base ? null : $this->parseTypes($classReflection);
+        $types = $this->schema->parseTypes($classReflection,
+            static::ROOT_CLASS_NAME);
 
-        $property = $new([
-            'class' => $this,
+        if (isset($this->properties[$reflection->name])) {
+            $this->properties[$reflection->name]->parseTypeSpecificFormulas(
+                $types, $reflection);
+            return;
+        }
+
+        $new = "{$this->propertyClassName($reflection)}::new";
+
+        $this->properties[$reflection->name] = $property = $new([
+            'parent' => $this,
             'name' => $reflection->name,
             'reflection' => $reflection,
-            'type_specific' => $types,
+            'if' => $types ? ['type' => $types] : [],
         ]);
 
-        if (!isset($this->properties[$reflection->name])) {
-            $this->properties[$reflection->name] = $property;
-            $property->parse();
-        }
-        else {
-            $this->properties[$reflection->name]->parseTypeSpecificAttributes(
-                $types, $reflection);
-        }
+        $property->parse();
     }
 
     protected function propertyBelongs(CoreProperty $reflection): bool

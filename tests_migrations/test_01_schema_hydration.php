@@ -4,23 +4,11 @@ declare(strict_types=1);
 
 namespace Osm\Admin\TestsMigrations;
 
-use Osm\Admin\Forms\Form;
-use Osm\Admin\Grids\Column;
-use Osm\Admin\Grids\Grid;
-use Osm\Admin\Icons\Icon;
 use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Schema;
-use Osm\Admin\Scopes\Scope;
-use Osm\Admin\Scopes\ScopedTable;
-use Osm\Admin\Storages\Storage;
-use Osm\Admin\Tables\Column as TableColumn;
-use Osm\Admin\Tables\Table;
-use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
-use Osm\Framework\Areas\Admin;
 use Osm\Framework\TestCase;
-use Osm\Admin\Forms\Field;
 use function Osm\dehydrate;
 use function Osm\hydrate;
 
@@ -65,6 +53,12 @@ class test_01_schema_hydration extends TestCase
         Object_ $hydrated, array $propertyNames): void
     {
         foreach ($propertyNames as $propertyName) {
+            if ($original->$propertyName === null &&
+                $hydrated->$propertyName === null)
+            {
+                continue;
+            }
+
             $this->assertTrue(is_array($original->$propertyName),
                 $original::class . '::$' . "{$propertyName} must be an array");
             $this->assertTrue(array_keys($original->$propertyName) ==
@@ -107,8 +101,8 @@ class test_01_schema_hydration extends TestCase
     {
         $this->assertTrue($original::class === $hydrated::class);
 
-        $this->assertTrue($hydrated->struct ===
-            $hydratedSchema->classes[$hydrated->struct->name]);
+        $this->assertTrue($hydrated->parent ===
+            $hydratedSchema->classes[$hydrated->parent->name]);
         $this->assertPropertiesEqual($original, $hydrated,
             ['name', 'type', 'reflection', 'nullable', 'array', 'explicit',
                 'virtual', 'formula', 'overridable', 'control_class_name',

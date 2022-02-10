@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema;
 
+use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Traits\AttributeParser;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\NotImplemented;
@@ -11,15 +12,15 @@ use Osm\Core\Property as CoreProperty;
 use Osm\Core\Attributes\Serialized;
 
 /**
- * @property Struct $struct
+ * @property Struct $parent
  * @property CoreProperty $reflection
  * @property string $name #[Serialized]
- * @property string[]|null $type_specific #[Serialized]
- * @property \stdClass[] $type_specific_settings #[Serialized]
+ * @property array $if #[Serialized]
  * @property bool $nullable #[Serialized]
  * @property bool $array #[Serialized]
  * @property bool $explicit #[Serialized]
  * @property ?string $formula #[Serialized]
+ * @property string[] $formula_if #[Serialized]
  * @property bool $virtual #[Serialized]
  * @property bool $computed #[Serialized]
  * @property bool $overridable #[Serialized]
@@ -35,23 +36,23 @@ class Property extends Object_
     public const MEDIUM = 'medium';
     public const LONG = 'long';
 
-    protected function get_struct(): Struct {
+    protected function get_parent(): Struct {
         throw new Required(__METHOD__);
     }
 
     protected function get_reflection(): CoreProperty {
-        return $this->struct->reflection->properties[$this->name];
+        return $this->parent->reflection->properties[$this->name];
     }
 
     protected function get_name(): string {
         throw new Required(__METHOD__);
     }
 
-    protected function get_type_specific(): ?array {
-        return null;
+    protected function get_if(): array {
+        return [];
     }
 
-    protected function get_type_specific_settings(): array {
+    protected function get_formula_if(): array {
         return [];
     }
 
@@ -79,30 +80,22 @@ class Property extends Object_
         $this->parseAttributes();
     }
 
-    public function parseTypeSpecificAttributes(array $types,
+    public function parseTypeSpecificFormulas(array $types,
         CoreProperty $reflection): void
     {
-        $data = $this->parseAttributeData();
+        $data = $this->parseAttributeData($reflection);
 
-        $typeSpecificData = [];
-        foreach (['formula'] as $propertyName) {
-            if (isset($data->$propertyName)) {
-                $typeSpecificData[$propertyName] = $data->$propertyName;
-            }
-        }
-
-        if (empty($typeSpecificData)) {
+        if (!isset($data->formula)) {
             return;
         }
 
+        $this->formula_if = [];
         foreach ($types as $type) {
-            if (!isset($this->type_specific_settings[$type])) {
-                $this->type_specific_settings[$type] = new \stdClass();
-            }
-
-            foreach ($typeSpecificData as $propertyName => $value) {
-                $this->type_specific_settings[$type]->$propertyName = $value;
-            }
+            $this->formula_if[$type] = $data->formula;
         }
+    }
+
+    public function create(Blueprint $table): void {
+        throw new NotImplemented($this);
     }
 }

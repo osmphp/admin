@@ -154,15 +154,40 @@ class Schema extends Object_
         }
 
         for(; $class; $class = $class->parent_class) {
-            if ($class->parent_class_name == Record::class) {
+            if ($class->parent_class_name == Table::ROOT_CLASS_NAME) {
                 $this->parseTable($class);
                 break;
             }
 
-            if ($class->parent_class_name == Object_::class) {
+            if ($class->parent_class_name == Class_::ROOT_CLASS_NAME) {
                 $this->parseClass($class);
                 break;
             }
         }
+    }
+
+    public function parseTypes(CoreClass $reflection,
+        string $rootClassName): ?array
+    {
+        global $osm_app; /* @var App $osm_app */
+
+        if ($reflection->parent_class_name === $rootClassName) {
+            return null;
+        }
+
+        $types = [];
+
+        /* @var Type $type */
+        if ($type = $reflection->attributes[Type::class] ?? null) {
+            $types[] = $type->name;
+        }
+
+        foreach ($reflection->child_class_names as $childClassName) {
+            $types = array_merge($types, $this->parseTypes(
+                $osm_app->classes[$childClassName], $rootClassName));
+        }
+
+        sort($types);
+        return array_unique($types);
     }
 }

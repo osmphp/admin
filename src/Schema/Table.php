@@ -20,6 +20,9 @@ use Osm\Core\Attributes\Serialized;
 #[Type('table')]
 class Table extends Struct
 {
+    public const SCHEMA_PROPERTY = 'tables';
+    public const ROOT_CLASS_NAME = Record::class;
+
     protected function get_table_name(): string {
         return str_replace(' ', '_', $this->s_objects_lowercase);
     }
@@ -35,7 +38,12 @@ class Table extends Struct
     public function create(): void
     {
         $this->db->create($this->table_name, function(Blueprint $table) {
-            $table->increments('id');
+            foreach ($this->properties as $property) {
+                if ($property->explicit) {
+                    $property->create($table);
+                }
+            }
+
             $table->json('data')->nullable();
         });
     }

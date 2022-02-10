@@ -22,6 +22,8 @@ use Osm\Admin\Schema\Attributes\Overridable;
  * @property Related $record #[Explicit]
  * @property Struct $object
  *
+ * @property ?int[] $int_array
+ *
  * @property ?string $nullable_string
  * @property ?Related $nullable_record #[Explicit]
  * @property ?Struct $nullable_object

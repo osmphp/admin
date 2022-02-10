@@ -51,5 +51,17 @@ class test_02_sample_schema extends TestCase
         $this->assertEquals(true, $property->explicit);
         $this->assertEquals(Related::class, $property->ref_class_name);
         $this->assertEquals(null, $property->ref_if);
+
+        // AND it "knows" if a property is nullable
+        $property = $struct->properties['nullable_string'];
+        $this->assertEquals('nullable_string', $property->name);
+        $this->assertEquals('string', $property->type);
+        $this->assertEquals(true, $property->nullable);
+
+        // AND it "knows" how an array is defined
+        $property = $struct->properties['int_array'];
+        $this->assertEquals('int_array', $property->name);
+        $this->assertEquals('int', $property->type);
+        $this->assertEquals(true, $property->array);
     }
 }

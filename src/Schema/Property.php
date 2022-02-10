@@ -78,6 +78,9 @@ class Property extends Object_
 
     public function parse(): void {
         $this->parseAttributes();
+
+        $this->array = $this->reflection->array;
+        $this->nullable = $this->reflection->nullable;
     }
 
     public function parseTypeSpecificFormulas(array $types,

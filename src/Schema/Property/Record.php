@@ -24,7 +24,9 @@ class Record extends Bag
     public string $refs_root_class_name = Table::ROOT_CLASS_NAME;
 
     protected function get_on_delete(): string {
-        return static::ON_DELETE_SET_NULL;
+        return $this->nullable
+            ? static::ON_DELETE_SET_NULL
+            : static::ON_DELETE_CASCADE;
     }
 
     public function create(Blueprint $table): void {

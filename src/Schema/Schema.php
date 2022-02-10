@@ -12,6 +12,7 @@ use Osm\Framework\Db\Db;
 use function Osm\dehydrate;
 use function Osm\hydrate;
 use Osm\Core\Attributes\Serialized;
+use function Osm\sort_by_dependency;
 
 /**
  * @property Class_[] $classes #[Serialized]
@@ -102,6 +103,12 @@ class Schema extends Object_
         foreach ($this->classes as $class) {
             $class->parse();
         }
+
+        $this->tables = sort_by_dependency($this->tables, 'Tables',
+            fn($positions) =>
+                fn(Table $a, Table $b) =>
+                    $positions[$a->name] <=> $positions[$b->name]
+        );
 
         return $this;
     }

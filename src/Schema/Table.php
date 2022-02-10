@@ -14,6 +14,7 @@ use Osm\Core\Attributes\Serialized;
  * @property string[] $column_names #[Serialized]
  * @property Property[] $columns
  * @property Db $db
+ * @property string[] $after #[Serialized]
  *
  * @uses Serialized
  */
@@ -57,5 +58,25 @@ class Table extends Struct
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function get_after(): array {
+        $after = [];
+
+        foreach ($this->properties as $property) {
+            if ($property->type !== 'record') {
+                continue;
+            }
+
+            if (!$property->explicit) {
+                continue;
+            }
+
+            if ($property->ref_class_name !== $this->name) {
+                $after[] = $property->ref_class_name;
+            }
+        }
+
+        return $after;
     }
 }

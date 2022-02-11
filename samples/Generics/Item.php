@@ -11,6 +11,7 @@ use Osm\Admin\Schema\Attributes\Computed;
 use Osm\Admin\Schema\Attributes\Overridable;
 
 /**
+ * @property ?Item $parent #[Explicit]
  * @property ?string $type
  *
  * @property int $int
@@ -22,7 +23,7 @@ use Osm\Admin\Schema\Attributes\Overridable;
  * @property Related $record #[Explicit]
  * @property Struct $object
  *
- * @property ?int[] $int_array
+ * @property int[] $int_array
  *
  * @property ?string $nullable_string
  * @property ?Related $nullable_record #[Explicit]

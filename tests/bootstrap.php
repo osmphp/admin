@@ -15,6 +15,8 @@ try {
         $app->cache->clear();
         $app->migrations()->fresh();
         $app->migrations()->up();
+        $app->schema->migrate();
+        \Osm\Admin\Samples\Seed\Commands\Samples::new()->run();
     });
 }
 catch (Throwable $e) {

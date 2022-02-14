@@ -93,4 +93,8 @@ class Formula extends Object_
     {
         throw new NotImplemented($this);
     }
+
+    public function as(): string {
+        return '';
+    }
 }

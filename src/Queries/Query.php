@@ -200,6 +200,7 @@ EOT;
             }
 
             $sql .= $formula->toSql($bindings, $from, 'LEFT OUTER');
+            $sql .= $formula->as();
         }
 
         return "SELECT {$sql}";

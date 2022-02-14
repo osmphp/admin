@@ -28,4 +28,13 @@ class SelectExpr extends Formula
     {
         $this->expr->parent = $this;
     }
+
+    public function toSql(array &$bindings, array &$from, string $join): string
+    {
+        return $this->expr->toSql($bindings, $from, $join);
+    }
+
+    public function as(): string {
+        return " AS `{$this->alias}`";
+    }
 }

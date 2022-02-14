@@ -124,4 +124,8 @@ class Identifier extends Formula
 
         return $sql;
     }
+
+    public function as(): string {
+        return ' AS `' . implode('__', $this->parts) . '`';
+    }
 }

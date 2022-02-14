@@ -22,5 +22,16 @@ class test_02_sql_generation extends TestCase
         $this->assertEquals(1, $item->id);
     }
 
+    public function test_select_int(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you retrieve the `int` property the first created object
+        $item = query(Item::class)
+            ->orderBy('id')
+            ->first('int');
+
+        // THEN it's 1
+        $this->assertEquals(5, $item->int);
+    }
 
 }

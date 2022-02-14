@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Queries\Exceptions;
 
-class InvalidCast extends Error
+class InvalidIdentifier extends \Exception
 {
 
 }

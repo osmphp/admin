@@ -3,6 +3,7 @@
 namespace Osm\Admin\Queries;
 
 use Osm\Admin\Schema\Struct;
+use Osm\Admin\Schema\Table;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -83,12 +84,12 @@ class Formula extends Object_
         throw new Required(__METHOD__);
     }
 
-    public function resolve(Struct $struct): static
+    public function resolve(Table $table): void
     {
         throw new NotImplemented($this);
     }
 
-    public function toSql(array &$bindings): string
+    public function toSql(array &$bindings, array &$from, string $join): string
     {
         throw new NotImplemented($this);
     }

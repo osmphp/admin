@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Queries\Exceptions;
 
-class RedundantParameters extends \Exception
+class InvalidQuery extends \Exception
 {
 
 }

@@ -2,12 +2,14 @@
 
 namespace Osm\Admin\Queries;
 
+use Osm\Admin\Queries\Exceptions\InvalidQuery;
 use Osm\Admin\Schema\Table;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Db\Db;
+use function Osm\__;
 
 /**
  * @property Table $table
@@ -153,9 +155,12 @@ class Query extends Object_
             }
         }
 
-        return Parser::new(['text' => $formula, 'parameters' => $parameters])
+        $parsed = Parser::new(['text' => $formula, 'parameters' => $parameters])
             ->parse($as);
-            //->resolve($this->table);
+
+        $parsed->resolve($this->table);
+
+        return $parsed;
     }
 
     protected function get_db(): Db {
@@ -166,54 +171,113 @@ class Query extends Object_
 
     protected function generateSelect(array &$bindings): string
     {
-        $sql = 'SELECT ';
-        $sql .= $this->generateSelects($bindings);
-        $sql .= $this->generateFrom($bindings);
-        $sql .= $this->generateFilters($bindings);
-        $sql .= $this->generateOrders($bindings);
-        $sql .= $this->generateOffset($bindings);
-        $sql .= $this->generateLimit($bindings);
+        $from = [];
+        $where = $this->generateWhere($bindings, $from);
+        $select = $this->generateSelects($bindings, $from);
+        $orderBy = $this->generateOrderBy($bindings, $from);
 
-        return $sql;
+        return <<<EOT
+{$select}
+{$this->generateFrom($from)}
+{$where}
+{$orderBy}
+{$this->generateLimit()}
+{$this->generateOffset()}
+EOT;
     }
 
-    protected function generateSelects(array &$bindings): string
+    protected function generateSelects(array &$bindings, array &$from): string
     {
         $sql = '';
+
+        if (empty($this->selects)) {
+            throw new InvalidQuery(__("Add a select expression to the query."));
+        }
 
         foreach ($this->selects as $formula) {
             if ($sql) {
                 $sql .= ', ';
             }
 
-            $sql .= $formula->toSql($bindings);
+            $sql .= $formula->toSql($bindings, $from, 'LEFT OUTER');
+        }
+
+        return "SELECT {$sql}";
+    }
+
+    protected function generateFrom(array $from): string
+    {
+        $sql = '';
+
+        ksort($from);
+
+        foreach ($from as $alias => $on) {
+            if ($on !== true) { // if it's a JOIN
+                $sql .= "\n    {$on}";
+                continue;
+            }
+
+            // otherwise, it's the main table, or a singleton
+            if ($sql) {
+                $sql .= ", \n";
+            }
+
+            $sql .= "FROM `{$alias}`";
         }
 
         return $sql;
     }
 
-    protected function generateFrom(array &$bindings): string
+    protected function generateWhere(array &$bindings, array &$from): string
     {
-        throw new NotImplemented($this);
+        $sql = '';
+
+        if (empty($this->filters)) {
+            return $sql;
+        }
+
+        foreach ($this->filters as $formula) {
+            if ($sql) {
+                $sql .= ' AND ';
+            }
+
+            $sql .= '(' . $formula->toSql($bindings, $from, 'INNER') .
+                ')';
+        }
+
+        return "WHERE {$sql}";
     }
 
-    protected function generateFilters(array &$bindings): string
+    protected function generateOrderBy(array &$bindings, array &$from): string
     {
-        throw new NotImplemented($this);
+        $sql = '';
+
+        if (empty($this->orders)) {
+            return $sql;
+        }
+
+        foreach ($this->orders as $formula) {
+            if ($sql) {
+                $sql .= ', ';
+            }
+
+            $sql .= $formula->toSql($bindings, $from, 'LEFT OUTER');
+        }
+
+        return "ORDER BY {$sql}";
     }
 
-    protected function generateOrders(array &$bindings): string
+    protected function generateLimit(): string
     {
-        throw new NotImplemented($this);
+        return $this->limit !== null
+            ? "LIMIT {$this->limit}"
+            : '';
     }
 
-    protected function generateLimit(array &$bindings): string
+    protected function generateOffset(): string
     {
-        throw new NotImplemented($this);
-    }
-
-    protected function generateOffset(array &$bindings): string
-    {
-        throw new NotImplemented($this);
+        return $this->offset !== null
+            ? "OFFSET {$this->offset}"
+            : '';
     }
 }

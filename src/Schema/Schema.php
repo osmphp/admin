@@ -17,6 +17,8 @@ use function Osm\sort_by_dependency;
 /**
  * @property Class_[] $classes #[Serialized]
  * @property Table[] $tables #[Serialized]
+ * @property string[] $singleton_class_names #[Serialized]
+ * @property Table[] $singletons
  * @property Db $db
  * @property Descendants $descendants
  *
@@ -196,5 +198,22 @@ class Schema extends Object_
 
         sort($types);
         return array_unique($types);
+    }
+
+    protected function get_singleton_class_names(): array {
+        $tableNames = [];
+
+        foreach ($this->tables as $table) {
+            if ($table->singleton) {
+                $tableNames[$table->table_name] = $table->name;
+            }
+        }
+
+        return $tableNames;
+    }
+
+    protected function get_singletons(): array {
+        return array_map(fn(string $className) => $this->tables[$className],
+            $this->singleton_class_names);
     }
 }

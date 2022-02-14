@@ -34,5 +34,8 @@ trait ScalarTrait
 
             $identifier->path .= '"' . $this->name . '"';
         }
+
+        $identifier->data_type = $this->type;
+        $identifier->array = $this->array;
     }
 }

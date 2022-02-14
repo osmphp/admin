@@ -3,6 +3,7 @@
 namespace Osm\Admin\Queries\Formula;
 
 use Osm\Admin\Queries\Formula;
+use Osm\Admin\Schema\Table;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 
@@ -29,12 +30,17 @@ class SelectExpr extends Formula
         $this->expr->parent = $this;
     }
 
-    public function toSql(array &$bindings, array &$from, string $join): string
+    public function resolve(Table $table): void
     {
-        return $this->expr->toSql($bindings, $from, $join);
+        $this->expr->resolve($table);
+
+        $this->data_type = $this->expr->data_type;
+        $this->array = $this->expr->array;
     }
 
-    public function as(): string {
-        return " AS `{$this->alias}`";
+    public function toSql(array &$bindings, array &$from, string $join): string
+    {
+        return $this->expr->toSql($bindings, $from, $join) .
+            " AS `{$this->alias}`";
     }
 }

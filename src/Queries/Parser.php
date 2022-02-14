@@ -631,7 +631,19 @@ class Parser extends Object_
 
         $expr = $this->parseTernary();
         if ($this->token_type != static::AS_) {
-            return $expr;
+            if ($expr instanceof Formula\Identifier) {
+                $alias = implode('__', $expr->parts);
+                $length = $this->previous_pos - $pos;
+
+                $result = Formula\SelectExpr::new(compact('expr',
+                    'alias', 'pos', 'formula', 'length'));
+                $expr->parent = $result;
+
+                return $result;
+            }
+
+            $this->syntaxError(__(
+                "For non-identifier select expression , use AS to specify the resulting column name"));
         }
 
         $this->scan();

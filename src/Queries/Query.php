@@ -26,7 +26,7 @@ class Query extends Object_
     public array $filters = [];
 
     /**
-     * @var Formula[]
+     * @var Formula\SelectExpr[]
      */
     public array $selects = [];
 
@@ -94,7 +94,8 @@ class Query extends Object_
         $bindings = [];
         $sql = $this->generateSelect($bindings);
 
-        return $this->db->connection->select($sql, $bindings);
+        return array_map(fn(\stdClass $item) => $this->load($item),
+            $this->db->connection->select($sql, $bindings));
     }
 
     public function first(string|array ...$formulas): \stdClass|Object_|null {
@@ -200,7 +201,6 @@ EOT;
             }
 
             $sql .= $formula->toSql($bindings, $from, 'LEFT OUTER');
-            $sql .= $formula->as();
         }
 
         return "SELECT {$sql}";
@@ -280,5 +280,33 @@ EOT;
         return $this->offset !== null
             ? "OFFSET {$this->offset}"
             : '';
+    }
+
+    protected function load(\stdClass $item): \stdClass|Object_
+    {
+        foreach ($this->selects as $formula) {
+            $value = $item->{$formula->alias};
+            if ($value === null) {
+                unset($item->{$formula->alias});
+                continue;
+            }
+
+            switch ($formula->data_type) {
+                case 'int':
+                    $item->{$formula->alias} = (int)$value;
+                    break;
+                case 'bool':
+                    $item->{$formula->alias} = (bool)$value;
+                    break;
+                case 'float':
+                    $item->{$formula->alias} = (float)$value;
+                    break;
+                case 'object':
+                    $item->{$formula->alias} = json_decode($value);
+                    break;
+            }
+        }
+
+        return $item;
     }
 }

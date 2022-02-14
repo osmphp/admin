@@ -19,6 +19,7 @@ use Osm\Core\Attributes\Serialized;
  * Resolved properties:
  *
  * @property string $data_type #[Serialized]
+ * @property bool $array #[Serialized]
  *
  * @uses Serialized
  */
@@ -84,6 +85,14 @@ class Formula extends Object_
         throw new Required(__METHOD__);
     }
 
+    protected function get_data_type(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_array(): bool {
+        throw new Required(__METHOD__);
+    }
+
     public function resolve(Table $table): void
     {
         throw new NotImplemented($this);
@@ -92,9 +101,5 @@ class Formula extends Object_
     public function toSql(array &$bindings, array &$from, string $join): string
     {
         throw new NotImplemented($this);
-    }
-
-    public function as(): string {
-        return '';
     }
 }

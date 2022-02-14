@@ -19,7 +19,7 @@ class test_02_sql_generation extends TestCase
             ->first('id');
 
         // THEN it's 1
-        $this->assertEquals(1, $item->id);
+        $this->assertSame(1, $item->id);
     }
 
     public function test_select_int(): void {
@@ -31,7 +31,7 @@ class test_02_sql_generation extends TestCase
             ->first('int');
 
         // THEN it's 1
-        $this->assertEquals(5, $item->int);
+        $this->assertSame(5, $item->int);
     }
 
 }

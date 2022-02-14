@@ -6,6 +6,7 @@ use Osm\Admin\Queries\Exceptions\InvalidQuery;
 use Osm\Admin\Schema\Table;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\NotSupported;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Db\Db;
@@ -39,6 +40,20 @@ class Query extends Object_
      * @var Query[]
      */
     public array $child_queries = [];
+
+    public static array $operators = [
+        Parser::OR_ => " OR ",
+        Parser::AND_ => " AND ",
+        Parser::EQ => " = ",
+        Parser::GT_EQ => " >= ",
+        Parser::GT => " > ",
+        Parser::LT_EQ => " <= ",
+        Parser::LT => " < ",
+        Parser::LT_GT => " <> ",
+        Parser::NOT_EQ => " <> ",
+        Parser::PLUS => " + ",
+        Parser::MINUS => " - ",
+    ];
 
     protected function get_table(): Table {
         throw new Required(__METHOD__);
@@ -289,6 +304,10 @@ EOT;
             if ($value === null) {
                 unset($item->{$formula->alias});
                 continue;
+            }
+
+            if ($formula->array) {
+                throw new NotImplemented($this);
             }
 
             switch ($formula->data_type) {

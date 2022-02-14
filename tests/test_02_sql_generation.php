@@ -34,4 +34,15 @@ class test_02_sql_generation extends TestCase
         $this->assertSame(5, $item->int);
     }
 
+    public function test_where_equals(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you retrieve the `int` property the first created object
+        $item = query(Item::class)
+            ->where('id = 1')
+            ->first('int');
+
+        // THEN it's 1
+        $this->assertSame(5, $item->int);
+    }
 }

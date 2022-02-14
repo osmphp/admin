@@ -167,6 +167,16 @@ class Parser extends Object_
         self::TILDE => Formula::BIT_INVERT,
     ];
     
+    public static array $literals = [
+        self::STRING_ => 'string',
+        self::INT_ => 'int',
+        self::FLOAT_ => 'float',
+        self::HEXADECIMAL => 'int',
+        self::BINARY => 'int',
+        self::TRUE_ => 'bool',
+        self::FALSE_ => 'bool',
+        self::NULL_ => 'null',
+    ];
     protected static string $identifier_starting_char =
         '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     protected static string $identifier_char =
@@ -1058,7 +1068,7 @@ class Parser extends Object_
         $pos = $this->token_pos;
         $formula = $this->text;
 
-        if (isset($this->types->literals[$this->token_type])) {
+        if (isset(static::$literals[$this->token_type])) {
             $token = $this->token_type;
             $value = $this->token_text;
             $this->scan();

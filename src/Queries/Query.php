@@ -106,6 +106,8 @@ class Query extends Object_
      * @return \stdClass[]|Object_[]|array
      */
     public function get(string|array ...$formulas): array {
+        $this->select(...$formulas);
+
         $bindings = [];
         $sql = $this->generateSelect($bindings);
 

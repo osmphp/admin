@@ -45,4 +45,16 @@ class test_02_sql_generation extends TestCase
         // THEN it's 1
         $this->assertSame(5, $item->int);
     }
+
+    public function test_where_in(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you retrieve the `int` property the first created object
+        $items = query(Item::class)
+            ->where('id IN (1, 2)')
+            ->get('id');
+
+        // THEN it's 1 - the ID 2 is not there in the sample
+        $this->assertCount(1, $items);
+    }
 }

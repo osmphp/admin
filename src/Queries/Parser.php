@@ -652,7 +652,7 @@ class Parser extends Object_
                 return $result;
             }
 
-            $this->syntaxError(__(
+            throw $this->syntaxError(__(
                 "For non-identifier select expression , use AS to specify the resulting column name"));
         }
 
@@ -1028,8 +1028,8 @@ class Parser extends Object_
                 $this->expect(static::CLOSE_PAR);
                 $this->scan();
                 $length = $this->previous_pos - $pos;
-                $function = $name;
-                $result = Formula\Call::new(compact('function', 
+                $function_name = $name;
+                $result = Formula\Call::new(compact('function_name',
                     'args', 'pos', 'formula', 'length'));
                 foreach ($args as $arg) {
                     $arg->parent = $result;

@@ -129,11 +129,15 @@ class Query extends Object_
     }
 
     public function value(string|array $formula): mixed {
-        if (($value = $this->first($formula)) === null) {
+        if (($item = $this->first($formula)) === null) {
             return null;
         }
 
-        throw new NotImplemented($this);
+        foreach ($item as $value) {
+            return $value;
+        }
+
+        return null;
     }
 
     public function chunk(callable $callback, int $size = 100): void {

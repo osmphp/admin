@@ -14,7 +14,13 @@ trait PropertyTrait
         throw new NotImplemented($this);
     }
 
-    public function assign(array &$assignments, mixed $value): void {
+    public function insert(array &$inserts, mixed $value)
+        : void
+    {
+        throw new NotImplemented($this);
+    }
+
+    public function update(array &$updates, mixed $value): void {
         throw new NotImplemented($this);
     }
 }

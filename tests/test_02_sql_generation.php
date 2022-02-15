@@ -97,4 +97,19 @@ class test_02_sql_generation extends TestCase
             ->where('id = 1')
             ->value('int'));
     }
+
+    public function test_insert(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you update an implicit property
+        $id = query(Item::class)->insert([
+            'record' => 1,
+            'int' => 2,
+        ]);
+
+        // THEN it actually changes in the database
+        $this->assertSame(2, query(Item::class)
+            ->where("id = {$id}")
+            ->value('int'));
+    }
 }

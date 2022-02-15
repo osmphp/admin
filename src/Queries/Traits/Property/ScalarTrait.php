@@ -39,19 +39,38 @@ trait ScalarTrait
         $identifier->array = $this->array;
     }
 
-    public function assign(array &$assignments, mixed $value): void {
+    public function insert(array &$inserts, mixed $value)
+        : void
+    {
         /* @var Property|Property\Scalar|static $this */
 
         if ($this->explicit) {
-            $assignments[$this->name] = $value === null
-                ? ["NULL", []]
-                : ["?", $value];
+            $inserts[$this->name] = $value;
             return;
         }
 
-        $assignment = $assignments['data'] ?? ["`data`", []];
-        list($sql, $bindings) = $assignment;
-        $assignments['data'] = $value === null
+        if ($value === null) {
+            return;
+        }
+
+        if (!isset($inserts['data'])) {
+            $inserts['data'] = new \stdClass();
+        }
+
+        $inserts['data']->{$this->name} = $value;
+    }
+
+    public function update(array &$updates, mixed $value): void {
+        /* @var Property|Property\Scalar|static $this */
+
+        if ($this->explicit) {
+            $updates[$this->name] = ["?", [$value]];
+            return;
+        }
+
+        list($sql, $bindings) = $updates['data'] ?? ["`data`", []];
+
+        $updates['data'] = $value === null
             ? ["JSON_REMOVE({$sql}, '$.\"{$this->name}\"')", $bindings]
             : ["JSON_SET({$sql}, '$.\"{$this->name}\"', ?)",
                 array_merge($bindings, [$value])];

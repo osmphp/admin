@@ -153,21 +153,23 @@ class Query extends Object_
         return $query->value("COUNT()");
     }
 
-    public function insert(\stdClass|array $data): int {
-        throw new NotImplemented($this);
+    public function insert(array $data): int {
+        $bindings = [];
+        $sql = $this->generateInsert($data, $bindings);
+
+        $this->db->connection->insert($sql, $bindings);
+        return (int)$this->db->connection->getPdo()->lastInsertId();
     }
 
     public function update(array $data): void {
-        $this->db->transaction(function() use ($data) {
-            // don't do anything if there are no properties to update
-            if (empty($data)) {
-                return;
-            }
+        // don't do anything if there are no properties to update
+        if (empty($data)) {
+            return;
+        }
 
-            $bindings = [];
-            $sql = $this->generateUpdate($data, $bindings);
-            $this->db->connection->update($sql, $bindings);
-        });
+        $bindings = [];
+        $sql = $this->generateUpdate($data, $bindings);
+        $this->db->connection->update($sql, $bindings);
     }
 
     public function delete(): void {
@@ -217,14 +219,24 @@ FROM {$this->generateFrom($from)}
 EOT;
     }
 
+    protected function generateInsert(array $data, array &$bindings): string {
+        list($columns, $values) = $this->generateInserts($data, $bindings);
+
+        return <<<EOT
+INSERT INTO `{$this->table->table_name}` 
+({$columns})
+VALUES ({$values})
+EOT;
+    }
+
     protected function generateUpdate(array $data, array &$bindings): string {
         $from = [$this->table->table_name => true];
-        $assignments = $this->generateAssignments($data, $bindings);
+        $updates = $this->generateUpdates($data, $bindings);
         $where = $this->generateWhere($bindings, $from);
 
         return <<<EOT
 UPDATE {$this->generateFrom($from)}
-SET {$assignments}
+SET {$updates}
 {$where}
 EOT;
     }
@@ -356,32 +368,56 @@ EOT;
         return $item;
     }
 
-    protected function updateCommitted(array $data): void
-    {
-    }
-
-    protected function generateAssignments(array $data, array &$bindings)
+    protected function generateUpdates(array $data, array &$bindings)
         : string
     {
-        $assignments = [];
+        $updates = [];
         $sql = '';
 
         foreach ($data as $propertyName => $value) {
             $property = $this->table->properties[$propertyName];
-            $property->assign($assignments, $value);
+            $property->update($updates, $value);
         }
 
-        foreach ($assignments as $columnName => $assignment) {
-            list($assignmentSql, $assignmentBindings) = $assignment;
+        foreach ($updates as $columnName => $update) {
+            list($updateSql, $updateBindings) = $update;
 
             if ($sql) {
                 $sql .= ', ';
             }
 
-            $sql .= "`$columnName` = $assignmentSql";
-            $bindings = array_merge($bindings, $assignmentBindings);
+            $sql .= "`$columnName` = $updateSql";
+            $bindings = array_merge($bindings, $updateBindings);
         }
 
         return $sql;
+    }
+
+    protected function generateInserts(array $data, array &$bindings): array
+    {
+        $inserts = [];
+
+        foreach ($data as $propertyName => $value) {
+            $property = $this->table->properties[$propertyName];
+            $property->insert($inserts, $value);
+        }
+
+        $columns = '';
+        $values = '';
+        foreach ($inserts as $columnName => $value) {
+            if ($columns) {
+                $columns .= ', ';
+                $values .= ', ';
+            }
+
+            if ($columnName == 'data') {
+                $value = json_encode($value);
+            }
+
+            $columns .= "`$columnName`";
+            $values .= '?';
+            $bindings[] = $value;
+        }
+        return [$columns, $values];
     }
 }

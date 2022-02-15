@@ -101,15 +101,28 @@ class test_02_sql_generation extends TestCase
     public function test_insert(): void {
         // GIVEN tables and classes defined in the sample application
 
-        // WHEN you update an implicit property
+        // WHEN you insert an object
         $id = query(Item::class)->insert([
             'record' => 1,
             'int' => 2,
         ]);
 
-        // THEN it actually changes in the database
+        // THEN it's actually stored in the database
         $this->assertSame(2, query(Item::class)
             ->where("id = {$id}")
             ->value('int'));
+    }
+
+    public function test_delete(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you delete an object
+        query(Item::class)
+            ->where('id = 1')
+            ->delete();
+
+        // THEN it's actually no longer in the database
+        $this->assertCount(0, query(Item::class)
+            ->get('id'));
     }
 }

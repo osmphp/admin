@@ -173,7 +173,9 @@ class Query extends Object_
     }
 
     public function delete(): void {
-        throw new NotImplemented($this);
+        $bindings = [];
+        $sql = $this->generateDelete($bindings);
+        $this->db->connection->delete($sql, $bindings);
     }
 
     protected function parse(array|string $formula, string $as = Formula::EXPR)
@@ -237,6 +239,16 @@ EOT;
         return <<<EOT
 UPDATE {$this->generateFrom($from)}
 SET {$updates}
+{$where}
+EOT;
+    }
+
+    protected function generateDelete(array &$bindings): string {
+        $from = [$this->table->table_name => true];
+        $where = $this->generateWhere($bindings, $from);
+
+        return <<<EOT
+DELETE FROM {$this->generateFrom($from)}
 {$where}
 EOT;
     }

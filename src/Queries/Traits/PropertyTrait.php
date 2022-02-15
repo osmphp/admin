@@ -13,4 +13,8 @@ trait PropertyTrait
     public function resolve(Formula\Identifier $identifier): void {
         throw new NotImplemented($this);
     }
+
+    public function assign(array &$assignments, mixed $value): void {
+        throw new NotImplemented($this);
+    }
 }

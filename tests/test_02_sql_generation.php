@@ -9,6 +9,7 @@ use function Osm\query;
 class test_02_sql_generation extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
+    public bool $use_db = true;
 
     public function test_select_id(): void {
         // GIVEN tables and classes defined in the sample application
@@ -67,5 +68,33 @@ class test_02_sql_generation extends TestCase
 
         // THEN it's 1 - there is only 1 object
         $this->assertSame(1, $count);
+    }
+
+    public function test_update(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you update an implicit property
+        query(Item::class)
+            ->where('id = 1')
+            ->update(['int' => 2]);
+
+        // THEN it actually changes in the database
+        $this->assertSame(2, query(Item::class)
+            ->where('id = 1')
+            ->value('int'));
+    }
+
+    public function test_update_null(): void {
+        // GIVEN tables and classes defined in the sample application
+
+        // WHEN you update an implicit property with NULL
+        query(Item::class)
+            ->where('id = 1')
+            ->update(['int' => null]);
+
+        // THEN it actually changes in the database
+        $this->assertSame(null, query(Item::class)
+            ->where('id = 1')
+            ->value('int'));
     }
 }

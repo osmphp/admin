@@ -38,4 +38,22 @@ trait ScalarTrait
         $identifier->data_type = $this->type;
         $identifier->array = $this->array;
     }
+
+    public function assign(array &$assignments, mixed $value): void {
+        /* @var Property|Property\Scalar|static $this */
+
+        if ($this->explicit) {
+            $assignments[$this->name] = $value === null
+                ? ["NULL", []]
+                : ["?", $value];
+            return;
+        }
+
+        $assignment = $assignments['data'] ?? ["`data`", []];
+        list($sql, $bindings) = $assignment;
+        $assignments['data'] = $value === null
+            ? ["JSON_REMOVE({$sql}, '$.\"{$this->name}\"')", $bindings]
+            : ["JSON_SET({$sql}, '$.\"{$this->name}\"', ?)",
+                array_merge($bindings, [$value])];
+    }
 }

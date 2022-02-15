@@ -157,8 +157,17 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    public function update(\stdClass|array $data): void {
-        throw new NotImplemented($this);
+    public function update(array $data): void {
+        $this->db->transaction(function() use ($data) {
+            // don't do anything if there are no properties to update
+            if (empty($data)) {
+                return;
+            }
+
+            $bindings = [];
+            $sql = $this->generateUpdate($data, $bindings);
+            $this->db->connection->update($sql, $bindings);
+        });
     }
 
     public function delete(): void {
@@ -193,18 +202,30 @@ class Query extends Object_
 
     protected function generateSelect(array &$bindings): string
     {
-        $from = [];
+        $from = [$this->table->table_name => true];
         $where = $this->generateWhere($bindings, $from);
         $select = $this->generateSelects($bindings, $from);
         $orderBy = $this->generateOrderBy($bindings, $from);
 
         return <<<EOT
 {$select}
-{$this->generateFrom($from)}
+FROM {$this->generateFrom($from)}
 {$where}
 {$orderBy}
 {$this->generateLimit()}
 {$this->generateOffset()}
+EOT;
+    }
+
+    protected function generateUpdate(array $data, array &$bindings): string {
+        $from = [$this->table->table_name => true];
+        $assignments = $this->generateAssignments($data, $bindings);
+        $where = $this->generateWhere($bindings, $from);
+
+        return <<<EOT
+UPDATE {$this->generateFrom($from)}
+SET {$assignments}
+{$where}
 EOT;
     }
 
@@ -241,10 +262,10 @@ EOT;
 
             // otherwise, it's the main table, or a singleton
             if ($sql) {
-                $sql .= ", \n";
+                $sql .= ", \nFROM ";
             }
 
-            $sql .= "FROM `{$alias}`";
+            $sql .= "`{$alias}`";
         }
 
         return $sql;
@@ -333,5 +354,34 @@ EOT;
         }
 
         return $item;
+    }
+
+    protected function updateCommitted(array $data): void
+    {
+    }
+
+    protected function generateAssignments(array $data, array &$bindings)
+        : string
+    {
+        $assignments = [];
+        $sql = '';
+
+        foreach ($data as $propertyName => $value) {
+            $property = $this->table->properties[$propertyName];
+            $property->assign($assignments, $value);
+        }
+
+        foreach ($assignments as $columnName => $assignment) {
+            list($assignmentSql, $assignmentBindings) = $assignment;
+
+            if ($sql) {
+                $sql .= ', ';
+            }
+
+            $sql .= "`$columnName` = $assignmentSql";
+            $bindings = array_merge($bindings, $assignmentBindings);
+        }
+
+        return $sql;
     }
 }

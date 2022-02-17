@@ -7,6 +7,10 @@ use Osm\Admin\Schema\Record;
 use Osm\Admin\Schema\Attributes\Default_;
 
 /**
+ */
+class Product extends Record
+{
+/*
  * @property ?string $name
  * @property ?string $type
  * @property int $qty #[Default_(0)]
@@ -16,7 +20,4 @@ use Osm\Admin\Schema\Attributes\Default_;
  *
  * @uses Default_
  */
-class Product extends Record
-{
-
 }

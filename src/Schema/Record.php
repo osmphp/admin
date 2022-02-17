@@ -9,6 +9,7 @@ use Osm\Admin\Schema\Attributes\AutoIncrement;
 
 /**
  * @property int $id #[Explicit, Unsigned, AutoIncrement]
+ * @property ?string $title
  *
  * @uses Unsigned, Explicit, AutoIncrement
  */

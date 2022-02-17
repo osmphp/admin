@@ -3,9 +3,11 @@
 namespace Osm\Admin\Samples\Seed\Commands;
 
 use Carbon\Carbon;
+use Osm\Admin\Samples\Products\Product;
 use Osm\Core\App;
 use Osm\Framework\Console\Command;
 use Osm\Framework\Db\Db;
+use function Osm\query;
 
 /**
  * @property Db $db
@@ -37,6 +39,19 @@ class Samples extends Command
                 ],
                 'int_array' => [1, 2, 3,],
             ]),
+        ]);
+
+        query(Product::class)->insert([
+            'title' => 'Pink Bag',
+        ]);
+        query(Product::class)->insert([
+            'title' => 'Blue Dress',
+        ]);
+        query(Product::class)->insert([
+            'title' => 'White Shirt',
+        ]);
+        query(Product::class)->insert([
+            'title' => 'Black Jacket',
         ]);
     }
 

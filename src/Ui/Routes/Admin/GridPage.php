@@ -34,10 +34,9 @@ class GridPage extends Route
                 's_deleted' => __($this->table->s_n_objects_deleted),
             ],
             'table' => $this->table,
-            'count' => $this->query->count,
+            'query' => $this->query,
             'create_url' => $this->table->url('GET /create'),
             'grid' => $this->table->grid,
-            'items' => $this->query->items,
         ];
     }
 

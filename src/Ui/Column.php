@@ -51,4 +51,8 @@ class Column extends Object_
     protected function get_formula(): ?string {
         return $this->property->control->cell_formula;
     }
+
+    public function editUrl(\stdClass $item): string {
+        return "{$this->grid->table->url('GET /edit')}?id={$item->id}";
+    }
 }

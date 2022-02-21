@@ -34,7 +34,7 @@ export default register('grid', class Grid extends Controller {
 
     get rows() {
         return Array.from(this.element.querySelectorAll('.grid__row'))
-            .map(element => controller(element, 'row'));
+            .map(element => controller(element, 'grid-row'));
     }
 
     get row_handle_elements() {

@@ -1,5 +1,5 @@
 import Header from "../Header";
-import {register, controller} from '../../../js/scripts';
+import {register, controller} from '../../../../js/scripts';
 
 export default register('grid-handle-header', class Handle extends Header {
     get events() {

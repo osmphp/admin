@@ -66,7 +66,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                         @forelse($query->items as $item)
                             <div class="grid__row table-row bg-white border-b
                                 dark:bg-gray-800 dark:border-gray-700"
-                                data-js-row='{"id": {{ $item->id }}}'
+                                data-js-grid-row='{"id": {{ $item->id }}}'
                             >
                                 @include ('ui::grid.cell.handle')
                                 @foreach ($grid->columns as $column)

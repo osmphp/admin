@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Admin\Schema\Attributes;
+namespace Osm\Admin\Ui\Attributes\Control;
 
 use Osm\Admin\Schema\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class OnDeleteSetNull extends Attribute
+final class Select extends Attribute
 {
 }

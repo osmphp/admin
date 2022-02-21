@@ -1,14 +1,15 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
+
 /* @var string $title */
 /* @var array $js */
-
-/* @var \Osm\Admin\Grids\Grid $grid */
-/* @var \Osm\Admin\Ui\Interface_ $interface */
-/* @var string $route_name */
-/* @var int $object_count */
-/* @var \stdClass[] $objects */
+/* @var \Osm\Admin\Schema\Table $table */
+/* @var int $count */
 /* @var string $create_url */
+/* @var \Osm\Admin\Ui\Grid $grid */
+/* @var \stdClass[] $items */
+
+/* @var string $route_name */
 /* @var string $edit_url */
 /* @var callable $editUrl */
 ?>
@@ -23,9 +24,9 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                 </h1>
                 <p class="text-sm mb-6">
                     <span class="grid__selected">
-                        {{ \Osm\__($interface->s_n_m_objects_selected, [
+                        {{ \Osm\__($table->s_n_m_objects_selected, [
                             'selected' => 0,
-                            'count' => $object_count,
+                            'count' => $count,
                         ]) }}
                     </span>
                 </p>
@@ -51,30 +52,34 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                 <div class="table min-w-full border-collapse">
                     <div class="table-header-group bg-gray-50 dark:bg-gray-700">
                         <div class="table-row">
-                            @include('grids::header.handle')
+                            @include('ui::grid.header.handle')
                             @foreach ($grid->columns as $column)
-                                @include($column->header_template, [
-                                    'column' => $column,
-                                ])
+                                @if ($column->header_template)
+                                    @include($column->header_template, [
+                                        'column' => $column,
+                                    ])
+                                @endif
                             @endforeach
                         </div>
                     </div>
                     <div class="table-row-group">
-                        @forelse($objects as $object)
+                        @forelse($items as $item)
                             <div class="grid__row table-row bg-white border-b
                                 dark:bg-gray-800 dark:border-gray-700"
-                                data-js-row='{"id": {{ $object->id }}}'
+                                data-js-row='{"id": {{ $item->id }}}'
                             >
-                                @include ('grids::cell.handle')
+                                @include ('ui::grid.cell.handle')
                                 @foreach ($grid->columns as $column)
-                                    @include($column->template, [
-                                        'column' => $column,
-                                        'object' => $object,
-                                    ])
+                                    @if ($column->cell_template)
+                                        @include($column->cell_template, [
+                                            'column' => $column,
+                                            'item' => $item,
+                                        ])
+                                    @endif
                                 @endforeach
                             </div>
                         @empty
-                            No objects.
+                            {{ \Osm\__($table->s_no_objects) }}
                         @endforelse
                     </div>
                 </div>

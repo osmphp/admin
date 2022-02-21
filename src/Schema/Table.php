@@ -13,7 +13,6 @@ use Osm\Core\Attributes\Serialized;
  * @property string $table_name #[Serialized]
  * @property string[] $column_names #[Serialized]
  * @property bool $singleton #[Serialized]
- * @property Property[] $columns
  * @property Db $db
  * @property string[] $after #[Serialized]
  *
@@ -35,10 +34,6 @@ class Table extends Struct
 
     protected function get_singleton(): bool {
         return false;
-    }
-
-    protected function get_columns(): array {
-        throw new NotImplemented($this);
     }
 
     public function create(): void

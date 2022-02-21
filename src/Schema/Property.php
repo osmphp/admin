@@ -101,4 +101,7 @@ class Property extends Object_
     public function create(Blueprint $table): void {
         throw new NotImplemented($this);
     }
+
+    public function __wakeup(): void {
+    }
 }

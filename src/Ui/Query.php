@@ -13,12 +13,14 @@ use function Osm\query;
 /**
  * @property Table $table
  * @property DbQuery $query
- * @property bool $query_count
  * @property int $count
+ * @property \stdClass[] $items
  */
 class Query extends Object_
 {
     protected bool $executed = false;
+    protected bool $query_count = false;
+    protected bool $query_items = true;
 
     protected function get_table(): Table {
         throw new Required(__METHOD__);
@@ -28,8 +30,14 @@ class Query extends Object_
         return query($this->table->name);
     }
 
-    public function count(): static {
-        $this->query_count = true;
+    public function count(bool $count = true): static {
+        $this->query_count = $count;
+
+        return $this;
+    }
+
+    public function items(bool $items = true): static {
+        $this->query_items = $items;
 
         return $this;
     }
@@ -45,6 +53,17 @@ class Query extends Object_
         return $this->count;
     }
 
+    protected function get_items(): array {
+        $this->run();
+
+        if (!isset($this->items)) {
+            throw new InvalidQuery(__(
+                "To retrieve record data, use `items()` method before accessing query results"));
+        }
+
+        return $this->items;
+    }
+
     protected function run(): void
     {
         if ($this->executed) {
@@ -52,7 +71,14 @@ class Query extends Object_
         }
 
         if ($this->query_count) {
-            $this->count = $this->query->count();
+            $query = query($this->table->name, [
+                'filters' => $this->query->filters,
+            ]);
+            $this->count = $query->value("COUNT() AS count");
+        }
+
+        if ($this->query_items) {
+            $this->items = $this->query->get();
         }
     }
 }

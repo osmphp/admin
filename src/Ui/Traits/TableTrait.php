@@ -3,11 +3,16 @@
 namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Table;
+use Osm\Admin\Ui\Grid;
 use Osm\Core\App;
 use Osm\Core\Attributes\UseIn;
+use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string $url
+ * @property Grid $grid #[Serialized]
+ *
+ * @uses Serialized
  */
 #[UseIn(Table::class)]
 trait TableTrait
@@ -34,5 +39,19 @@ trait TableTrait
         }
 
         return "{$osm_app->area_url}{$this->url}{$routeName}";
+    }
+
+    protected function get_grid(): Grid {
+        /* @var Table|static $this */
+
+        return Grid::new([
+            'table' => $this,
+            'column_names' => $this->column_names,
+        ]);
+    }
+
+    protected function around___wakeup(callable $proceed): void {
+        $proceed();
+        $this->grid->table = $this;
     }
 }

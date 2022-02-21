@@ -1,15 +1,15 @@
 <?php
 
-namespace Osm\Admin\Schema\Attributes;
+namespace Osm\Admin\Schema\Attributes\Size;
 
 use Osm\Admin\Schema\Attribute;
-use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
+use Osm\Admin\Schema\Struct;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Tiny extends Attribute
+final class Long extends Attribute
 {
     public function parse(\stdClass|Struct|Property $data): void {
-        $data->size = Property::TINY;
+        $data->size = Property::LONG;
     }
 }

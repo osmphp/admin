@@ -7,7 +7,7 @@ namespace Osm {
     use Osm\Core\App;
     use Osm\Core\Exceptions\NotImplemented;
 
-    function query(string $className): Query {
+    function query(string $className, array $data = []): Query {
         global $osm_app; /* @var App $osm_app */
 
         return Query::new(['table' => $osm_app->schema->tables[$className]]);

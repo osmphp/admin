@@ -144,15 +144,6 @@ class Query extends Object_
         throw new NotImplemented($this);
     }
 
-    public function count(): int {
-        $query = static::new([
-            'table' => $this->table,
-            'filters' => $this->filters,
-        ]);
-
-        return $query->value("COUNT()");
-    }
-
     public function insert(array $data): int {
         $bindings = [];
         $sql = $this->generateInsert($data, $bindings);

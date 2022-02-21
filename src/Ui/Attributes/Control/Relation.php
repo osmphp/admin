@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Admin\Ui\Attributes;
+namespace Osm\Admin\Ui\Attributes\Control;
 
 use Osm\Admin\Schema\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class File extends Attribute
+final class Relation extends Attribute
 {
 }

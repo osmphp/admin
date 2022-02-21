@@ -1,10 +1,10 @@
 <?php
 
-namespace Osm\Admin\Ui\Attributes;
+namespace Osm\Admin\Schema\Attributes\OnDelete;
 
 use Osm\Admin\Schema\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Input extends Attribute
+final class Cascade extends Attribute
 {
 }

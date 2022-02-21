@@ -3,12 +3,12 @@
 namespace Osm\Admin\Samples\Generics;
 
 use Carbon\Carbon;
-use Osm\Admin\Schema\Record;
 use Osm\Admin\Schema\Attributes\Explicit;
+use Osm\Admin\Schema\Attributes\Formula\Computed;
+use Osm\Admin\Schema\Attributes\Formula\Overridable;
+use Osm\Admin\Schema\Attributes\Formula\Virtual;
 use Osm\Admin\Schema\Attributes\Length;
-use Osm\Admin\Schema\Attributes\Virtual;
-use Osm\Admin\Schema\Attributes\Computed;
-use Osm\Admin\Schema\Attributes\Overridable;
+use Osm\Admin\Schema\Record;
 
 /**
  * @property ?Item $parent #[Explicit]

@@ -33,12 +33,26 @@ class GridPage extends Route
                 's_deleting' => __($this->table->s_deleting_n_objects),
                 's_deleted' => __($this->table->s_n_objects_deleted),
             ],
+            'table' => $this->table,
+            'count' => $this->query->count,
+            'create_url' => $this->table->url('GET /create'),
+            'grid' => $this->table->grid,
+            'items' => $this->query->items,
         ];
     }
 
     protected function get_query(): Query
     {
-        return parent::get_query()
+        $query = parent::get_query()
             ->count();
+
+        $query->query->select('id');
+        foreach ($this->table->grid->columns as $column) {
+            $query->query->select($column->formula
+                ? "{$column->formula} AS {$column->name}"
+                : $column->name);
+        }
+
+        return $query;
     }
 }

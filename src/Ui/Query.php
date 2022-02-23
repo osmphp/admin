@@ -5,6 +5,7 @@ namespace Osm\Admin\Ui;
 use Osm\Admin\Queries\Query as DbQuery;
 use Osm\Admin\Schema\Table;
 use Osm\Admin\Ui\Exceptions\InvalidQuery;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use function Osm\__;
@@ -21,6 +22,7 @@ class Query extends Object_
     protected bool $executed = false;
     protected bool $query_count = false;
     protected bool $query_items = true;
+    protected bool $query_all = false;
 
     protected function get_table(): Table {
         throw new Required(__METHOD__);
@@ -39,6 +41,17 @@ class Query extends Object_
     public function items(bool $items = true): static {
         $this->query_items = $items;
 
+        return $this;
+    }
+
+    public function all(bool $all = true): static {
+        $this->query_all = $all;
+
+        return $this;
+    }
+
+    public function url(array $url, string ...$ignore): static {
+        //throw new NotImplemented($this);
         return $this;
     }
 

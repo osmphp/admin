@@ -8,7 +8,8 @@ use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 /**
  * @property Grid $grid
- * @property string $property_name #[Serialized]
+ * @property string $identifier #[Serialized]
+ * @property Property[] $path
  * @property Property $property
  * @property ?string $header_template #[Serialized]
  * @property ?string $cell_template #[Serialized]
@@ -24,12 +25,12 @@ class Column extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_property_name(): string {
+    protected function get_identifier(): string {
         throw new Required(__METHOD__);
     }
 
     protected function get_property(): Property {
-        return $this->grid->table->properties[$this->property_name];
+        return $this->grid->table->properties[$this->identifier];
     }
 
     protected function get_header_template(): ?string {

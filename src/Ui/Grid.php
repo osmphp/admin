@@ -8,8 +8,8 @@ use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 /**
  * @property Table $table
- * @property string[] $column_names #[Serialized]
- * @property Column[] $columns #[Serialized]
+ * @property string[] $select_identifiers #[Serialized]
+ * @property Column[] $selects #[Serialized]
  *
  * @uses Serialized
  */
@@ -26,10 +26,10 @@ class Grid extends Object_
     protected function get_columns(): array {
         $columns = [];
 
-        foreach ($this->column_names as $columnName) {
+        foreach ($this->select_identifiers as $columnName) {
             $columns[$columnName] = Column::new([
                 'grid' => $this,
-                'property_name' => $columnName,
+                'identifier' => $columnName,
             ]);
         }
 
@@ -38,7 +38,7 @@ class Grid extends Object_
 
     public function __wakeup(): void
     {
-        foreach ($this->columns as $column) {
+        foreach ($this->selects as $column) {
             $column->grid = $this;
         }
     }

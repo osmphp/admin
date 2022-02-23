@@ -53,7 +53,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     <div class="table-header-group bg-gray-50 dark:bg-gray-700">
                         <div class="table-row">
                             @include('ui::grid.header.handle')
-                            @foreach ($grid->columns as $column)
+                            @foreach ($grid->selects as $column)
                                 @if ($column->header_template)
                                     @include($column->header_template, [
                                         'column' => $column,
@@ -69,7 +69,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                 data-js-grid-row='{"id": {{ $item->id }}}'
                             >
                                 @include ('ui::grid.cell.handle')
-                                @foreach ($grid->columns as $column)
+                                @foreach ($grid->selects as $column)
                                     @if ($column->cell_template)
                                         @include($column->cell_template, [
                                             'column' => $column,

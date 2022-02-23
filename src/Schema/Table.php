@@ -11,7 +11,7 @@ use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string $table_name #[Serialized]
- * @property string[] $column_names #[Serialized]
+ * @property string[] $select_identifiers #[Serialized]
  * @property bool $singleton #[Serialized]
  * @property Db $db
  * @property string[] $after #[Serialized]
@@ -28,7 +28,7 @@ class Table extends Struct
         return str_replace(' ', '_', $this->s_objects_lowercase);
     }
 
-    protected function get_column_names(): array {
+    protected function get_select_identifiers(): array {
         return ['title'];
     }
 

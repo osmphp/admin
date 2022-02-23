@@ -46,7 +46,7 @@ trait TableTrait
 
         return Grid::new([
             'table' => $this,
-            'column_names' => $this->column_names,
+            'select_identifiers' => $this->select_identifiers,
         ]);
     }
 

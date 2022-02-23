@@ -25,6 +25,10 @@ class GridPage extends Route
     protected function get_data(): array {
         return [
             'title' => $this->table->s_objects,
+            'table' => $this->table,
+            'query' => $this->query,
+            'create_url' => $this->table->url('GET /create'),
+            'grid' => $this->table->grid,
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),
                 'count' => $this->query->count,
@@ -33,20 +37,18 @@ class GridPage extends Route
                 's_deleting' => __($this->table->s_deleting_n_objects),
                 's_deleted' => __($this->table->s_n_objects_deleted),
             ],
-            'table' => $this->table,
-            'query' => $this->query,
-            'create_url' => $this->table->url('GET /create'),
-            'grid' => $this->table->grid,
         ];
     }
 
     protected function get_query(): Query
     {
         $query = parent::get_query()
+            ->all()
+            ->url($this->http->query, 'id', 'select')
             ->count();
 
         $query->query->select('id');
-        foreach ($this->table->grid->columns as $column) {
+        foreach ($this->table->grid->selects as $column) {
             $query->query->select($column->formula
                 ? "{$column->formula} AS {$column->name}"
                 : $column->name);

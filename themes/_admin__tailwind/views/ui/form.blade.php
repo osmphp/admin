@@ -1,12 +1,15 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
-/* @var \Osm\Admin\Forms\Form $form */
-/* @var string $route_name */
-/* @var int $object_id */
-/* @var int $object_count */
+
 /* @var string $title */
-/* @var \stdClass $object */
+/* @var \Osm\Admin\Ui\FormMode $mode */
 /* @var string $form_url */
+/* @var \Osm\Admin\Ui\Query $query */
+
+/* @var \Osm\Admin\Ui\Form $form */
+/* @var int $object_id */
+/* @var int $query->count */
+/* @var \stdClass $object */
 /* @var array $options */
 /* @var array $field_options */
 ?>
@@ -15,9 +18,9 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
         <section class="col-start-1 col-span-12">
             <form method="POST" action="{{ $form_url }}"
                 autocomplete="off"
-                data-js-form='{!! \Osm\js($options) !!}'>
+                data-js-form='{!! \Osm\js($js) !!}'>
 
-                @if ($route_name === 'GET /create')
+                @if ($mode === \Osm\Admin\Ui\FormMode::Create)
                     <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
                         {{ $title }}
                     </h1>
@@ -33,8 +36,8 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                 mr-3 mb-3">{{ \Osm\__("Save")}}</button>
                     </div>
-                @elseif ($route_name === 'GET /edit')
-                    @if ($object_count > 1)
+                @elseif ($mode === \Osm\Admin\Ui\FormMode::Edit)
+                    @if ($query->count > 1)
                         <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
                             {{ $title }}
                         </h1>

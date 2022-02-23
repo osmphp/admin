@@ -1,8 +1,8 @@
-# Data Classes
+# Objects
 
 {{ toc }}
 
-## Top And Child Objects
+## Object Types
 
 ### Records
 
@@ -14,39 +14,70 @@ Let’s call them just *records*.
 
 For example, products are instances of `Product` class:
 
+    /**
+     * @property int $qty       Qty in stock
+     * @property float $price   Regular price
+     * @property bool $enabled 
+     */
     class Product extends Record
     {
-    
     }
 
-As defined in the `Record` class, every record has two standard properties:
+As defined in the `Record` class, every record, in addition to all properties defined in its class has two standard properties:
 
 * `id` - Unique auto-incremented record ID. It's used for creating relationships between objects, and for object selection in a grid.
 * `title` - Record title. It's used for in various places of the admin area, for example, while displaying the object in dropdown option list, or in the page title of an edit form.
 
 ### Objects
 
-Some objects may not have a designated table that stores them. Instead, they are stored in the parent object's record. 
+Some objects don't have a designated table that stores them. Instead, they are stored in the parent object's record. 
 
-Let's call these child objects just *objects*.
+Let's call such child objects just *objects*.
 
-For example, product stock settings may be stored in an object that is a part of the product object:
+For example, product images can be stored in the product record:
 
     /**
-     * @property StockSettings $stock_settings
+     * ...
+     * @property Image[] $images 
      */
     class Product extends Record
     {
     }
 
-    class StockSettings extends Object_ {
+    /**
+     * @property Product $parent
+     * @property string $path
+     * @property int $sort_order
+     */
+    class Image extends Object_
+    {
+    
     }
 
-### Scalar Properties
+## Properties
 
-A record stores property values. Each property is of some predefined [type](https://www.php.net/manual/en/language.types.intro.php).
+Objects store property values. For example, products may be of different color or size, have different quantity in stock. All of these are properties.
 
-Osm Admin supports scalar PHP types (`string`, `int`, `float` and `bool`), and `Carbon` class for date/time values:
+Properties are defined in the doc comment of the object's class using `@property` tag: 
+
+    /**
+     * @property int $qty       Qty in stock
+     * @property float $price   Regular price
+     * @property bool $enabled 
+     */
+    class Product extends Record
+    {
+    }
+
+If you accidentally assign an undefined property a value, such assignment is ignored.
+
+Each property definition has mandatory type (e.g. `int`) and name (e.g. `qty`). The property can be a scalar, an object, or an array.
+
+### Scalars
+
+Scalar properties store regular, simple values. 
+
+To define a scalar property, use `int`, `string`, `bool`, `float`, `\DateTime` (or `Carbon` its better alternative) or `mixed` property type:
 
     /**
      * @property string $name
@@ -60,35 +91,40 @@ Osm Admin supports scalar PHP types (`string`, `int`, `float` and `bool`), and `
     
     }
 
-### Compound Properties
+In PHP, `mixed` means "any type", while in Osm Admin, it means "any scalar type". In general, avoid `mixed` properties, and use them only if absolutely necessary.
 
-It also supports object and array types:
+### Objects
 
-    /**
-     * @property string $name
-     * @property Category $parent
-     * @property Category[] $children
-     */
-    class Category extends Record
-    {
-    
-    }
-
-### Child Objects
-
-Not every object is stored as a database record. Some objects - let’s call them *child* objects - are stored in a property of some parent object. For example, product images can be stored in the product record. For such object extend the `Object_` class instead of the `Record` class:
+An object property contains an objects, or references a record.
+ 
+To define an object property, use the class name of the referenced record (should extend `Record`) or contained object (should extend `Object_`), for example: 
 
     /**
-     * @property Product $product
-     * @property string $path
-     * @property int $sort_order
+     * @property Product $parent
+     * ...
      */
     class Image extends Object_
     {
     
     }
 
-### Nullable Properties
+### Arrays
+
+An array property contains an array of scalars or objects. 
+
+To define an array property, use a scalar or object property type followed by `[]`:
+
+    /**
+     * ...
+     * @property Image[] $images 
+     */
+    class Product extends Record
+    {
+    }
+
+## Basic Property Characteristics
+
+### Nullable
 
 Mark property as *nullable* using `?` syntax if some object may have no value for it. For example, a root product category has no parent category, hence it should be nullable:
 
@@ -102,26 +138,9 @@ Mark property as *nullable* using `?` syntax if some object may have no value fo
     
     }
 
-User has to provide values for all non-nullable properties, so, nullable properties make object creation easier. In fact, consider marking all properties nullable, unless a vlue is really, really required.
+User has to provide values for all non-nullable properties, so, nullable properties make object creation easier. In fact, consider marking all properties nullable, unless a value is really, really required.
 
-### Mixed Properties
-
-Use `mixed` type to allow any property value:
-
-    /**
-     * @property string $name
-     * @property mixed $value
-     */
-    class Property extends Record
-    {
-    
-    }
-
-All `mixed` properties are nullable.
-
-In general, avoid `mixed` properties, and use them only if absolutely necessary.
-
-### Default Values
+### Default Value
 
 Another way to simplify object creation is providing sensible default values using `#[Default_]` attribute. Let’s refine the definition of the product class:
 
@@ -136,11 +155,11 @@ Another way to simplify object creation is providing sensible default values usi
     
     }
 
-### Object Types
+## Object Types
 
-[Previous implementation](https://osm.software/blog/21/11/data-subclasses.html)
+Some records of the same table may have different structure. 
 
-Some objects being in the same table may have different structure. For example, simple products and configurable products have many common properties that can be put into the base `Product` class, but some other properties differ. For example, a configurable product specifies properties that a user should specify while ordering a product, and a list of the underlying simple products that will actually be shipped:
+For example, simple products and configurable products have many common properties that can be put into the base `Product` class, but some other properties differ. For example, a configurable product specifies properties that a user should specify while ordering a product, and a list of the underlying simple products that will actually be shipped:
 
     /**
      * @property string[] $config_properties
@@ -292,17 +311,6 @@ However, a record array is neither stored in `data` column, nor in an explicit c
     {
     }
 
-## Queries And Formulas
-
-[Previous implementation](https://osm.software/blog/21/11/data-query-formulas.html)
-
-### Basic Syntax
-
-    $category = query(Category::class)
-        ->where('parent.id = 1 OR id > 5')
-        ->orderBy('name DESC')
-        ->first('id', 'name', 'parent.name');
-
 ### Virtual Properties
 
 You may also compute property values on the fly, and use them in queries:
@@ -355,43 +363,16 @@ Finally, you may allow user to override the computed value:
     
     }
 
-### Compound Queries
+## Implementation Status / Efforts Required
 
-You may query a parent table and its child table at the same time:
+### Validation
 
-    $orders = query(Order::class)
-            ->query('lines', fn(Query $query) => $query->get('*'))
-        ->get('*');
+Currently, Osm Admin doesn't validate property definitions and applied attributes.
 
-It also works on hierarchical tables:
+**R**. Validate property definitions and applied attributes. 
 
-    $categories = query(Category::class)
-            ->query('children', fn(Query $query) => $query->get('*'))
-        ->get('*');
+### Supported Property Types
 
-## User Interface
+Although you can define any property in a data class, currently only `int` and `string` properties are supported.
 
-### Forms
-
-Previous implementation
-
-All properties, except `#[System]`, are shown on the form page:
-
-- most properties are displayed as `#[Input]`
-- date/time properties as displayed as `#[Date]`
-- `bool` properties are displayed as `#[Switch_]`
-- record properties are displayed as `#[Relation]`
-- object array properties are displayed as grids
-- scalar array properties are displayed as `#[Multiselect]`
-
-You may change the default behavior using `#[Select]`, `#[File]` and (later) other attributes.
-
-Change field order using `#[Before]` and `#[After]` attributes.
-
-Organize fields into fieldsets, sections and chapters using `#[In_]` attribute.
-
-### Grids
-
-Properties behave in a grid according to their behavior in a form.
-
-However, by default, only the `title` property is displayed. To change that, define a `Grid` -derived class, and specify columns there.
+**R**. Support all the rest property types.

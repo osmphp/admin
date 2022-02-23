@@ -1,12 +1,34 @@
 # Objects
 
+Application data is made of objects. Use standard PHP class and attribute syntax to: 
+
+* define the structure of application objects,
+* define how they are stored in the database,
+* specify computation logic,
+* represent them in the user interface. 
+
+***Status**. The text of this specification is a work in progress.*
+
+Contents:
+
 {{ toc }}
+
+### meta.abstract
+
+Application data is made of objects. Use standard PHP class and attribute syntax to:
+
+* define the structure of application objects,
+* define how they are stored in the database,
+* specify computation logic,
+* represent them in the user interface.
+
+***Status**. The text of this specification is a work in progress.*
 
 ## Object Types
 
 ### Records
 
-Application data is made of objects. Top-level objects are stored in database records. For example, product objects are stored as records in `products` table.
+Top-level objects are stored in database records. For example, product objects are stored as records in `products` table.
 
 Top-level objects are instances of classes that extend from the `Record` class. 
 
@@ -23,7 +45,7 @@ For example, products are instances of `Product` class:
     {
     }
 
-As defined in the `Record` class, every record, in addition to all properties defined in its class has two standard properties:
+In addition to all properties defined in the class, every record has two standard properties:
 
 * `id` - Unique auto-incremented record ID. It's used for creating relationships between objects, and for object selection in a grid.
 * `title` - Record title. It's used for in various places of the admin area, for example, while displaying the object in dropdown option list, or in the page title of an edit form.
@@ -50,6 +72,22 @@ For example, product images can be stored in the product record:
      * @property int $sort_order
      */
     class Image extends Object_
+    {
+    
+    }
+
+### Subtypes
+
+Some records of the same table may have different structure.
+
+For example, simple products and configurable products have many common properties that can be put into the base `Product` class, but some other properties differ. A configurable product contains properties that a user should specify while ordering a product, and a list of the underlying simple products that will actually be shipped. Use `#[Type]` attribute to define a record subtype:
+
+    /**
+     * @property string[] $config_properties
+     * @property Product[] $config_products
+     */
+    #[Type('configurable')] 
+    class Configurable extends Product
     {
     
     }
@@ -122,9 +160,7 @@ To define an array property, use a scalar or object property type followed by `[
     {
     }
 
-## Basic Property Characteristics
-
-### Nullable
+## Nullable Properties
 
 Mark property as *nullable* using `?` syntax if some object may have no value for it. For example, a root product category has no parent category, hence it should be nullable:
 
@@ -140,7 +176,7 @@ Mark property as *nullable* using `?` syntax if some object may have no value fo
 
 User has to provide values for all non-nullable properties, so, nullable properties make object creation easier. In fact, consider marking all properties nullable, unless a value is really, really required.
 
-### Default Value
+## Default Values
 
 Another way to simplify object creation is providing sensible default values using `#[Default_]` attribute. Let’s refine the definition of the product class:
 
@@ -155,28 +191,11 @@ Another way to simplify object creation is providing sensible default values usi
     
     }
 
-## Object Types
+## Table Columns
 
-Some records of the same table may have different structure. 
+Records of the same class are stored in one table. For example, all product objects are stored as records in the `products` table.
 
-For example, simple products and configurable products have many common properties that can be put into the base `Product` class, but some other properties differ. For example, a configurable product specifies properties that a user should specify while ordering a product, and a list of the underlying simple products that will actually be shipped:
-
-    /**
-     * @property string[] $config_properties
-     * @property Product[] $config_products
-     */
-    class Configurable extends Product
-    {
-    
-    }
-
-## Database Schema
-
-### Table Name
-
-By default, the table name is inferred from the short class name. For example, `Product` instances are stored in `products` table.
-
-You may specify the table name using `#[Table]` attribute:
+The table name is inferred from the short class name, `Product`. You can specify a custom table name using the `#[Table]` attribute:
 
     /**
      * ...
@@ -184,12 +203,9 @@ You may specify the table name using `#[Table]` attribute:
     #[Table('my_products')]
     class Product extends Record
     {
-    
     }
 
-### Implicit Columns
-
-By default, records are stored in the underlying table using two columns:
+By default, a table has two columns:
 
 - `id` is unique auto-incremented unsigned integer
 - `data` JSON column stored all the properties. Null values are not stored.
@@ -204,9 +220,7 @@ For example:
     2       {"name": "Blue Dress", "qty": 10}
     3       {"name": "Black Jacket", "qty": 20}
 
-### Explicit Columns
-
-You may add `#[Explicit]` attribute to create an explicit table column for the property:
+You may add `#[Explicit]` attribute to a property definition to create an explicit table column:
 
     /**
      * @property ?string $name #[Explicit]
@@ -229,7 +243,7 @@ The underlying table changes as follows:
 
 Column type used, and other database schema details are dependent on the property type and additional attributes. Nullable explicit properties make nullable table columns.
 
-### `string` Columns
+### `string`
 
 By default, an explicit `string` property is stored as `TEXT`.  You can force it to be `VARCHAR` using `#[Length]` attribute specifying a value that is small enough for it:
 
@@ -242,7 +256,7 @@ By default, an explicit `string` property is stored as `TEXT`.  You can force it
     
     }
 
-### `int` Columns
+### `int`
 
 By default, an explicit `int` property is stored as signed `INT`.  Change that using `#[Tiny]`, [`Small]`,  `#[Long]` and `#[Unsigned]` attributes:
 
@@ -254,7 +268,7 @@ By default, an explicit `int` property is stored as signed `INT`.  Change that u
     
     }
 
-### `float` Columns
+### `float`
 
 By default, an explicit `float` property is stored as `DECIMAL(18, 2)`.  Change that using `#[Precision]`  and `[Scale]` attributes:
 
@@ -266,15 +280,15 @@ By default, an explicit `float` property is stored as `DECIMAL(18, 2)`.  Change 
     
     }
 
-### `Carbon` Columns
+### `Carbon` (or `\DateTime`)
 
 These columns are stored as `DATETIME` columns, in UTC timezone.
 
-### Object Columns
+### Objects
 
-Non-record objects can’t be explicit - they are always stored in the `data` column.
+Non-record explicit objects are stored in a JSON column.
 
-On the contrary, a record object can’t be implicit. For it, a foreign key column is explicitly created. For example:
+For record objects, foreign key columns are explicitly created. For example:
 
     /**
      * @property ?Category $parent #[Explicit]
@@ -285,55 +299,11 @@ On the contrary, a record object can’t be implicit. For it, a foreign key colu
     
     }
 
-This property creates `parent_id UNSIGNED INT` column, an index and a foreign key contraint. By default, the constraint rule has a `ON DELETE CASCASE` clause, you may use `#[OnDeleteRestrict]` or `[OnDeleteSetNull]` to change that.
+This property creates `parent_id UNSIGNED INT` column, an index and a foreign key constraint. By default, the constraint rule has a `ON DELETE CASCASE` clause, you may use `#[OnDeleteRestrict]` or `[OnDeleteSetNull]` to change that.
 
-### Virtual Properties
+## Computed Properties
 
-Some properties are only computed while PHP code executes, but never stored in the database. Mark such properties as `#[Virtual]`.
-
-### Arrays
-
-Most arrays can’t be explicit - they are stored in the `data` column.
-
-However, a record array is neither stored in `data` column, nor in an explicit column. In fact, it is stored in a child table, so it has to be marked as `#[Virtual]`. For example:
-
-    /**
-     * @property Line[] $lines [Virtual]
-     */
-    class Order extends Record
-    {
-    }
-    
-    /**
-     * @property Order $order [Explicit]
-     */
-    class Line extends Record
-    {
-    }
-
-### Virtual Properties
-
-You may also compute property values on the fly, and use them in queries:
-
-    /**
-     * @property ?Category $parent #[Explicit]
-     * @property bool $root #[Virtual("parent.id IS NULL")]
-     * @property bool $top #[Virtual("parent.parent.id IS NULL")]
-     * ...
-     */
-    class Category extends Record
-    {
-    
-    }
-    ...
-    $category = query(Category::class)
-        ->where('top OR id > 5')
-        ->orderBy('name DESC')
-        ->first('id', 'name', 'parent.name');
-
-### Computed Properties
-
-Alternatively, you may store computed value in the database:
+You may have a property computed based on a SQL-like formula:
 
     /**
      * @property ?Category $parent #[Explicit]
@@ -349,9 +319,28 @@ Alternatively, you may store computed value in the database:
     
     }
 
+Computed values are stored in the database, and updated as needed.
+
+Actually there are two more variations of computed properties: virtual properties and overridable properties. 
+
+### Virtual Properties
+
+Rather than storing computed value in the database, you may compute it whenever it's needed. In this case, use `#[Virtual]` attribute:
+
+    /**
+     * @property ?Category $parent #[Explicit]
+     * @property bool $root #[Virtual("parent.id IS NULL")]
+     * @property bool $top #[Virtual("parent.parent.id IS NULL")]
+     * ...
+     */
+    class Category extends Record
+    {
+    
+    }
+
 ### Overridable Properties
 
-Finally, you may allow user to override the computed value:
+Finally, you may allow user to override the computed value using the `#[Overridable]` attribute:
 
     /**
      * @property ?Category $parent #[Explicit]
@@ -363,16 +352,33 @@ Finally, you may allow user to override the computed value:
     
     }
 
-## Implementation Status / Efforts Required
+## What's Missing In This Specification
 
-### Validation
+* controls
+* grids
+* forms
+* filterable, sortable, searchable
+
+## Implementation Status / Efforts Required
 
 Currently, Osm Admin doesn't validate property definitions and applied attributes.
 
-**R**. Validate property definitions and applied attributes. 
-
-### Supported Property Types
-
 Although you can define any property in a data class, currently only `int` and `string` properties are supported.
 
+Arrays are especially tricky, be it an array of scalars, an array of objects, or an array of record references. How they should be stored, queried, displayed? 
+
+Upgrading a database is a non-trivial task. What if property type changes? What if property is renamed? Deleted? What if nullability changes? How the data is preserved? How computed properties are preserved? This topic is so wide that it requires a separate specification.
+
+Computed properties are well, not computed.
+
+**R**. Validate property definitions and applied attributes. 
+
 **R**. Support all the rest property types.
+
+**R**. Support arrays.
+
+**R**. Test both implicit and explicit property versions.
+
+**R**. Specify how database upgrades work.
+
+**R**. Implement computed properties.

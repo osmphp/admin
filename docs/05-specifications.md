@@ -12,8 +12,6 @@ What will Osm Admin look like? What is missing right now? What effort is needed 
 
 In free form, explain the future usage of a given feature, and how Osm Admin will internally handle it. 
 
-### Implementation Status / Efforts Required
-
 Then, add *Implementation Status / Efforts Required* section. 
 
 In this section, specify what is not implemented yet. By convention, anything *not* listed in this section is already implemented and works as described, so be explicit.

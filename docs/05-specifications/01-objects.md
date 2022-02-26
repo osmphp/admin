@@ -5,7 +5,6 @@ Application data is made of objects. Use standard PHP class and attribute syntax
 * define the structure of application objects,
 * define how they are stored in the database,
 * specify computation logic,
-* represent them in the user interface. 
 
 ***Status**. This specification is a work in progress.*
 
@@ -20,7 +19,6 @@ Application data is made of objects. Use standard PHP class and attribute syntax
 * define the structure of application objects,
 * define how they are stored in the database,
 * specify computation logic,
-* represent them in the user interface.
 
 ***Status**. The text of this specification is a work in progress.*
 

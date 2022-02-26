@@ -384,14 +384,18 @@ If a property is filterable or sortable, it also has an explicit column in the u
 
 Properties can also be indexed for full-text search.
 
-By default, all records are searchable by `title` property.
+By default, all records are searchable by `title` property. Add an attribute to a search index using the `#[Searchable]` attribute:
+
+    /**
+     * @property string $description #[Searchable]
+     */
+    class Product extends Record
+    {
+    }
 
 ## What's Missing In This Specification
 
-* controls
-* grids
-* forms
-* searchable
+* implementation status is outdated
 
 ## Implementation Status / Efforts Required
 

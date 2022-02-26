@@ -7,7 +7,7 @@ Application data is made of objects. Use standard PHP class and attribute syntax
 * specify computation logic,
 * represent them in the user interface. 
 
-***Status**. The text of this specification is a work in progress.*
+***Status**. This specification is a work in progress.*
 
 Contents:
 
@@ -352,12 +352,46 @@ Finally, you may allow user to override the computed value using the `#[Overrida
     
     }
 
+## Views
+
+
+## Controls
+
+
+
+## Indexes
+
+Properties are indexed for optimal performance. 
+
+By default, a property is not indexed. In general, keep properties not indexed unless it's really needed. 
+
+You can index it manually for filtering and sorting purposes using `#[Filterable]` and `#[Sortable]` attributes, accordingly:
+
+    /**
+     * @property int $qty      #[Filterable, Sortable]
+     * @property float $price  #[Filterable, Sortable]
+     * @property bool $enabled #[Filterable, Sortable]
+     */
+    class Product extends Record
+    {
+    }
+   
+If a property is shown in a grid, it's implicitly filterable and sortable, except virtual properties. If a grid shows a formula rather than a property, it's also neither filterable nor sortable.
+
+If a property is filterable or sortable, it also has an explicit column in the underlying table. 
+
+## Search
+
+Properties can also be indexed for full-text search.
+
+By default, all records are searchable by `title` property.
+
 ## What's Missing In This Specification
 
 * controls
 * grids
 * forms
-* filterable, sortable, searchable
+* searchable
 
 ## Implementation Status / Efforts Required
 
@@ -371,6 +405,8 @@ Upgrading a database is a non-trivial task. What if property type changes? What 
 
 Computed properties are well, not computed.
 
+`#[Filterable]` and `#[Sortable]` attributes are ignored. `#[Searchable]` attribute is also ignored.
+
 **R**. Validate property definitions and applied attributes. 
 
 **R**. Support all the rest property types.
@@ -382,3 +418,7 @@ Computed properties are well, not computed.
 **R**. Specify how database upgrades work.
 
 **R**. Implement computed properties.
+
+**R**. Handle `#[Filterable]` and `#[Sortable]` attributes.
+
+**R**. Handle `#[Searchable]` attribute.

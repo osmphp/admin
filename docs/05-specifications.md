@@ -8,8 +8,6 @@ What will Osm Admin look like? What is missing right now? What effort is needed 
 
 What will Osm Admin look like? What is missing right now? What effort is needed to close this gap? All these, and some other questions are covered in specifications. 
 
----
-
 ## How To Write Specifications
 
 In free form, explain the future usage of a given feature, and how Osm Admin will internally handle it. 

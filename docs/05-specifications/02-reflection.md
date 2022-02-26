@@ -1,6 +1,6 @@
 # Reflection
 
-Osm Admin knows every tiny details about your application objects and properties. And you can, too, using reflection.
+Osm Admin knows every tiny detail about your application objects and properties. And you can, too, using reflection.
 
 ***Status**. This specification is a work in progress.*
 
@@ -10,5 +10,7 @@ Contents:
 
 ### meta.abstract
 
-Osm Admin knows every tiny details about your application objects and properties. And you can, too, using reflection.
+Osm Admin knows every tiny detail about your application objects and properties. And you can, too, using reflection.
+
+***Status**. This specification is a work in progress.*
  

@@ -36,11 +36,11 @@ A UI place property, for example `$table->list_views`, is an array of views, hav
 
 A view is shown using `?view=<name>` URL parameter.
 
-If the `view` URL parameter is omitted, the default view, having an empty string as its name, is used:
+If the `view` URL parameter is omitted, the default view, having a predefined name, is used:
 
-* `$table->list_views['']` is a `Grid`
-* `$table->create_views['']` is a `Form(['mode' => 'create'])`
-* `$table->edit_views['']` is a `Form(['mode' => 'edit'])`
+* `$table->list_views['grid']` is a `Grid`
+* `$table->create_views['form']` is a `Form(['mode' => 'create'])`
+* `$table->edit_views['form']` is a `Form(['mode' => 'edit'])`
 
 A UI place property expects every view in the list to extend some base class. For example, `$table->list_views` are expected to be instances of `List_`. The UI route and template code are programmed to the expected base class.
 

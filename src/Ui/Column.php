@@ -3,9 +3,11 @@
 namespace Osm\Admin\Ui;
 
 use Osm\Admin\Schema\Property;
+use Osm\Admin\Ui\List_\Grid;
+use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Core\Attributes\Serialized;
+
 /**
  * @property Grid $grid
  * @property string $identifier #[Serialized]

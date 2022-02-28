@@ -1,17 +1,12 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
 
-/* @var string $title */
-/* @var array $js */
+/* @var \Osm\Admin\Ui\View\List_\Grid $grid */
 /* @var \Osm\Admin\Schema\Table $table */
 /* @var \Osm\Admin\Ui\Query $query */
+/* @var string $title */
 /* @var string $create_url */
-/* @var \Osm\Admin\Ui\Grid $grid */
-/* @var \stdClass[] $query */
-
-/* @var string $route_name */
-/* @var string $edit_url */
-/* @var callable $editUrl */
+/* @var array $js */
 ?>
 <x-std-pages::layout :title='"{$title} | {$osm_app->http->title}"'>
     <div class="container mx-auto px-4 grid grid-cols-12">

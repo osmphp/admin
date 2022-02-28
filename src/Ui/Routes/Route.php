@@ -13,7 +13,6 @@ use function Osm\ui_query;
  * @property string $route_name
  * @property string $class_name
  * @property Table $table
- * @property Query $query
  */
 class Route extends BaseRoute
 {
@@ -29,9 +28,5 @@ class Route extends BaseRoute
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->schema->tables[$this->class_name];
-    }
-
-    protected function get_query(): Query {
-        return ui_query($this->class_name);
     }
 }

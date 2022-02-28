@@ -3,14 +3,14 @@
 namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Table;
-use Osm\Admin\Ui\Grid;
+use Osm\Admin\Ui\List_;
 use Osm\Core\App;
-use Osm\Core\Attributes\UseIn;
 use Osm\Core\Attributes\Serialized;
+use Osm\Core\Attributes\UseIn;
 
 /**
  * @property string $url
- * @property Grid $grid #[Serialized]
+ * @property List_[] $list_views #[Serialized]
  *
  * @uses Serialized
  */
@@ -41,17 +41,23 @@ trait TableTrait
         return "{$osm_app->area_url}{$this->url}{$routeName}";
     }
 
-    protected function get_grid(): Grid {
+    protected function get_list_views(): array {
         /* @var Table|static $this */
 
-        return Grid::new([
-            'table' => $this,
-            'select_identifiers' => $this->select_identifiers,
-        ]);
+        return [
+            'grid' => List_\Grid::new([
+                'table' => $this,
+                'name' => 'grid',
+                'selects' => ['title'],
+            ]),
+        ];
     }
 
     protected function around___wakeup(callable $proceed): void {
         $proceed();
-        $this->grid->table = $this;
+
+        foreach ($this->list_views as $listView) {
+            $listView->table = $this;
+        }
     }
 }

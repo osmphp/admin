@@ -1,7 +1,7 @@
 <?php
 global $osm_app; /* @var \Osm\Core\App $osm_app */
 
-/* @var \Osm\Admin\Ui\View\List_\Grid $grid */
+/* @var \Osm\Admin\Ui\List_\Grid $grid */
 /* @var \Osm\Admin\Schema\Table $table */
 /* @var \Osm\Admin\Ui\Query $query */
 /* @var string $title */
@@ -48,7 +48,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     <div class="table-header-group bg-gray-50 dark:bg-gray-700">
                         <div class="table-row">
                             @include('ui::grid.header.handle')
-                            @foreach ($grid->selects as $column)
+                            @foreach ($grid->columns as $column)
                                 @if ($column->header_template)
                                     @include($column->header_template, [
                                         'column' => $column,

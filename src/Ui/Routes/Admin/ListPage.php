@@ -24,7 +24,7 @@ class ListPage extends Route
 
     public function run(): Response
     {
-        $view = $this->list_view->view();
+        $view = clone $this->list_view;
 
         return view_response($view->template, $view->data);
     }

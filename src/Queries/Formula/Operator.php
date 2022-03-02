@@ -45,7 +45,7 @@ class Operator extends Formula
             case Formula::LOGICAL_XOR:
             case Formula::LOGICAL_AND:
                 $this->cast('bool');
-                $this->data_type = 'bool';
+                $this->data_type = $this->data_types['bool'];
                 $this->array = false;
                 break;
 
@@ -56,7 +56,7 @@ class Operator extends Formula
             case Formula::LESS:
             case Formula::NOT_EQUAL:
             case Formula::EQUAL_OR_NULL:
-                $this->data_type = 'bool';
+                $this->data_type = $this->data_types['bool'];
                 $this->array = false;
                 break;
 
@@ -67,7 +67,7 @@ class Operator extends Formula
             case Formula::MULTIPLY:
             case Formula::BIT_XOR:
             case Formula::COALESCE:
-                $this->data_type = $this->castToFirstNonNull();
+                $this->data_type = $this->data_types[$this->castToFirstNonNull()];
                 $this->array = false;
                 break;
             default:
@@ -92,7 +92,7 @@ class Operator extends Formula
         switch ($this->type) {
             /** @noinspection PhpMissingBreakStatementInspection */
             case Formula::ADD:
-                if ($this->data_type == 'string') {
+                if ($this->data_type->type == 'string') {
                     foreach ($this->operands as $operand) {
                         if ($operand instanceof Formula\Literal && $operand->value == '') {
                             continue;

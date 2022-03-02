@@ -5,6 +5,7 @@ namespace Osm\Admin\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Traits\AttributeParser;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -24,6 +25,11 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $virtual #[Serialized]
  * @property bool $computed #[Serialized]
  * @property bool $overridable #[Serialized]
+ * @property DataType $data_type
+ *
+ * Dependencies:
+ *
+ * @property DataType[] $data_types
  *
  * @uses Serialized
  */
@@ -103,5 +109,15 @@ class Property extends Object_
     }
 
     public function __wakeup(): void {
+    }
+
+    protected function get_data_type(): DataType {
+        return $this->data_types[$this->type];
+    }
+
+    protected function get_data_types(): array {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->modules[Module::class]->data_types;
     }
 }

@@ -10,7 +10,7 @@ use Osm\Admin\Queries\Formula;
 class Count extends Function_
 {
     public function resolve(Formula\Call $call): void {
-        $call->data_type = 'int';
+        $call->data_type = $this->data_types['int'];
         $call->array = false;
     }
 

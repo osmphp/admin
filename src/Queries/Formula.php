@@ -2,8 +2,10 @@
 
 namespace Osm\Admin\Queries;
 
+use Osm\Admin\Schema\DataType;
 use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Table;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
@@ -18,8 +20,12 @@ use Osm\Core\Attributes\Serialized;
  *
  * Resolved properties:
  *
- * @property string $data_type #[Serialized]
+ * @property DataType $data_type #[Serialized]
  * @property bool $array #[Serialized]
+ *
+ * Dependencies:
+ *
+ * @property DataType[] $data_types
  *
  * @uses Serialized
  */
@@ -85,7 +91,7 @@ class Formula extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_data_type(): string {
+    protected function get_data_type(): DataType {
         throw new Required(__METHOD__);
     }
 
@@ -101,5 +107,11 @@ class Formula extends Object_
     public function toSql(array &$bindings, array &$from, string $join): string
     {
         throw new NotImplemented($this);
+    }
+
+    protected function get_data_types(): array {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->modules[\Osm\Admin\Schema\Module::class]->data_types;
     }
 }

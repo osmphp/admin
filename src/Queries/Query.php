@@ -352,7 +352,7 @@ EOT;
                 throw new NotImplemented($this);
             }
 
-            switch ($formula->data_type) {
+            switch ($formula->data_type->type) {
                 case 'int':
                     $item->{$formula->alias} = (int)$value;
                     break;

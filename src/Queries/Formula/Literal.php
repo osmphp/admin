@@ -30,7 +30,7 @@ class Literal extends Formula
 
     public function resolve(Table $table): void
     {
-        $this->data_type = Parser::$literals[$this->token];
+        $this->data_type = $this->data_types[Parser::$literals[$this->token]];
         $this->array = false;
     }
 

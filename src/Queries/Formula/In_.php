@@ -42,7 +42,7 @@ class In_ extends Formula
             // TODO: cast to value data type
             $item->resolve($table);
         }
-        $this->data_type = 'bool';
+        $this->data_type = $this->data_types['bool'];
         $this->array = false;
     }
 

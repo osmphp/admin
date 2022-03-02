@@ -9,7 +9,10 @@ use Osm\Core\Attributes\Serialized;
 
 /**
  * @property string $name #[Serialized]
- * @property string $template
+ * @property string $template #[Serialized]
+ *
+ * Render-time properties:
+ *
  * @property array $http_query
  *
  * @uses Serialized

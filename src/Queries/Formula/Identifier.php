@@ -21,9 +21,10 @@ use function Osm\__;
  *
  * @property Property[] $properties
  * @property string[]|bool[] $from
- * @property ?string $alias
- * @property ?string $column
+ * @property string $alias
+ * @property string $column
  * @property ?string $path
+ * @property Property $property
  *
  * @uses Serialized
  */
@@ -35,7 +36,23 @@ class Identifier extends Formula
         throw new Required(__METHOD__);
     }
 
-    protected function get_property(): Property {
+    protected function get_properties(): array {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_from(): array {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_alias(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_column(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_path(): ?string {
         throw new Required(__METHOD__);
     }
 
@@ -123,5 +140,9 @@ class Identifier extends Formula
         }
 
         return $sql;
+    }
+
+    protected function get_property(): Property {
+        return $this->properties[count($this->properties) - 1];
     }
 }

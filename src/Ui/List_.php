@@ -7,8 +7,11 @@ use Osm\Core\Exceptions\Required;
 use function Osm\ui_query;
 
 /**
+ * Render-time properties:
+ *
  * @property Table $table
  * @property Query $query
+ * @property string $edit_url
  */
 class List_ extends View
 {
@@ -25,5 +28,12 @@ class List_ extends View
         $query->query->select('id');
 
         return $query;
+    }
+
+    protected function get_edit_url(): string {
+        return $this->table->url('GET /edit');
+    }
+    public function editUrl(\stdClass $item): string {
+        return "{$this->edit_url}/?id={$item->id}";
     }
 }

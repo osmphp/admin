@@ -7,23 +7,42 @@ use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
+use Osm\Admin\Queries\Formula;
+use Osm\Core\Attributes\Serialized;
 
 /**
- * @property Property $property
+ * @property string $header_template #[Serialized]
+ * @property string $cell_template #[Serialized]
+ *
+ * Render-time properties:
+ *
+ * @property View $view
+ * @property string $name
  * @property string $title
- * @property ?string $header_template
- * @property ?string $cell_template
- * @property ?string $cell_formula
+ *
+ * @uses Serialized
  */
 class Control extends Object_
 {
     use RequiredSubTypes;
 
-    protected function get_property(): Property {
+    protected function get_header_template(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_cell_template(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_view(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_name(): string {
         throw new Required(__METHOD__);
     }
 
     protected function get_title(): string {
-        return Str::title($this->property->name);
+        return Str::title($this->name);
     }
 }

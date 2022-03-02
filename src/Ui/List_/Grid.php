@@ -9,9 +9,13 @@ use Osm\Admin\Ui\View;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 use function Osm\__;
+use Osm\Admin\Queries\Formula;
 
 /**
  * @property string[] $selects #[Serialized]
+ *
+ * Render-time properties:
+ *
  * @property array $data
  * @property Control[] $columns
  *
@@ -44,7 +48,7 @@ class Grid extends List_
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),
                 'count' => $this->query->count,
-                'edit_url' => $this->table->url('GET /edit'),
+                'edit_url' => $this->edit_url,
                 'delete_url' => $this->table->url('DELETE /'),
                 's_deleting' => __($this->table->s_deleting_n_objects),
                 's_deleted' => __($this->table->s_n_objects_deleted),
@@ -56,11 +60,19 @@ class Grid extends List_
         $columns = [];
 
         foreach ($this->query->query->selects as $select) {
-            if ($select->alias === 'id') {
+            $control = $select->expr instanceof Formula\Identifier
+                ? $select->expr->property->control
+                : $select->data_type->control;
+
+            if (!$control) {
                 continue;
             }
 
-            //$columns[$select->alias]
+            $columns[$select->alias] = $control = clone $control;
+            $control->name = $select->alias;
+            $control->view = $this;
         }
+
+        return $columns;
     }
 }

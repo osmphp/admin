@@ -12,6 +12,6 @@ final class Hidden extends Attribute
 {
     public function parse(\stdClass|Struct|Property $data): void
     {
-        $data->control = Control\Hidden::new();
+        $data->control = null;
     }
 }

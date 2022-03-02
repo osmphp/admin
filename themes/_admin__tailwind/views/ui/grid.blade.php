@@ -64,7 +64,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                                 data-js-grid-row='{"id": {{ $item->id }}}'
                             >
                                 @include ('ui::grid.cell.handle')
-                                @foreach ($grid->selects as $column)
+                                @foreach ($grid->columns as $column)
                                     @if ($column->cell_template)
                                         @include($column->cell_template, [
                                             'column' => $column,

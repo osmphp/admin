@@ -7,15 +7,21 @@ use Osm\Core\Exceptions\Required;
 use function Osm\ui_query;
 
 /**
+ * @property string $name #[Serialized]
+ *
  * Render-time properties:
  *
- * @property Table $table
+ * @property array $data
  * @property Query $query
  * @property string $edit_url
  */
 class List_ extends View
 {
-    protected function get_table(): Table {
+    protected function get_name(): string {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_data(): array {
         throw new Required(__METHOD__);
     }
 
@@ -33,7 +39,8 @@ class List_ extends View
     protected function get_edit_url(): string {
         return $this->table->url('GET /edit');
     }
+
     public function editUrl(\stdClass $item): string {
-        return "{$this->edit_url}/?id={$item->id}";
+        return "{$this->edit_url}?id={$item->id}";
     }
 }

@@ -16,7 +16,7 @@ class test_01_sql_experiments extends TestCase
         // WHEN you retrieve a record with int array
         $items = $this->app->db->connection->select(<<<EOT
 SELECT 
-		JSON_EXTRACT(`items`.`data`, '$.int_array') AS `int_array` 
+		JSON_EXTRACT(`items`.`_data`, '$.int_array') AS `int_array` 
 FROM `items`
 EOT);
 
@@ -31,7 +31,7 @@ EOT);
         $items = $this->app->db->connection->select(<<<EOT
 SELECT
     `items`.`id`,
-    JSON_EXTRACT(`items`.`data`, '$.int') AS `int` 
+    JSON_EXTRACT(`items`.`_data`, '$.int') AS `int` 
 FROM `items`
 EOT);
 
@@ -46,7 +46,7 @@ EOT);
         $items = $this->app->db->connection->select(<<<EOT
 SELECT
     `items`.`id`,
-    JSON_EXTRACT(`items`.`data`, '$.int') - 4 AS `int` 
+    JSON_EXTRACT(`items`.`_data`, '$.int') - 4 AS `int` 
 FROM `items`
 EOT);
 

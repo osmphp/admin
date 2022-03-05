@@ -29,7 +29,7 @@ trait ScalarTrait
             }
 
             if (!$identifier->column) {
-                $identifier->column = 'data';
+                $identifier->column = '_data';
             }
 
             $identifier->path .= '"' . $this->name . '"';
@@ -53,11 +53,11 @@ trait ScalarTrait
             return;
         }
 
-        if (!isset($inserts['data'])) {
-            $inserts['data'] = new \stdClass();
+        if (!isset($inserts['_data'])) {
+            $inserts['_data'] = new \stdClass();
         }
 
-        $inserts['data']->{$this->name} = $value;
+        $inserts['_data']->{$this->name} = $value;
     }
 
     public function update(array &$updates, mixed $value): void {
@@ -68,9 +68,9 @@ trait ScalarTrait
             return;
         }
 
-        list($sql, $bindings) = $updates['data'] ?? ["`data`", []];
+        list($sql, $bindings) = $updates['_data'] ?? ["`_data`", []];
 
-        $updates['data'] = $value === null
+        $updates['_data'] = $value === null
             ? ["JSON_REMOVE({$sql}, '$.\"{$this->name}\"')", $bindings]
             : ["JSON_SET({$sql}, '$.\"{$this->name}\"', ?)",
                 array_merge($bindings, [$value])];

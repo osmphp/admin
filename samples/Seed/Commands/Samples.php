@@ -22,7 +22,7 @@ class Samples extends Command
 
         $this->db->table('items')->insert([
             'record_id' => $relatedId,
-            'data' => json_encode((object)[
+            '_data' => json_encode((object)[
                 'int' => 5,
                 'float' => 10.0,
                 'string' => 'Lorem ipsum',

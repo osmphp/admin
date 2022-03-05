@@ -413,7 +413,7 @@ EOT;
                 $values .= ', ';
             }
 
-            if ($columnName == 'data') {
+            if ($columnName == '_data') {
                 $value = json_encode($value);
             }
 

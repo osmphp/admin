@@ -19,13 +19,14 @@ use function Osm\view_response;
 class ListPage extends Route
 {
     protected function get_list_view(): List_ {
-        return $this->table->list_views['grid'];
+        $list = clone $this->table->list_views['grid'];
+        $list->http_query = $this->http->query;
+
+        return $list;
     }
 
-    public function run(): Response
-    {
-        $view = clone $this->list_view;
-
-        return view_response($view->template, $view->data);
+    public function run(): Response {
+        return view_response($this->list_view->template, $this->list_view->data,
+            status: $this->list_view->query->count > 0 ? 200 : 404);
     }
 }

@@ -16,7 +16,6 @@ use Osm\Admin\Queries\Formula;
  *
  * Render-time properties:
  *
- * @property array $data
  * @property Control[] $columns
  *
  * @uses Serialized

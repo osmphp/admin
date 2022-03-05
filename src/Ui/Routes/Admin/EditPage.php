@@ -3,6 +3,7 @@
 namespace Osm\Admin\Ui\Routes\Admin;
 
 use Osm\Admin\Ui\Attributes\Ui;
+use Osm\Admin\Ui\Form;
 use Osm\Admin\Ui\FormMode;
 use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Routes\Route;
@@ -14,19 +15,26 @@ use function Osm\__;
 use function Osm\view_response;
 
 /**
- * @property array $data
- * @property string $title
+ * @property Form $form_view
  */
 #[Ui(Admin::class), Name('GET /edit')]
 class EditPage extends Route
 {
+    protected function get_form_view(): Form {
+        $form = clone $this->table->form_view;
+
+        $form->http_query = $this->http->query;
+
+        return $form;
+    }
+
     public function run(): Response
     {
-        if ($this->query->count === 0) {
+        if ($this->form_view->count === 0) {
             throw new NotFound();
         }
 
-        return view_response('ui::form', $this->data);
+        return view_response($this->form_view->template, $this->form_view->data);
     }
 
     protected function get_data(): array {

@@ -2,20 +2,23 @@
 
 namespace Osm\Admin\Ui\Traits;
 
+use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Table;
+use Osm\Admin\Ui\Form;
 use Osm\Admin\Ui\List_;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\UseIn;
 
 /**
- * @property string $url
+ * @property string $url #[Serialized]
  * @property List_[] $list_views #[Serialized]
+ * @property Form $form_view #[Serialized]
  *
  * @uses Serialized
  */
-#[UseIn(Table::class)]
-trait TableTrait
+#[UseIn(Struct::class)]
+trait StructTrait
 {
     public function route(string $routeName): string
     {
@@ -46,18 +49,28 @@ trait TableTrait
 
         return [
             'grid' => List_\Grid::new([
-                'table' => $this,
+                'struct' => $this,
                 'name' => 'grid',
                 'selects' => ['title'],
             ]),
         ];
     }
 
+    protected function get_form_view(): Form {
+        /* @var Table|static $this */
+
+        return Form::new([
+            'struct' => $this,
+        ]);
+    }
+
     protected function around___wakeup(callable $proceed): void {
         $proceed();
 
-        foreach ($this->list_views as $listView) {
-            $listView->table = $this;
+        foreach ($this->list_views as $view) {
+            $view->struct = $this;
         }
+
+        $this->form_view->struct = $this;
     }
 }

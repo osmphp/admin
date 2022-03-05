@@ -45,7 +45,8 @@ class Table extends Struct
                 }
             }
 
-            $table->json('data')->nullable();
+            $table->json('_data')->nullable();
+            $table->json('_overrides')->nullable();
         });
     }
 

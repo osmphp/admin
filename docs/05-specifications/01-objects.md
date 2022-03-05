@@ -350,13 +350,6 @@ Finally, you may allow user to override the computed value using the `#[Overrida
     
     }
 
-## Views
-
-
-## Controls
-
-
-
 ## Indexes
 
 Properties are indexed for optimal performance. 

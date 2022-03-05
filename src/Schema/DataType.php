@@ -8,4 +8,8 @@ use Osm\Core\Object_;
 class DataType extends Object_
 {
     use RequiredSubTypes;
+
+    public function __wakeup(): void
+    {
+    }
 }

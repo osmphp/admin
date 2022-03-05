@@ -3,6 +3,7 @@
 namespace Osm\Admin\Ui;
 
 use Illuminate\Support\Str;
+use Osm\Admin\Schema\DataType;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\Required;
@@ -11,6 +12,8 @@ use Osm\Admin\Queries\Formula;
 use Osm\Core\Attributes\Serialized;
 
 /**
+ * @property DataType $data_type
+ * @property ?Property $property
  * @property string[] $supported_filters #[Serialized]
  * @property ?Filter $default_filter #[Serialized]
  * @property string $header_template #[Serialized]
@@ -27,6 +30,10 @@ use Osm\Core\Attributes\Serialized;
 class Control extends Object_
 {
     use RequiredSubTypes;
+
+    protected function get_data_type(): DataType {
+        throw new Required(__METHOD__);
+    }
 
     protected function get_supported_filters(): array {
         return ['checkboxes'];
@@ -54,5 +61,9 @@ class Control extends Object_
 
     protected function get_title(): string {
         return Str::title($this->name);
+    }
+
+    public function display(\stdClass $item): ?string {
+        return $item->{$this->name} ?? null;
     }
 }

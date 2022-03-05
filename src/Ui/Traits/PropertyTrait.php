@@ -22,13 +22,27 @@ trait PropertyTrait
 {
     protected function get_control(): ?Control {
         /* @var Property|static $this */
-        return $this->data_type->default_control
-            ? clone $this->data_type->default_control
-            : null;
+        if ($this->option_class_name) {
+            return Control\Select::new([
+                'data_type' => $this->data_type,
+                'property' => $this,
+            ]);
+        }
+
+        if (!$this->data_type->default_control) {
+            return null;
+        }
+
+        $control = clone $this->data_type->default_control;
+
+        $control->property = $this;
+
+        return $control;
     }
 
     protected function get_filter(): ?Filter {
         /* @var Property|static $this */
+
         return $this->control->default_filter
             ? clone $this->control->default_filter
             : null;
@@ -45,4 +59,16 @@ trait PropertyTrait
     protected function get_in(): string {
         return '///';
     }
+
+    protected function around___wakeup(callable $proceed): void {
+        /* @var Property|static $this */
+
+        $proceed();
+
+        if ($this->control) {
+            $this->control->property = $this;
+            $this->control->data_type = $this->data_type;
+        }
+    }
+
 }

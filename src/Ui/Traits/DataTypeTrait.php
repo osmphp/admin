@@ -21,6 +21,14 @@ trait DataTypeTrait
     }
 
     protected function get_default_control(): ?Control {
-        return Control\Input::new();
+        return Control\Input::new(['data_type' => $this]);
+    }
+
+    protected function around___wakeup(callable $proceed): void {
+        $proceed();
+
+        if ($this->default_control) {
+            $this->default_control->data_type = $this;
+        }
     }
 }

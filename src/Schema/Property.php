@@ -27,6 +27,7 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $overridable #[Serialized]
  * @property ?string $option_class_name #[Serialized]
  * @property DataType $data_type
+ * @property Option[] $options
  *
  * Dependencies:
  *
@@ -120,5 +121,9 @@ class Property extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->modules[Module::class]->data_types;
+    }
+
+    protected function get_options(): array {
+        return $this->parent->schema->options[$this->option_class_name];
     }
 }

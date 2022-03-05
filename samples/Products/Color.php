@@ -9,7 +9,10 @@ class Color extends Option
 {
     #[Title('Pinky')]
     const PINK = 'pink';
+
     const BLUE = 'blue';
+
     const WHITE = 'white';
+
     const BLACK = 'black';
 }

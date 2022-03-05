@@ -5,6 +5,7 @@ namespace Osm\Admin\Schema;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Class_ as CoreClass;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Cache\Descendants;
@@ -17,6 +18,7 @@ use function Osm\sort_by_dependency;
 /**
  * @property Class_[] $classes #[Serialized]
  * @property Table[] $tables #[Serialized]
+ * @property array $options #[Serialized]
  * @property string[] $singleton_class_names #[Serialized]
  * @property Table[] $singletons
  * @property Db $db
@@ -215,5 +217,22 @@ class Schema extends Object_
     protected function get_singletons(): array {
         return array_map(fn(string $className) => $this->tables[$className],
             $this->singleton_class_names);
+    }
+
+    protected function get_options(): array {
+        $options = [];
+
+        $classes = $this->descendants->all(Option::class);
+
+        foreach ($classes as $className) {
+            $new = "{$className}::new";
+
+            /* @var Option $instance */
+            $instance = $new();
+
+            $options[$className] = $instance->get();
+        }
+
+        return $options;
     }
 }

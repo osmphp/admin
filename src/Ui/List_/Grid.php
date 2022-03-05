@@ -34,7 +34,7 @@ class Grid extends List_
     }
 
     protected function get_selects(): array {
-        throw new Required(__METHOD__);
+        return ['title'];
     }
 
     protected function get_data(): array {
@@ -61,7 +61,7 @@ class Grid extends List_
         foreach ($this->query->query->selects as $select) {
             $control = $select->expr instanceof Formula\Identifier
                 ? $select->expr->property->control
-                : $select->data_type->control;
+                : $select->data_type->default_control;
 
             if (!$control) {
                 continue;

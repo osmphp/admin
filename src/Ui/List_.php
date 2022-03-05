@@ -7,20 +7,12 @@ use Osm\Core\Exceptions\Required;
 use function Osm\ui_query;
 
 /**
- * @property string $name #[Serialized]
- *
  * Render-time properties:
  *
- * @property array $data
- * @property Query $query
  * @property string $edit_url
  */
 class List_ extends View
 {
-    protected function get_name(): string {
-        throw new Required(__METHOD__);
-    }
-
     protected function get_data(): array {
         throw new Required(__METHOD__);
     }

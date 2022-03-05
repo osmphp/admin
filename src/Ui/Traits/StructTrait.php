@@ -60,6 +60,7 @@ trait StructTrait
         /* @var Table|static $this */
 
         return Form::new([
+            'name' => 'form',
             'struct' => $this,
         ]);
     }

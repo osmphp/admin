@@ -12,18 +12,25 @@ use function Osm\__;
 
 /**
  * @property Struct $struct
+ * @property string $name #[Serialized]
  * @property string $template #[Serialized]
  *
  * Render-time properties:
  *
  * @property Table $table
  * @property array $http_query
+ * @property array $data
+ * @property Query $query
  *
  * @uses Serialized
  */
 class View extends Object_
 {
     protected function get_struct(): Struct {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_name(): string {
         throw new Required(__METHOD__);
     }
 
@@ -39,6 +46,14 @@ class View extends Object_
     }
 
     protected function get_http_query(): array {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_data(): array {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_query(): Query {
         throw new Required(__METHOD__);
     }
 }

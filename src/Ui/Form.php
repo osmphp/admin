@@ -12,8 +12,6 @@ use function Osm\ui_query;
 /**
  * Render-time properties:
  *
- * @property array $data
- * @property Query $query
  * @property int $count
  * @property \stdClass $item
  * @property string $title

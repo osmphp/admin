@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Attributes;
 
 use Osm\Admin\Schema\Attribute;
+use Osm\Admin\Schema\Option;
 use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
 
@@ -13,7 +14,7 @@ final class Default_ extends Attribute
     {
     }
 
-    public function parse(\stdClass|Struct|Property $data): void {
+    public function parse(\stdClass|Struct|Property|Option $data): void {
         $data->default = $this->value;
     }
 }

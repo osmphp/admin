@@ -11,6 +11,8 @@ use Osm\Admin\Queries\Formula;
 use Osm\Core\Attributes\Serialized;
 
 /**
+ * @property string[] $supported_filters #[Serialized]
+ * @property ?Filter $default_filter #[Serialized]
  * @property string $header_template #[Serialized]
  * @property string $cell_template #[Serialized]
  *
@@ -25,6 +27,14 @@ use Osm\Core\Attributes\Serialized;
 class Control extends Object_
 {
     use RequiredSubTypes;
+
+    protected function get_supported_filters(): array {
+        return ['checkboxes'];
+    }
+
+    protected function get_default_filter(): ?Filter {
+        return Filter\Checkboxes::new();
+    }
 
     protected function get_header_template(): string {
         throw new Required(__METHOD__);

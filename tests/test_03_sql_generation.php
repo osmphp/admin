@@ -6,7 +6,7 @@ use Osm\Admin\Samples\Generics\Item;
 use Osm\Framework\TestCase;
 use function Osm\query;
 
-class test_02_sql_generation extends TestCase
+class test_03_sql_generation extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
     public bool $use_db = true;

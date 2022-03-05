@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Attributes\Formula;
 
 use Osm\Admin\Schema\Attribute;
+use Osm\Admin\Schema\Option;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Struct;
 
@@ -13,7 +14,7 @@ final class Computed extends Attribute
     {
     }
 
-    public function parse(\stdClass|Struct|Property $data): void {
+    public function parse(\stdClass|Struct|Property|Option $data): void {
         $data->computed = true;
         $data->overridable = false;
         $data->virtual = false;

@@ -7,14 +7,15 @@ use Osm\Admin\Schema\Option;
 use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
-final class Table extends Attribute
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_PROPERTY |
+    \Attribute::TARGET_CLASS_CONSTANT)]
+final class Title extends Attribute
 {
-    public function __construct(public string $name)
+    public function __construct(public string $title)
     {
     }
 
     public function parse(\stdClass|Struct|Property|Option $data): void {
-        $data->table_name = $this->name;
+        $data->title = $this->title;
     }
 }

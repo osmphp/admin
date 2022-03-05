@@ -7,11 +7,13 @@ use Osm\Admin\Schema\Attributes\Unsigned;
 use Osm\Admin\Schema\Attributes\Explicit;
 use Osm\Admin\Schema\Attributes\AutoIncrement;
 use Osm\Admin\Ui\Attributes\Control\Hidden;
+use Osm\Admin\Ui\Attributes\Filter;
+
 /**
- * @property int $id #[Explicit, Unsigned, AutoIncrement, Hidden]
+ * @property int $id #[Explicit, Unsigned, AutoIncrement, Hidden, Filter\Id]
  * @property ?string $title
  *
- * @uses Unsigned, Explicit, AutoIncrement, Hidden
+ * @uses Unsigned, Explicit, AutoIncrement, Hidden, Filter\Id
  */
 class Record extends Object_
 {

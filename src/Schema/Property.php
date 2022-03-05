@@ -25,6 +25,7 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $virtual #[Serialized]
  * @property bool $computed #[Serialized]
  * @property bool $overridable #[Serialized]
+ * @property ?string $option_class_name #[Serialized]
  * @property DataType $data_type
  *
  * Dependencies:

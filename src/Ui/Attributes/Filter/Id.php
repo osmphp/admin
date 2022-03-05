@@ -1,18 +1,18 @@
 <?php
 
-namespace Osm\Admin\Ui\Attributes\Control;
+namespace Osm\Admin\Ui\Attributes\Filter;
 
 use Osm\Admin\Schema\Attribute;
 use Osm\Admin\Schema\Option;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Struct;
-use Osm\Admin\Ui\Control;
+use Osm\Admin\Ui\Filter;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Hidden extends Attribute
+final class Id extends Attribute
 {
     public function parse(\stdClass|Struct|Property|Option $data): void
     {
-        $data->control = null;
+        $data->filter = Filter\Id::new();
     }
 }

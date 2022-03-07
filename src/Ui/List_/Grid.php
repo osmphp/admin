@@ -3,13 +3,16 @@
 namespace Osm\Admin\Ui\List_;
 
 use Osm\Admin\Ui\Control;
+use Osm\Admin\Ui\Filters;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;
+use Osm\Admin\Ui\Sidebar;
 use Osm\Admin\Ui\View;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 use function Osm\__;
 use Osm\Admin\Queries\Formula;
+use function Osm\theme_specific;
 
 /**
  * @property string[] $selects #[Serialized]
@@ -44,6 +47,11 @@ class Grid extends List_
             'query' => $this->query,
             'title' => $this->table->s_objects,
             'create_url' => $this->table->url('GET /create'),
+            'sidebar' => theme_specific(Sidebar::class, [
+                'filters' => theme_specific(Filters::class, [
+                    'query' => $this->query,
+                ]),
+            ]),
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),
                 'count' => $this->query->count,

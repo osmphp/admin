@@ -350,7 +350,7 @@ Finally, you may allow user to override the computed value using the `#[Overrida
     
     }
 
-## Indexes
+## Filtering And Sorting
 
 Properties are indexed for optimal performance. 
 
@@ -370,6 +370,8 @@ You can index it manually for filtering and sorting purposes using `#[Filterable
 If a property is shown in a grid, it's implicitly filterable and sortable, except virtual properties. If a grid shows a formula rather than a property, it's also neither filterable nor sortable.
 
 If a property is filterable or sortable, it also has an explicit column in the underlying table. 
+
+You may more make properties filterable only in the specific application area using `#[Filterable(Api::class)]` syntax.
 
 ## Search
 

@@ -6,11 +6,12 @@ use Carbon\Carbon;
 use Osm\Admin\Schema\Record;
 use Osm\Admin\Schema\Attributes\Default_;
 use Osm\Admin\Schema\Attributes\Option;
+use Osm\Admin\Ui\Attributes\Filterable;
 
 /**
- * @property string $color #[Option(Color::class)]
+ * @property string $color #[Option(Color::class), Filterable]
  *
- * @uses Option
+ * @uses Option, Filterable
  */
 class Product extends Record
 {

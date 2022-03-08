@@ -1667,16 +1667,16 @@
         },
         {
             "name": "osmphp/core",
-            "version": "v0.10.18",
+            "version": "v0.10.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/core.git",
-                "reference": "10791908aa2c40ef311fbf4103f49de8de4e042c"
+                "reference": "a05131466b046eb90a3eedb974da7ca6071e79d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/core/zipball/10791908aa2c40ef311fbf4103f49de8de4e042c",
-                "reference": "10791908aa2c40ef311fbf4103f49de8de4e042c",
+                "url": "https://api.github.com/repos/osmphp/core/zipball/a05131466b046eb90a3eedb974da7ca6071e79d3",
+                "reference": "a05131466b046eb90a3eedb974da7ca6071e79d3",
                 "shasum": ""
             },
             "require": {
@@ -1713,22 +1713,22 @@
             "description": "Enables modular software development in any PHP project",
             "support": {
                 "issues": "https://github.com/osmphp/core/issues",
-                "source": "https://github.com/osmphp/core/tree/v0.10.18"
+                "source": "https://github.com/osmphp/core/tree/v0.10.19"
             },
-            "time": "2022-02-14T06:07:45+00:00"
+            "time": "2022-03-07T17:53:44+00:00"
         },
         {
             "name": "osmphp/framework",
-            "version": "v0.15.3",
+            "version": "v0.15.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/osmphp/framework.git",
-                "reference": "a50c1e26c1ba90a12e144d058f78ae44d7360945"
+                "reference": "79d5c415939184e23c352f5297bc22ada6bfcb87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/osmphp/framework/zipball/a50c1e26c1ba90a12e144d058f78ae44d7360945",
-                "reference": "a50c1e26c1ba90a12e144d058f78ae44d7360945",
+                "url": "https://api.github.com/repos/osmphp/framework/zipball/79d5c415939184e23c352f5297bc22ada6bfcb87",
+                "reference": "79d5c415939184e23c352f5297bc22ada6bfcb87",
                 "shasum": ""
             },
             "require": {
@@ -1785,9 +1785,9 @@
             "description": "Osm Framework is an open-source, insanely fast, unprecedentedly extensible, and fun to work with PHP 8 framework for creating modern Web applications. It's built on top of tried and tested Symfony and Laravel components.",
             "support": {
                 "issues": "https://github.com/osmphp/framework/issues",
-                "source": "https://github.com/osmphp/framework/tree/v0.15.3"
+                "source": "https://github.com/osmphp/framework/tree/v0.15.4"
             },
-            "time": "2022-03-07T13:49:20+00:00"
+            "time": "2022-03-07T17:41:11+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

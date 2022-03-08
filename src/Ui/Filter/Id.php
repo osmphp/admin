@@ -8,5 +8,5 @@ use Osm\Core\Attributes\Type;
 #[Type('id')]
 class Id extends Filter
 {
-
+    public ?string $template = null;
 }

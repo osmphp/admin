@@ -26,7 +26,7 @@ class Form extends View
             ->url($this->http_query, 'select')
             ->count();
 
-        $query->query->select('id', 'title');
+        $query->db_query->select('id', 'title');
 
         return $query;
     }

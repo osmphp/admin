@@ -3,6 +3,7 @@
 namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Table;
+use Osm\Admin\Ui\Attributes\Filterable;
 use Osm\Admin\Ui\Attributes\Ui;
 use Osm\Core\App;
 use Osm\Core\Attributes\Name;

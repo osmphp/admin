@@ -10,6 +10,7 @@ use Osm\Admin\Ui\Sidebar;
 use Osm\Admin\Ui\View;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
+use Osm\Framework\Blade\View as BaseView;
 use function Osm\__;
 use Osm\Admin\Queries\Formula;
 use function Osm\theme_specific;
@@ -20,6 +21,7 @@ use function Osm\theme_specific;
  * Render-time properties:
  *
  * @property Control[] $columns
+ * @property Filters $filters
  *
  * @uses Serialized
  */
@@ -29,15 +31,32 @@ class Grid extends List_
 
     protected function get_query(): Query
     {
-        $query = parent::get_query();
+        $this->configureQueryAndFilters();
 
-        $query->query->select(...$this->selects);
-
-        return $query;
+        return $this->query;
     }
 
     protected function get_selects(): array {
         return ['title'];
+    }
+
+    protected function get_filters(): Filters|BaseView {
+        $this->configureQueryAndFilters();
+
+        return $this->filters;
+    }
+
+    protected function configureQueryAndFilters(): void {
+        $this->query = parent::get_query();
+
+        $this->query->db_query->select(...$this->selects);
+
+        $this->filters = theme_specific(Filters::class, [
+            'struct' => $this->struct,
+            'query' => $this->query,
+        ]);
+
+        $this->filters->prepare();
     }
 
     protected function get_data(): array {
@@ -48,9 +67,7 @@ class Grid extends List_
             'title' => $this->table->s_objects,
             'create_url' => $this->table->url('GET /create'),
             'sidebar' => theme_specific(Sidebar::class, [
-                'filters' => theme_specific(Filters::class, [
-                    'query' => $this->query,
-                ]),
+                'filters' => $this->filters,
             ]),
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),
@@ -66,7 +83,7 @@ class Grid extends List_
     protected function get_columns(): array {
         $columns = [];
 
-        foreach ($this->query->query->selects as $select) {
+        foreach ($this->query->db_query->selects as $select) {
             $control = $select->expr instanceof Formula\Identifier
                 ? $select->expr->property->control
                 : $select->data_type->default_control;

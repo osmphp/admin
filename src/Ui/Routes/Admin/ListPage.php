@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Ui\Routes\Admin;
 
+use Osm\Admin\Ui\Attributes\Filterable;
 use Osm\Admin\Ui\Attributes\Ui;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;

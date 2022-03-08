@@ -8,12 +8,14 @@ use Osm\Admin\Ui\Exceptions\InvalidQuery;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
+use Osm\Framework\Search\Query as SearchQuery;
 use function Osm\__;
 use function Osm\query;
 
 /**
  * @property Table $table
- * @property DbQuery $query
+ * @property DbQuery $db_query
+ * @property SearchQuery $search_query
  * @property int $count
  * @property \stdClass[] $items
  */
@@ -23,12 +25,13 @@ class Query extends Object_
     protected bool $query_count = false;
     protected bool $query_items = true;
     protected bool $query_all = false;
+    protected array $query_facet_counts = [];
 
     protected function get_table(): Table {
         throw new Required(__METHOD__);
     }
 
-    protected function get_query(): DbQuery {
+    protected function get_db_query(): DbQuery {
         return query($this->table->name);
     }
 
@@ -52,6 +55,13 @@ class Query extends Object_
 
     public function url(array $url, string ...$ignore): static {
         //throw new NotImplemented($this);
+        return $this;
+    }
+
+    public function facetCounts(string $propertyName): static
+    {
+        $this->query_facet_counts[$propertyName] = true;
+
         return $this;
     }
 
@@ -83,15 +93,30 @@ class Query extends Object_
             return;
         }
 
+        if (!empty($this->query_facet_counts)) {
+            $this->runSearchAndDb();
+        }
+        else {
+            $this->runDb();
+        }
+
+        $this->executed = true;
+    }
+
+    protected function runSearchAndDb(): void {
+        throw new NotImplemented($this);
+    }
+
+    protected function runDb(): void {
         if ($this->query_count) {
             $query = query($this->table->name, [
-                'filters' => $this->query->filters,
+                'filters' => $this->db_query->filters,
             ]);
             $this->count = $query->value("COUNT() AS count");
         }
 
         if ($this->query_items) {
-            $this->items = $this->query->get();
+            $this->items = $this->db_query->get();
         }
     }
 }

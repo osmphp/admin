@@ -11,6 +11,7 @@ use Osm\Core\Attributes\Serialized;
 /**
  * @property ?Control $control #[Serialized]
  * @property ?Filter $filter #[Serialized]
+ * @property bool $filterable #[Serialized]
  * @property string[] $before #[Serialized]
  * @property string[] $after #[Serialized]
  * @property string $in #[Serialized]
@@ -43,9 +44,18 @@ trait PropertyTrait
     protected function get_filter(): ?Filter {
         /* @var Property|static $this */
 
-        return $this->control->default_filter
-            ? clone $this->control->default_filter
-            : null;
+        if (!$this->control->default_filter) {
+            return null;
+        }
+
+        $filter = clone $this->control->default_filter;
+        $filter->property = $this;
+
+        return $filter;
+    }
+
+    protected function get_filterable(): bool {
+        return false;
     }
 
     protected function get_before(): array {
@@ -68,6 +78,10 @@ trait PropertyTrait
         if ($this->control) {
             $this->control->property = $this;
             $this->control->data_type = $this->data_type;
+        }
+
+        if ($this->filter) {
+            $this->filter->property = $this;
         }
     }
 

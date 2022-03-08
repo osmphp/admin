@@ -23,7 +23,7 @@ class List_ extends View
             ->url($this->http_query, 'id', 'select')
             ->count();
 
-        $query->query->select('id');
+        $query->db_query->select('id');
 
         return $query;
     }

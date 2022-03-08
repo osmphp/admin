@@ -4,14 +4,14 @@ namespace Osm\Admin\Ui\Traits;
 
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Ui\Control;
-use Osm\Admin\Ui\Filter;
+use Osm\Admin\Ui\Facet;
 use Osm\Core\Attributes\UseIn;
 use Osm\Core\Attributes\Serialized;
 
 /**
  * @property ?Control $control #[Serialized]
- * @property ?Filter $filter #[Serialized]
- * @property bool $filterable #[Serialized]
+ * @property ?Facet $facet #[Serialized]
+ * @property bool $faceted #[Serialized]
  * @property string[] $before #[Serialized]
  * @property string[] $after #[Serialized]
  * @property string $in #[Serialized]
@@ -41,20 +41,20 @@ trait PropertyTrait
         return $control;
     }
 
-    protected function get_filter(): ?Filter {
+    protected function get_facet(): ?Facet {
         /* @var Property|static $this */
 
-        if (!$this->control->default_filter) {
+        if (!$this->control->default_facet) {
             return null;
         }
 
-        $filter = clone $this->control->default_filter;
+        $filter = clone $this->control->default_facet;
         $filter->property = $this;
 
         return $filter;
     }
 
-    protected function get_filterable(): bool {
+    protected function get_faceted(): bool {
         return false;
     }
 
@@ -80,8 +80,8 @@ trait PropertyTrait
             $this->control->data_type = $this->data_type;
         }
 
-        if ($this->filter) {
-            $this->filter->property = $this;
+        if ($this->facet) {
+            $this->facet->property = $this;
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
-/* @var \Osm\Admin\Ui\Filters $filters */
+/* @var \Osm\Admin\Ui\Facets $facets */
 ?>
-@isset($filters?->visible)
-    @include($filters->template, $filters->data)
+@isset($facets?->visible)
+    @include($facets->template, $facets->data)
 @endif

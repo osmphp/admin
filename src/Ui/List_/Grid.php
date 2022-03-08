@@ -3,7 +3,7 @@
 namespace Osm\Admin\Ui\List_;
 
 use Osm\Admin\Ui\Control;
-use Osm\Admin\Ui\Filters;
+use Osm\Admin\Ui\Facets;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Sidebar;
@@ -21,7 +21,7 @@ use function Osm\theme_specific;
  * Render-time properties:
  *
  * @property Control[] $columns
- * @property Filters $filters
+ * @property Facets $facets
  *
  * @uses Serialized
  */
@@ -40,10 +40,10 @@ class Grid extends List_
         return ['title'];
     }
 
-    protected function get_filters(): Filters|BaseView {
+    protected function get_facets(): Facets|BaseView {
         $this->configureQueryAndFilters();
 
-        return $this->filters;
+        return $this->facets;
     }
 
     protected function configureQueryAndFilters(): void {
@@ -51,12 +51,12 @@ class Grid extends List_
 
         $this->query->db_query->select(...$this->selects);
 
-        $this->filters = theme_specific(Filters::class, [
+        $this->facets = theme_specific(Facets::class, [
             'struct' => $this->struct,
             'query' => $this->query,
         ]);
 
-        $this->filters->prepare();
+        $this->facets->prepare();
     }
 
     protected function get_data(): array {
@@ -67,7 +67,7 @@ class Grid extends List_
             'title' => $this->table->s_objects,
             'create_url' => $this->table->url('GET /create'),
             'sidebar' => theme_specific(Sidebar::class, [
-                'filters' => $this->filters,
+                'facets' => $this->facets,
             ]),
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),

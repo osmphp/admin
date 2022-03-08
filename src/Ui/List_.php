@@ -20,7 +20,7 @@ class List_ extends View
     protected function get_query(): Query {
         $query = ui_query($this->table->name)
             ->all()
-            ->url($this->http_query, 'id', 'select')
+            ->fromUrl('all', 'id', 'id-', 'select')
             ->count();
 
         $query->db_query->select('id');

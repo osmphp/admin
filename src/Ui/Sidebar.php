@@ -7,7 +7,7 @@ use Osm\Framework\Blade\View as BaseView;
 /**
  * Render-time properties:
  *
- * @property ?Filters $filters
+ * @property ?Facets $facets
  * @property bool $visible
  */
 class Sidebar extends BaseView
@@ -15,12 +15,12 @@ class Sidebar extends BaseView
     public string $template = 'ui::sidebar';
 
     protected function get_visible(): bool {
-        return $this->filters?->visible ?: false;
+        return $this->facets?->visible ?: false;
     }
 
     protected function get_data(): array {
         return [
-            'filters' => $this->filters,
+            'facets' => $this->facets,
         ];
     }
 }

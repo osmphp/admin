@@ -22,8 +22,7 @@ class Form extends View
 
     protected function get_query(): Query {
         $query = ui_query($this->table->name)
-            ->all()
-            ->url($this->http_query, 'select')
+            ->fromUrl('limit', 'offset', 'order', 'select')
             ->count();
 
         $query->db_query->select('id', 'title');

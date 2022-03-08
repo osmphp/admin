@@ -8,10 +8,10 @@ use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Struct;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-final class Filterable extends Attribute
+final class Faceted extends Attribute
 {
     public function parse(\stdClass|Struct|Property|Option $data): void
     {
-        $data->filterable = true;
+        $data->faceted = true;
     }
 }

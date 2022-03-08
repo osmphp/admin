@@ -6,12 +6,12 @@ use Carbon\Carbon;
 use Osm\Admin\Schema\Record;
 use Osm\Admin\Schema\Attributes\Default_;
 use Osm\Admin\Schema\Attributes\Option;
-use Osm\Admin\Ui\Attributes\Filterable;
+use Osm\Admin\Ui\Attributes\Faceted;
 
 /**
- * @property string $color #[Option(Color::class), Filterable]
+ * @property string $color #[Option(Color::class), Faceted]
  *
- * @uses Option, Filterable
+ * @uses Option, Faceted
  */
 class Product extends Record
 {

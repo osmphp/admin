@@ -1,13 +1,13 @@
 <?php
 
-namespace Osm\Admin\Ui\Filter;
+namespace Osm\Admin\Ui\Facet;
 
-use Osm\Admin\Ui\Filter;
+use Osm\Admin\Ui\Facet;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 
 #[Type('checkboxes')]
-class Checkboxes extends Filter
+class Checkboxes extends Facet
 {
     public string $template = 'ui::filter.checkboxes';
 
@@ -16,6 +16,6 @@ class Checkboxes extends Filter
     }
 
     public function prepare(): void {
-        $this->query->facetCounts($this->property->name);
+        $this->query->facet($this->property->name);
     }
 }

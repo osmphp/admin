@@ -14,8 +14,8 @@ use Osm\Core\Attributes\Serialized;
 /**
  * @property DataType $data_type
  * @property ?Property $property
- * @property string[] $supported_filters #[Serialized]
- * @property ?Filter $default_filter #[Serialized]
+ * @property string[] $supported_facets #[Serialized]
+ * @property ?Facet $default_facet #[Serialized]
  * @property string $header_template #[Serialized]
  * @property string $cell_template #[Serialized]
  *
@@ -35,12 +35,12 @@ class Control extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_supported_filters(): array {
+    protected function get_supported_facets(): array {
         return ['checkboxes'];
     }
 
-    protected function get_default_filter(): ?Filter {
-        return Filter\Checkboxes::new();
+    protected function get_default_facet(): ?Facet {
+        return Facet\Checkboxes::new();
     }
 
     protected function get_header_template(): string {

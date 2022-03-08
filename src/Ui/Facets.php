@@ -11,13 +11,13 @@ use function Osm\theme_specific;
  * Render-time properties:
  *
  * @property Query $query
- * @property Filter[] $filters
+ * @property Facet[] $facets
  * @property Struct $struct
  * @property bool $visible
  */
-class Filters extends BaseView
+class Facets extends BaseView
 {
-    public string $template = 'ui::filters';
+    public string $template = 'ui::facets';
 
     protected function get_query(): Query {
         throw new Required(__METHOD__);
@@ -27,29 +27,29 @@ class Filters extends BaseView
         throw new Required(__METHOD__);
     }
 
-    protected function get_filters(): array {
-        $filters = [];
+    protected function get_facets(): array {
+        $facets = [];
 
         foreach ($this->struct->properties as $property) {
-            if (!$property->filterable) {
+            if (!$property->faceted) {
                 continue;
             }
 
-            if (!$property->filter) {
+            if (!$property->facet) {
                 continue;
             }
 
-            $filters[] = theme_specific($property->filter, [
+            $facets[] = theme_specific($property->facet, [
                 'query' => $this->query,
             ]);
         }
 
-        return $filters;
+        return $facets;
     }
 
     protected function get_visible(): bool {
-        foreach ($this->filters as $filter) {
-            if ($filter->visible) {
+        foreach ($this->facets as $facet) {
+            if ($facet->visible) {
                 return true;
             }
         }
@@ -59,13 +59,13 @@ class Filters extends BaseView
 
     protected function get_data(): array {
         return [
-            'filters' => $this->filters,
+            'facets' => $this->facets,
         ];
     }
 
     public function prepare(): void {
-        foreach ($this->filters as $filter) {
-            $filter->prepare();
+        foreach ($this->facets as $facet) {
+            $facet->prepare();
         }
     }
 }

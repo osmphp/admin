@@ -16,7 +16,7 @@ use Osm\Admin\Queries\Formula;
 use function Osm\theme_specific;
 
 /**
- * @property string[] $selects #[Serialized]
+ * @property string[] $selects #[Serialized] Formulas shown as grid columns
  *
  * Render-time properties:
  *
@@ -36,6 +36,11 @@ class Grid extends List_
         return $this->query;
     }
 
+    /**
+     * Returns formulas shown as grid columns
+     *
+     * @return string[]
+     */
     protected function get_selects(): array {
         return ['title'];
     }
@@ -98,5 +103,13 @@ class Grid extends List_
         }
 
         return $columns;
+    }
+
+    public function filterable(string $propertyName): bool {
+        return in_array($propertyName, $this->selects);
+    }
+
+    public function sortable(string $propertyName): bool {
+        return in_array($propertyName, $this->selects);
     }
 }

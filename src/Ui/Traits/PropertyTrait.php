@@ -11,7 +11,6 @@ use Osm\Core\Attributes\Serialized;
 /**
  * @property ?Control $control #[Serialized]
  * @property ?Facet $facet #[Serialized]
- * @property bool $faceted #[Serialized]
  * @property string[] $before #[Serialized]
  * @property string[] $after #[Serialized]
  * @property string $in #[Serialized]
@@ -52,10 +51,6 @@ trait PropertyTrait
         $filter->property = $this;
 
         return $filter;
-    }
-
-    protected function get_faceted(): bool {
-        return false;
     }
 
     protected function get_before(): array {

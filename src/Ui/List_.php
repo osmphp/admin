@@ -35,4 +35,12 @@ class List_ extends View
     public function editUrl(\stdClass $item): string {
         return "{$this->edit_url}?id={$item->id}";
     }
+
+    public function filterable(string $propertyName): bool {
+        return false;
+    }
+
+    public function sortable(string $propertyName): bool {
+        return false;
+    }
 }

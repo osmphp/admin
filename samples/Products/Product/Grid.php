@@ -10,6 +10,11 @@ use Osm\Admin\Ui\List_\Grid as BaseGrid;
 #[Class_(Product::class), View('list')]
 class Grid extends BaseGrid
 {
+    /**
+     * Returns formulas shown as grid columns
+     *
+     * @return string[]
+     */
     protected function get_selects(): array
     {
         return ['title', 'color'];

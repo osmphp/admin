@@ -5,12 +5,16 @@ namespace Osm\Admin\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Traits\AttributeParser;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Admin\Ui\List_;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Core\Property as CoreProperty;
 use Osm\Core\Attributes\Serialized;
+use Osm\Admin\Schema\Index;
+use Osm\Framework\Search\Blueprint as SearchBlueprint;
+use Osm\Framework\Search\Field;
 
 /**
  * @property Struct $parent
@@ -26,8 +30,18 @@ use Osm\Core\Attributes\Serialized;
  * @property bool $computed #[Serialized]
  * @property bool $overridable #[Serialized]
  * @property ?string $option_class_name #[Serialized]
+ * @property bool $index #[Serialized] If set, the property is added to the
+ *      search engine index. And it's set if either of `*_index` properties
+ *      is set.
+ * @property bool $index_filterable #[Serialized] If set,
+ *      a filter for the property is created in the search index
+ * @property bool $index_faceted #[Serialized]
+ * @property bool $index_sortable #[Serialized]
+ * @property bool $index_searchable #[Serialized]
  * @property DataType $data_type
  * @property Option[] $options
+ * @property bool $faceted #[Serialized] If set, a property is shown in the
+ *      faceted navigation in the sidebar
  *
  * Dependencies:
  *
@@ -110,6 +124,11 @@ class Property extends Object_
         throw new NotImplemented($this);
     }
 
+    public function createIndex(SearchBlueprint $index): Field
+    {
+        throw new NotImplemented($this);
+    }
+
     public function __wakeup(): void {
     }
 
@@ -125,5 +144,46 @@ class Property extends Object_
 
     protected function get_options(): array {
         return $this->parent->schema->options[$this->option_class_name];
+    }
+
+    protected function get_index(): bool {
+        return $this->index_filterable || $this->index_sortable != null ||
+            $this->index_searchable != null;
+    }
+
+    protected function get_index_filterable(): bool {
+        if ($this->faceted) {
+            return true;
+        }
+
+        foreach ($this->parent->list_views as $list) {
+            if ($list->filterable($this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function get_index_sortable(): bool {
+        foreach ($this->parent->list_views as $list) {
+            if ($list->sortable($this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function get_index_searchable(): bool {
+        return false;
+    }
+
+    protected function get_index_faceted(): bool {
+        return false;
+    }
+
+    protected function get_faceted(): bool {
+        return false;
     }
 }

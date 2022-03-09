@@ -8,12 +8,15 @@ use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Db\Db;
 use Osm\Core\Attributes\Serialized;
+use Osm\Framework\Search\Blueprint as SearchBlueprint;
+use Osm\Framework\Search\Search;
 
 /**
  * @property string $table_name #[Serialized]
  * @property string[] $select_identifiers #[Serialized]
  * @property bool $singleton #[Serialized]
  * @property Db $db
+ * @property Search $search
  * @property string[] $after #[Serialized]
  *
  * @uses Serialized
@@ -48,6 +51,34 @@ class Table extends Struct
             $table->json('_data')->nullable();
             $table->json('_overrides')->nullable();
         });
+
+        if ($this->search->exists($this->table_name)) {
+            $this->search->drop($this->table_name);
+        }
+
+        $this->search->create($this->table_name, function(SearchBlueprint $index) {
+            foreach ($this->properties as $property) {
+                if ($property->index) {
+                    $field = $property->createIndex($index);
+
+                    if ($property->index_filterable) {
+                        $field->filterable();
+                    }
+
+                    if ($property->index_sortable) {
+                        $field->sortable();
+                    }
+
+                    if ($property->index_searchable) {
+                        $field->searchable();
+                    }
+
+                    if ($property->index_faceted) {
+                        $field->faceted();
+                    }
+                }
+            }
+        });
     }
 
     public function alter(Table $current): void
@@ -59,6 +90,12 @@ class Table extends Struct
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function get_search(): Search {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->search;
     }
 
     protected function get_after(): array {

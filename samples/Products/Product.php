@@ -2,11 +2,9 @@
 
 namespace Osm\Admin\Samples\Products;
 
-use Carbon\Carbon;
-use Osm\Admin\Schema\Record;
-use Osm\Admin\Schema\Attributes\Default_;
+use Osm\Admin\Schema\Attributes\Faceted;
 use Osm\Admin\Schema\Attributes\Option;
-use Osm\Admin\Ui\Attributes\Faceted;
+use Osm\Admin\Schema\Record;
 
 /**
  * @property string $color #[Option(Color::class), Faceted]

@@ -5,6 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Framework\Search\Blueprint as SearchBlueprint;
+use Osm\Framework\Search\Field;
 
 /**
  * @property ?int $max_length #[Serialized]
@@ -41,5 +43,23 @@ class String_ extends Scalar
         if ($this->nullable || !empty($this->if)) {
             $column->nullable();
         }
+    }
+
+    public function createIndex(SearchBlueprint $index): Field
+    {
+        return $index->string($this->name);
+    }
+
+    protected function get_index_faceted(): bool
+    {
+        if (!$this->index_filterable) {
+            return false;
+        }
+
+        if ($this->option_class_name) {
+            return true;
+        }
+
+        return false;
     }
 }

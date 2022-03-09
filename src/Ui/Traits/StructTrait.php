@@ -15,7 +15,6 @@ use Osm\Core\Attributes\UseIn;
 
 /**
  * @property string $url #[Serialized]
- * @property List_[] $list_views #[Serialized]
  * @property Form $form_view #[Serialized]
  *
  * @uses Serialized
@@ -45,53 +44,6 @@ trait StructTrait
         }
 
         return "{$osm_app->area_url}{$this->url}{$routeName}";
-    }
-
-    protected function get_list_views(): array {
-        global $osm_app; /* @var App $osm_app */
-
-        /* @var Table|static $this */
-
-        $views = [];
-
-        $classes = $osm_app->descendants->classes(List_::class);
-        foreach ($classes as $class) {
-            /* @var Class_ $classAttribute */
-            if (!($classAttribute = $class->attributes[Class_::class] ?? null)) {
-                continue;
-            }
-
-            if ($classAttribute->class_name != $this->name) {
-                continue;
-            }
-
-            /* @var View $viewAttribute */
-            if (!($viewAttribute = $class->attributes[View::class] ?? null)) {
-                continue;
-            }
-
-            if ($viewAttribute->name !== 'list') {
-                continue;
-            }
-
-            $new = "{$class->name}::new";
-            $name = Str::snake(mb_substr($class->name,
-                mb_strrpos($class->name, '\\') + 1));
-
-            $views[$name] = $new([
-                'struct' => $this,
-                'name' => $name,
-            ]);
-        }
-
-        if (!isset($views['grid'])) {
-            $views['grid'] = List_\Grid::new([
-                'struct' => $this,
-                'name' => 'grid',
-            ]);
-        }
-
-        return $views;
     }
 
     protected function get_form_view(): Form {

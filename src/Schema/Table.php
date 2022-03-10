@@ -18,6 +18,7 @@ use Osm\Framework\Search\Search;
  * @property Db $db
  * @property Search $search
  * @property string[] $after #[Serialized]
+ * @property Indexer[] $indexers
  *
  * @uses Serialized
  */
@@ -116,5 +117,11 @@ class Table extends Struct
         }
 
         return $after;
+    }
+
+    protected function get_indexers(): array {
+        return [
+            'search' => Indexer\Search::new(),
+        ];
     }
 }

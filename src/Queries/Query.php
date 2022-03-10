@@ -21,6 +21,13 @@ use function Osm\__;
  */
 class Query extends Object_
 {
+    public const INSERTING = 'inserting';
+    public const INSERTED = 'inserted';
+    public const UPDATING = 'updating';
+    public const UPDATED = 'updated';
+    public const DELETING = 'deleting';
+    public const DELETED = 'deleted';
+
     /**
      * @var Formula[]
      */
@@ -145,28 +152,123 @@ class Query extends Object_
     }
 
     public function insert(array $data): int {
-        $bindings = [];
-        $sql = $this->generateInsert($data, $bindings);
+        // all input data is validated before running a transaction
+        $this->validateProperties(static::INSERTING, $data);
 
-        $this->db->connection->insert($sql, $bindings);
-        return (int)$this->db->connection->getPdo()->lastInsertId();
+        return $this->db->transaction(function() use($data) {
+            // generate and execute SQL INSERT statement
+            $bindings = [];
+            $sql = $this->generateInsert($data, $bindings);
+
+            $this->db->connection->insert($sql, $bindings);
+            $id = (int)$this->db->connection->getPdo()->lastInsertId();
+
+            // compute regular, self and ID-based indexing expressions by
+            // running an additional UPDATE. Note that property-level validation
+            // rules on computed values are not executed - take care in formulas
+            $this->computeProperties(static::INSERTED, $data);
+
+            // register a callback that is executed after a successful transaction
+            $this->db->committing(function() use ($data)
+            {
+                // validate modified objects as a whole, and their
+                // dependent objects
+                $this->validateObjects(static::INSERTED);
+
+                // create notification records for the dependent objects in
+                // other tables, and for search index entries
+                $this->notifyDependentObjects(static::INSERTED, $data);
+            });
+
+            // register a callback that is executed after a successful transaction
+            $this->db->committed(function()
+            {
+                // successful transaction guarantees that current objects are
+                // fully up-to-date (except aggregations), so it's a good time to
+                // make sure that asynchronous indexing is queued, or to execute
+                // it right away if queue is not configured. All types of asynchronous
+                // indexing are queued/executed: regular, aggregation and search.
+                $this->updateDependentObjects();
+            });
+
+            return $id;
+        });
     }
 
     public function update(array $data): void {
         // don't do anything if there are no properties to update
         if (empty($data)) {
+            // TODO: don't quit if there are computed properties
             return;
         }
 
-        $bindings = [];
-        $sql = $this->generateUpdate($data, $bindings);
-        $this->db->connection->update($sql, $bindings);
+        // all input data is validated before running a transaction
+        $this->validateProperties(static::UPDATING, $data);
+
+        $this->db->transaction(function() use($data) {
+            // regular, self and ID-based indexing expressions are added
+            // to the UPDATE statement. Note that property-level validation
+            // rules on computed values are not executed - take care in formulas
+            $this->computeProperties(static::UPDATING, $data);
+
+            // generate and execute SQL UPDATE statement
+            $bindings = [];
+            $sql = $this->generateUpdate($data, $bindings);
+            $this->db->connection->update($sql, $bindings);
+
+            $this->db->committing(function() use ($data)
+            {
+                // validate modified objects as a whole, and their
+                // dependent objects
+                $this->validateObjects(static::UPDATED);
+
+                // create notification records for the dependent objects in
+                // other tables, and for search index entries
+                $this->notifyDependentObjects(static::UPDATED, $data);
+            });
+
+            // register a callback that is executed after a successful transaction
+            $this->db->committed(function()
+            {
+                // successful transaction guarantees that current objects are
+                // fully up-to-date (except aggregations), so it's a good time to
+                //make sure that asynchronous indexing is queued, or to execute
+                // it right away if queue is not configured. All types of asynchronous
+                // indexing are queued/executed: regular, aggregation and search.
+                $this->updateDependentObjects();
+            });
+        });
     }
 
     public function delete(): void {
-        $bindings = [];
-        $sql = $this->generateDelete($bindings);
-        $this->db->connection->delete($sql, $bindings);
+        $this->db->transaction(function() {
+            // generate and execute SQL DELETE statement
+            $bindings = [];
+            $sql = $this->generateDelete($bindings);
+            $this->db->connection->delete($sql, $bindings);
+
+            $this->db->committing(function()
+            {
+                // validate modified objects as a whole, and their
+                // dependent objects
+                $this->validateObjects(static::DELETED);
+
+                // create notification records for the dependent objects in
+                // other tables, and for search index entries
+                $this->notifyDependentObjects(static::DELETED, []);
+            });
+
+            // register a callback that is executed after a successful transaction
+            $this->db->committed(function()
+            {
+                // successful transaction guarantees that current objects are
+                // fully up-to-date (except aggregations), so it's a good time to
+                //make sure that asynchronous indexing is queued, or to execute
+                // it right away if queue is not configured. All types of asynchronous
+                // indexing are queued/executed: regular, aggregation and search.
+                $this->updateDependentObjects();
+            });
+        });
     }
 
     protected function parse(array|string $formula, string $as = Formula::EXPR)
@@ -422,5 +524,26 @@ EOT;
             $bindings[] = $value;
         }
         return [$columns, $values];
+    }
+
+    protected function validateProperties(string $event, array $data): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function validateObjects(string $event): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function notifyDependentObjects(string $event, array $data): void
+    {
+        //throw new NotImplemented($this);
+    }
+
+    protected function updateDependentObjects(): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function computeProperties(string $event, array $data): void {
+        //throw new NotImplemented($this);
     }
 }

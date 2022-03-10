@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Schema\Hints\IndexerStatus;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Class_ as CoreClass;
@@ -20,6 +21,7 @@ use function Osm\sort_by_dependency;
  * @property Table[] $tables #[Serialized]
  * @property array $options #[Serialized]
  * @property string[] $singleton_class_names #[Serialized]
+ * @property Indexer[] $indexers #[Serialized]
  * @property Table[] $singletons
  * @property Db $db
  * @property Descendants $descendants
@@ -43,6 +45,10 @@ class Schema extends Object_
 
         foreach ($this->tables as $table) {
             $table->schema = $this;
+        }
+
+        foreach ($this->indexers as $indexer) {
+            $indexer->schema = $this;
         }
     }
 
@@ -234,5 +240,65 @@ class Schema extends Object_
         }
 
         return $options;
+    }
+
+    /**
+     * In `PARTIAL` mode, processes all pending change notifications
+     * for all tables. In `FULL` mode, calculates all indexes on all
+     * tables anew.
+     *
+     * @param string $mode `Indexer::PARTIAL` or `Indexer::FULL`
+     */
+    public function index(string $mode = Indexer::PARTIAL): void {
+        $status = $this->getIndexerStatus();
+
+        foreach ($this->indexers as $indexer) {
+            if ($indexerMode = $indexer->requiresReindex($status, $mode)) {
+                $this->db->transaction(function()
+                    use($indexer, &$status, $indexerMode)
+                {
+                    $indexer->index($indexerMode);
+                    $indexer->markAsIndexed($status);
+                });
+
+            }
+        }
+    }
+
+    /**
+     * Queue processing of all pending change notifications on all tables,
+     * or process them right away if queue is not configured
+     */
+    public function indexAsync(): void {
+        throw new NotImplemented($this);
+    }
+
+    protected function get_indexers(): array {
+        $this->indexers = [];
+
+        foreach ($this->tables as $table) {
+            foreach ($table->indexers as $name => $indexer) {
+                $indexer->schema = $this;
+                $indexer->table_name = $table->name;
+                $indexer->short_name = $name;
+                $this->indexers[$indexer->name] = $indexer;
+            }
+        }
+
+        return sort_by_dependency($this->indexers, 'Indexers',
+            fn($positions) =>
+                fn(Indexer $a, Indexer $b) =>
+                    $positions[$a->name] <=> $positions[$b->name]
+        );
+    }
+
+    /**
+     * @return IndexerStatus[]
+     */
+    protected function getIndexerStatus(): array {
+        return $this->db->table('indexers')
+            ->get(['id', 'requires_partial_reindex', 'requires_full_reindex'])
+            ->keyBy('id')
+            ->toArray();
     }
 }

@@ -3,7 +3,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 
 /* @var \Osm\Admin\Ui\List_\Grid $grid */
 /* @var \Osm\Admin\Schema\Table $table */
-/* @var \Osm\Admin\Ui\Query $query */
+/* @var \Osm\Admin\Ui\Result $result */
 /* @var string $title */
 /* @var string $create_url */
 /* @var array $js */
@@ -21,7 +21,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                 <span class="grid__selected">
                     {{ \Osm\__($table->s_n_m_objects_selected, [
                         'selected' => 0,
-                        'count' => $query->count,
+                        'count' => $result->count,
                     ]) }}
                 </span>
             </p>
@@ -58,7 +58,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     </div>
                 </div>
                 <div class="table-row-group">
-                    @forelse($query->items as $item)
+                    @forelse($result->items as $item)
                         <div class="grid__row table-row bg-white border-b
                             dark:bg-gray-800 dark:border-gray-700"
                             data-js-grid-row='{"id": {{ $item->id }}}'

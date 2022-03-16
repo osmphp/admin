@@ -31,7 +31,7 @@ class Grid extends List_
 
     protected function get_query(): Query
     {
-        $this->configureQueryAndFilters();
+        $this->configureQueryAndFacets();
 
         return $this->query;
     }
@@ -46,15 +46,15 @@ class Grid extends List_
     }
 
     protected function get_facets(): Facets|BaseView {
-        $this->configureQueryAndFilters();
+        $this->configureQueryAndFacets();
 
         return $this->facets;
     }
 
-    protected function configureQueryAndFilters(): void {
+    protected function configureQueryAndFacets(): void {
         $this->query = parent::get_query();
 
-        $this->query->db_query->select(...$this->selects);
+        $this->query->select(...$this->selects);
 
         $this->facets = theme_specific(Facets::class, [
             'struct' => $this->struct,
@@ -68,7 +68,7 @@ class Grid extends List_
         return [
             'grid' => $this,
             'table' => $this->table,
-            'query' => $this->query,
+            'result' => $this->result,
             'title' => $this->table->s_objects,
             'create_url' => $this->table->url('GET /create'),
             'sidebar' => theme_specific(Sidebar::class, [
@@ -76,7 +76,7 @@ class Grid extends List_
             ]),
             'js' => [
                 's_selected' => __($this->table->s_n_m_objects_selected),
-                'count' => $this->query->count,
+                'count' => $this->result->count,
                 'edit_url' => $this->edit_url,
                 'delete_url' => $this->table->url('DELETE /'),
                 's_deleting' => __($this->table->s_deleting_n_objects),
@@ -88,7 +88,7 @@ class Grid extends List_
     protected function get_columns(): array {
         $columns = [];
 
-        foreach ($this->query->db_query->selects as $select) {
+        foreach ($this->query->selects as $select) {
             $control = $select->expr instanceof Formula\Identifier
                 ? $select->expr->property->control
                 : $select->data_type->default_control;

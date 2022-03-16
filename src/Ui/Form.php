@@ -22,7 +22,8 @@ class Form extends View
 
     protected function get_query(): Query {
         $query = ui_query($this->table->name)
-            ->fromUrl('limit', 'offset', 'order', 'select')
+            ->fromUrl($this->http_query,
+                'limit', 'offset', 'order', 'select')
             ->count();
 
         $query->db_query->select('id', 'title');
@@ -31,7 +32,7 @@ class Form extends View
     }
 
     protected function get_count(): int {
-        return $this->query->count;
+        return $this->result->count;
     }
 
     protected function get_item(): \stdClass {
@@ -40,7 +41,7 @@ class Form extends View
         }
 
         if ($this->count === 1) {
-            return $this->query->items[0];
+            return $this->result->items[0];
         }
 
         throw new NotImplemented($this);

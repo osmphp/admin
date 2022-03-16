@@ -2,9 +2,12 @@
 
 namespace Osm\Admin\Ui;
 
+use Osm\Admin\Queries\Formula;
 use Osm\Admin\Queries\Query as DbQuery;
 use Osm\Admin\Schema\Table;
 use Osm\Admin\Ui\Exceptions\InvalidQuery;
+use Osm\Admin\Ui\Hints\UrlAction;
+use Osm\Admin\Ui\Query\Filter as QueryFilter;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
@@ -12,36 +15,80 @@ use Osm\Core\Object_;
 use Osm\Framework\Search\Query as SearchQuery;
 use function Osm\__;
 use function Osm\query;
+use function Osm\url_encode;
 
 /**
  * @property Table $table
  * @property DbQuery $db_query
- * @property SearchQuery $search_query
- * @property array $query_url
- * @property int $count
- * @property \stdClass[] $items
+ * @property Result $result
  */
 class Query extends Object_
 {
-    protected bool $executed = false;
-    protected bool $query_count = false;
-    protected bool $query_items = true;
-    protected bool $query_all = false;
+    public bool $count = false;
+    public bool $items = true;
+    public bool $all = false;
+    /**
+     * @var Formula\SelectExpr[]
+     */
+    public array $selects = [];
     /**
      * @var string[]
      */
-    protected array $query_facets = [];
+    public array $facets = [];
     /**
      * @var Filter[]
      */
-    protected array $query_filters = [];
+    public array $filters = [];
+    public array $url = [];
+
+    public static array $url_operators = ['-'];
+
+    public function whereIn(string $propertyName, array $items): static
+    {
+        $this->filters[] = QueryFilter\In_::new([
+            'query' => $this,
+            'property_name' => $propertyName,
+            'items' => $items,
+        ]);
+
+        return $this;
+    }
+
+    public function whereNotIn(string $propertyName, array $items): static
+    {
+        $this->filters[] = QueryFilter\In_::new([
+            'query' => $this,
+            'property_name' => $propertyName,
+            'items' => $items,
+            'not' => true,
+        ]);
+
+        return $this;
+    }
 
     protected function get_table(): Table {
         throw new Required(__METHOD__);
     }
 
-    protected function get_db_query(): DbQuery {
+    protected function dbQuery(): DbQuery {
         return query($this->table->name);
+    }
+
+    protected function searchQuery(): SearchQuery {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->search->index($this->table->table_name);
+    }
+
+    protected function get_db_query(): DbQuery {
+        return $this->dbQuery();
+    }
+
+    public function select(string|array ...$formulas): static {
+        $this->db_query->select(...$formulas);
+        $this->selects = $this->db_query->selects;
+
+        return $this;
     }
 
     /**
@@ -52,13 +99,13 @@ class Query extends Object_
      * @return $this
      */
     public function count(bool $count = true): static {
-        $this->query_count = $count;
+        $this->count = $count;
 
         return $this;
     }
 
     public function items(bool $items = true): static {
-        $this->query_items = $items;
+        $this->items = $items;
 
         return $this;
     }
@@ -73,20 +120,7 @@ class Query extends Object_
      * @return $this
      */
     public function all(bool $all = true): static {
-        $this->query_all = $all;
-
-        return $this;
-    }
-
-    /**
-     * Pass URL query parameters shallow-parsed format for further
-     * URL parsing and generation. If you don't, `$osm_app->http->query` is used.
-     *
-     * @param array $query
-     * @return $this
-     */
-    public function url(array $query): static {
-        $this->query_url = $query;
+        $this->all = $all;
 
         return $this;
     }
@@ -113,28 +147,122 @@ class Query extends Object_
      *      `'all', 'select', 'id', 'id-'`.
      * @return $this
      */
-    public function fromUrl(string ...$ignored): static {
-        //throw new NotImplemented($this);
+    public function fromUrl(array $query, string ...$ignored): static {
+        foreach ($query as $key => $value) {
+            if (in_array($key, $ignored)) {
+                continue;
+            }
+
+            switch ($key) {
+                case 'all':
+                case 'limit':
+                case 'offset':
+                case 'order':
+                case 'q':
+                case 'select':
+                    throw new NotImplemented($this);
+                default:
+                    $this->parseUrlFilter($key, $value);
+                    break;
+            }
+        }
+
         return $this;
+    }
+
+    protected function parseUrlFilter(string $key, string|bool|array $value)
+        : void
+    {
+        $operator = '';
+        foreach (static::$url_operators as $urlOperator) {
+            if (str_ends_with($key, $urlOperator)) {
+                $operator = $urlOperator;
+                $key = mb_substr($key, 0, mb_strlen($key) -
+                    mb_strlen($urlOperator));
+                break;
+            }
+        }
+
+        if (!($property = $this->table->properties[$key] ?? null)) {
+            return;
+        }
+
+        if (!$property->index_filterable) {
+            return;
+        }
+
+        $property->parseUrlFilter($this, $operator, $value);
     }
 
     /**
      * Generates URL based on the current query parameters, and requested
-     * `$changes`. Start each of `$changes` with ` ` (encoded as `+`)
-     * to add a parameter, or add a value to the existing parameter, or with `-`
-     * to remove a parameter value or the whole parameter. For example,
-     * ` id=5` or `-offset`. Use `-` to remove all filters.
+     * `$actions`.
      *
-     * @param string $route
-     * @param array $url
-     * @param string ...$changes
+     * @param string $routeName
+     * @param UrlAction[] $actions
      * @return string
      */
-    public function toUrl(string $route, string ...$changes)
+    public function toUrl(string $routeName, array $actions)
         : string
     {
-        //throw new NotImplemented($this);
-        return '#';
+        $url = $this->table->url($routeName);
+
+        $parameters = $this->url;
+
+        foreach ($actions as $action) {
+            switch ($action->type) {
+                case UrlAction::REMOVE_ALL_FILTERS:
+                    foreach (array_keys($parameters) as $param) {
+                        if (isset($this->table->properties[$param])) {
+                            unset($parameters['param']);
+                        }
+                    }
+                    break;
+                case UrlAction::REMOVE_PARAMETER:
+                    unset($parameters[$action->param]);
+                    break;
+                case UrlAction::REMOVE_OPTION:
+                    if (isset($parameters[$action->param]) &&
+                        ($index = array_search($action->value,
+                            $parameters[$action->param])) !== false)
+                    {
+                        array_splice($parameters[$action->param],
+                            $index, 1);
+
+                        if (empty($parameters[$action->param])) {
+                            unset($parameters[$action->param]);
+                        }
+                    }
+                    break;
+                case UrlAction::SET_PARAMETER:
+                    $parameters[$action->param] = $action->value !== null
+                        ? [$action->value]
+                        : null;
+                    break;
+                case UrlAction::ADD_OPTION:
+                    if (!isset($parameters[$action->param])) {
+                        $parameters[$action->param] = [];
+                    }
+                    $parameters[$action->param][] = $action->value;
+                    break;
+            }
+        }
+
+        $parameterUrl = '';
+        foreach ($parameters as $param => $values) {
+            if ($parameterUrl) {
+                $parameterUrl .= '&';
+            }
+
+            $parameterUrl .= $param . ($values !== null
+                ? '=' . implode('+', array_map(
+                    fn($value) => url_encode($value),
+                    $values
+                ))
+                : '');
+        }
+
+        return $parameterUrl ? "{$url}?{$parameterUrl}" : $url;
     }
     
     /**
@@ -145,64 +273,73 @@ class Query extends Object_
      */
     public function facet(string $propertyName): static
     {
-        $this->query_facets[$propertyName] = true;
+        $this->facets[] = $propertyName;
 
         return $this;
     }
 
-    protected function get_count(): int {
-        $this->run();
-
-        if (!isset($this->count)) {
-            throw new InvalidQuery(__(
-                "To retrieve record count, use `count()` method before accessing query results"));
-        }
-
-        return $this->count;
-    }
-
-    protected function get_items(): array {
-        $this->run();
-
-        if (!isset($this->items)) {
-            throw new InvalidQuery(__(
-                "To retrieve record data, use `items()` method before accessing query results"));
-        }
-
-        return $this->items;
-    }
-
-    protected function run(): void
+    protected function get_result(): Result
     {
-        if ($this->executed) {
-            return;
-        }
-
-        if (!empty($this->query_facets)) {
-            $this->runSearchAndDb();
-        }
-        else {
-            $this->runDb();
-        }
-
-        $this->executed = true;
+        return !empty($this->facets)
+            ? $this->runSearchAndDb()
+            : $this->runDb();
     }
 
-    protected function runSearchAndDb(): void {
-        throw new NotImplemented($this);
+    protected function runSearchAndDb(): Result {
+        $searchQuery = $this->searchQuery();
+
+        $facets = array_unique($this->facets);
+        foreach ($facets as $propertyName) {
+            $this->table->properties[$propertyName]->facet->query($searchQuery);
+        }
+
+        foreach ($this->filters as $filter) {
+            $filter->querySearch($searchQuery);
+        }
+
+        $searchResult = $searchQuery
+            ->count()
+            ->limit(10000)
+            ->get();
+
+        $result = Result::new();
+        $result->count = $searchResult->count;
+
+
+        $result->facets = [];
+        foreach ($facets as $propertyName) {
+            $result->facets[$propertyName] =
+                $this->table->properties[$propertyName]->facet
+                    ->populate($this, $searchResult);
+        }
+
+
+        $result->items = count($searchResult->ids)
+            ? $this->db_query
+                ->where("id IN (" .
+                    implode(', ', $searchResult->ids). ")")
+                ->get()
+            : [];
+
+        return $result;
     }
 
-    protected function runDb(): void {
-        if ($this->query_count) {
-            $query = query($this->table->name, [
-                'filters' => $this->db_query->filters,
-            ]);
-            $this->count = $query->value("COUNT() AS count");
+    protected function runDb(): Result {
+        $result = Result::new();
+
+        if ($this->count) {
+            $result->count = $this->dbQuery()->value("COUNT() AS count");
         }
 
-        if ($this->query_items) {
-            $this->items = $this->db_query->get();
+        foreach ($this->filters as $filter) {
+            $filter->queryDb($this->db_query);
         }
+
+        if ($this->items) {
+            $result->items = $this->db_query->get();
+        }
+
+        return $result;
     }
 
     protected function get_query_url(): array {

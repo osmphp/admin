@@ -20,6 +20,7 @@ use function Osm\__;
  * @property Table $table
  * @property array $http_query
  * @property Query $query
+ * @property Result $result
  *
  * @uses Serialized
  */
@@ -46,5 +47,9 @@ class View extends BaseView
 
     protected function get_query(): Query {
         throw new Required(__METHOD__);
+    }
+
+    protected function get_result(): Result {
+        return $this->query->result;
     }
 }

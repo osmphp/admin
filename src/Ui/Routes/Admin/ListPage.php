@@ -26,6 +26,6 @@ class ListPage extends Route
 
     public function run(): Response {
         return view_response($this->list_view->template, $this->list_view->data,
-            status: $this->list_view->query->count > 0 ? 200 : 404);
+            status: $this->list_view->result->count > 0 ? 200 : 404);
     }
 }

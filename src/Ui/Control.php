@@ -56,7 +56,7 @@ class Control extends Object_
     }
 
     protected function get_name(): string {
-        throw new Required(__METHOD__);
+        return $this->property?->name ?? throw new Required(__METHOD__);
     }
 
     protected function get_title(): string {

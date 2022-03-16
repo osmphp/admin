@@ -20,10 +20,10 @@ class List_ extends View
     protected function get_query(): Query {
         $query = ui_query($this->table->name)
             ->all()
-            ->fromUrl('all', 'id', 'id-', 'select')
+            ->fromUrl($this->http_query, 'all', 'id', 'id-', 'select')
             ->count();
 
-        $query->db_query->select('id');
+        $query->select('id');
 
         return $query;
     }

@@ -19,6 +19,7 @@ use function Osm\sort_by_dependency;
 /**
  * @property Class_[] $classes #[Serialized]
  * @property Table[] $tables #[Serialized]
+ * @property Option[] $option_handlers
  * @property array $options #[Serialized]
  * @property string[] $singleton_class_names #[Serialized]
  * @property Indexer[] $indexers #[Serialized]
@@ -225,8 +226,8 @@ class Schema extends Object_
             $this->singleton_class_names);
     }
 
-    protected function get_options(): array {
-        $options = [];
+    protected function get_option_handlers(): array {
+        $optionHandlers = [];
 
         $classes = $this->descendants->all(Option::class);
 
@@ -234,12 +235,15 @@ class Schema extends Object_
             $new = "{$className}::new";
 
             /* @var Option $instance */
-            $instance = $new();
-
-            $options[$className] = $instance->get();
+            $optionHandlers[$className] = $new();
         }
 
-        return $options;
+        return $optionHandlers;
+    }
+
+    protected function get_options(): array {
+        return array_map(fn(Option $handler) => $handler->get(),
+            $this->option_handlers);
     }
 
     /**

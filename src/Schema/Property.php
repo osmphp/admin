@@ -5,7 +5,10 @@ namespace Osm\Admin\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Traits\AttributeParser;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Admin\Ui\Control;
+use Osm\Admin\Ui\Facet;
 use Osm\Admin\Ui\List_;
+use Osm\Admin\Ui\Query;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
@@ -39,9 +42,12 @@ use Osm\Framework\Search\Field;
  * @property bool $index_sortable #[Serialized]
  * @property bool $index_searchable #[Serialized]
  * @property DataType $data_type
+ * @property Option $option_handler
  * @property Option[] $options
  * @property bool $faceted #[Serialized] If set, a property is shown in the
  *      faceted navigation in the sidebar
+ * @property ?Control $control #[Serialized]
+ * @property ?Facet $facet #[Serialized]
  *
  * Dependencies:
  *
@@ -146,6 +152,10 @@ class Property extends Object_
         return $this->parent->schema->options[$this->option_class_name];
     }
 
+    protected function get_option_handler(): Option {
+        return $this->parent->schema->option_handlers[$this->option_class_name];
+    }
+
     protected function get_index(): bool {
         return $this->index_filterable || $this->index_sortable != null ||
             $this->index_searchable != null;
@@ -185,5 +195,41 @@ class Property extends Object_
 
     protected function get_faceted(): bool {
         return false;
+    }
+
+    protected function get_control(): ?Control {
+        if ($this->option_class_name) {
+            return Control\Select::new([
+                'data_type' => $this->data_type,
+                'property' => $this,
+            ]);
+        }
+
+        if (!$this->data_type->default_control) {
+            return null;
+        }
+
+        $control = clone $this->data_type->default_control;
+
+        $control->property = $this;
+
+        return $control;
+    }
+
+    protected function get_facet(): ?Facet {
+        if (!$this->control->default_facet) {
+            return null;
+        }
+
+        $filter = clone $this->control->default_facet;
+        $filter->property = $this;
+
+        return $filter;
+    }
+
+    public function parseUrlFilter(Query $query, string $operator,
+        string|array|bool $value): void
+    {
+        // by default, properties ignore URL filters
     }
 }

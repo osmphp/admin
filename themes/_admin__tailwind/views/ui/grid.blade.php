@@ -14,7 +14,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 @section('main')
     <div data-js-grid='{!! \Osm\js($js) !!}'>
         <section>
-            <h1 class="text-2xl sm:text-4xl pt-6 mb-6 border-t border-gray-300">
+            <h1 class="text-2xl sm:text-4xl my-6">
                 {{ $title }}
             </h1>
             <p class="text-sm mb-6">

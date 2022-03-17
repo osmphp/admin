@@ -13,7 +13,7 @@ use Osm\Core\Attributes\Serialized;
  * @property mixed $value #[Serialized]
  * @property int $count #[Serialized]
  * @property string $title #[Serialized]
- * @property bool $selected #[Serialized]
+ * @property bool $applied #[Serialized]
  * @property string $action_url #[Serialized]
  * @property array $actions
  * @property Query $query
@@ -40,7 +40,7 @@ class Option extends Object_
         throw new Required(__METHOD__);
     }
 
-    protected function get_selected(): bool {
+    protected function get_applied(): bool {
         throw new Required(__METHOD__);
     }
 
@@ -49,9 +49,13 @@ class Option extends Object_
     }
 
     protected function get_actions(): array {
-        return [
-            UrlAction::addOption($this->property_name, $this->value),
-        ];
+        return $this->applied
+            ? [
+                UrlAction::removeOption($this->property_name, $this->value),
+            ]
+            : [
+                UrlAction::addOption($this->property_name, $this->value),
+            ];
     }
 
     protected function get_action_url(): string {

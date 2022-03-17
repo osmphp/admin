@@ -1,13 +1,13 @@
 <?php
 
-namespace Osm\Admin\Ui\Query\Filter;
+namespace Osm\Admin\Ui\Filter;
 
 use Osm\Admin\Queries\Query as DbQuery;
+use Osm\Admin\Ui\Filter;
 use Osm\Admin\Ui\Query;
-use Osm\Admin\Ui\Query\Filter;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
-use Osm\Core\Object_;
+use Osm\Framework\Search\Hints\Result\Count;
 use Osm\Framework\Search\Query as SearchQuery;
 
 /**
@@ -40,5 +40,9 @@ class In_ extends Filter
         }
 
         $query->where($this->property_name, 'in', $this->items);
+    }
+
+    public function isOptionApplied(Count|\stdClass $option): bool {
+        return in_array($option->value, $this->items);
     }
 }

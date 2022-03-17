@@ -5,15 +5,12 @@ namespace Osm\Admin\Ui;
 use Osm\Admin\Queries\Formula;
 use Osm\Admin\Queries\Query as DbQuery;
 use Osm\Admin\Schema\Table;
-use Osm\Admin\Ui\Exceptions\InvalidQuery;
 use Osm\Admin\Ui\Hints\UrlAction;
-use Osm\Admin\Ui\Query\Filter as QueryFilter;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Search\Query as SearchQuery;
-use function Osm\__;
 use function Osm\query;
 use function Osm\url_encode;
 
@@ -39,24 +36,29 @@ class Query extends Object_
      * @var Filter[]
      */
     public array $filters = [];
-    public array $url = [];
+    public array $url_parameters = [];
 
     public static array $url_operators = ['-'];
 
     public function whereIn(string $propertyName, array $items): static
     {
-        $this->filters[$propertyName] = QueryFilter\In_::new([
+        $this->filters[$propertyName] = Filter\In_::new([
             'query' => $this,
             'property_name' => $propertyName,
             'items' => $items,
         ]);
+
+        foreach ($items as $item) {
+            $this->applyUrlAction($this->url_parameters,
+                UrlAction::addOption($propertyName, $item));
+        }
 
         return $this;
     }
 
     public function whereNotIn(string $propertyName, array $items): static
     {
-        $this->filters[] = QueryFilter\In_::new([
+        $this->filters[] = Filter\In_::new([
             'query' => $this,
             'property_name' => $propertyName,
             'items' => $items,
@@ -207,45 +209,10 @@ class Query extends Object_
     {
         $url = $this->table->url($routeName);
 
-        $parameters = $this->url;
+        $parameters = $this->url_parameters;
 
         foreach ($actions as $action) {
-            switch ($action->type) {
-                case UrlAction::REMOVE_ALL_FILTERS:
-                    foreach (array_keys($parameters) as $param) {
-                        if (isset($this->table->properties[$param])) {
-                            unset($parameters['param']);
-                        }
-                    }
-                    break;
-                case UrlAction::REMOVE_PARAMETER:
-                    unset($parameters[$action->param]);
-                    break;
-                case UrlAction::REMOVE_OPTION:
-                    if (isset($parameters[$action->param]) &&
-                        ($index = array_search($action->value,
-                            $parameters[$action->param])) !== false)
-                    {
-                        array_splice($parameters[$action->param],
-                            $index, 1);
-
-                        if (empty($parameters[$action->param])) {
-                            unset($parameters[$action->param]);
-                        }
-                    }
-                    break;
-                case UrlAction::SET_PARAMETER:
-                    $parameters[$action->param] = $action->value !== null
-                        ? [$action->value]
-                        : null;
-                    break;
-                case UrlAction::ADD_OPTION:
-                    if (!isset($parameters[$action->param])) {
-                        $parameters[$action->param] = [];
-                    }
-                    $parameters[$action->param][] = $action->value;
-                    break;
-            }
+            $this->applyUrlAction($parameters, $action);
         }
 
         $parameterUrl = '';
@@ -264,7 +231,47 @@ class Query extends Object_
 
         return $parameterUrl ? "{$url}?{$parameterUrl}" : $url;
     }
-    
+
+    protected function applyUrlAction(array &$parameters,
+        \stdClass|UrlAction $action): void
+    {
+        switch ($action->type) {
+            case UrlAction::REMOVE_ALL_FILTERS:
+                foreach (array_keys($parameters) as $param) {
+                    if (isset($this->table->properties[$param])) {
+                        unset($parameters['param']);
+                    }
+                }
+                break;
+            case UrlAction::REMOVE_PARAMETER:
+                unset($parameters[$action->param]);
+                break;
+            case UrlAction::REMOVE_OPTION:
+                if (isset($parameters[$action->param]) &&
+                    ($index = array_search($action->value,
+                        $parameters[$action->param])) !== false)
+                {
+                    array_splice($parameters[$action->param],
+                        $index, 1);
+
+                    if (empty($parameters[$action->param])) {
+                        unset($parameters[$action->param]);
+                    }
+                }
+                break;
+            case UrlAction::SET_PARAMETER:
+                $parameters[$action->param] = $action->value !== null
+                    ? [$action->value]
+                    : null;
+                break;
+            case UrlAction::ADD_OPTION:
+                if (!isset($parameters[$action->param])) {
+                    $parameters[$action->param] = [];
+                }
+                $parameters[$action->param][] = $action->value;
+                break;
+        }
+    }
     /**
      * Request facet counts or stats. Triggers using the search index.
      *

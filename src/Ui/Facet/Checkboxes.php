@@ -48,6 +48,7 @@ class Checkboxes extends Facet
             'value' => $option->value,
             'count' => $option->count,
             'title' => $this->property->options[$option->value]->title,
+            'applied' => $this->populateApplied($query, $option),
         ]);
     }
 
@@ -56,5 +57,15 @@ class Checkboxes extends Facet
             'title' => $this->property->control->title,
             'options' => $this->query->result->facets[$this->property->name],
         ];
+    }
+
+    protected function populateApplied(Query $query, Count|\stdClass $option)
+        : bool
+    {
+        if (!($filter = $query->filters[$this->property->name] ?? null)) {
+            return false;
+        }
+
+        return $filter->isOptionApplied($option);
     }
 }

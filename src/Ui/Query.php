@@ -45,7 +45,7 @@ class Query extends Object_
 
     public function whereIn(string $propertyName, array $items): static
     {
-        $this->filters[] = QueryFilter\In_::new([
+        $this->filters[$propertyName] = QueryFilter\In_::new([
             'query' => $this,
             'property_name' => $propertyName,
             'items' => $items,
@@ -290,6 +290,10 @@ class Query extends Object_
 
         $facets = array_unique($this->facets);
         foreach ($facets as $propertyName) {
+            if (isset($this->filters[$propertyName])) {
+                continue;
+            }
+
             $this->table->properties[$propertyName]->facet->query($searchQuery);
         }
 
@@ -308,6 +312,10 @@ class Query extends Object_
 
         $result->facets = [];
         foreach ($facets as $propertyName) {
+            if (isset($this->filters[$propertyName])) {
+                continue;
+            }
+
             $result->facets[$propertyName] =
                 $this->table->properties[$propertyName]->facet
                     ->populate($this, $searchResult);
@@ -320,6 +328,27 @@ class Query extends Object_
                     implode(', ', $searchResult->ids). ")")
                 ->get()
             : [];
+
+        foreach ($facets as $propertyName) {
+            if (!isset($this->filters[$propertyName])) {
+                continue;
+            }
+
+            $searchQuery = $this->searchQuery()->hits(false);
+            $this->table->properties[$propertyName]->facet->query($searchQuery);
+
+            foreach ($this->filters as $filteredPropertyName => $filter) {
+                if ($filteredPropertyName !== $propertyName) {
+                    $filter->querySearch($searchQuery);
+                }
+            }
+
+            $searchResult = $searchQuery->get();
+
+            $result->facets[$propertyName] =
+                $this->table->properties[$propertyName]->facet
+                    ->populate($this, $searchResult);
+        }
 
         return $result;
     }

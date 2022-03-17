@@ -31,7 +31,14 @@ class In_ extends Filter
     }
 
     public function queryDb(DbQuery $query): void {
-        throw new NotImplemented($this);
+        if (count($this->items) == 1) {
+            $query->where("{$this->property_name} = ?", $this->items[0]);
+        }
+        else {
+            $query->where("{$this->property_name} IN (" .
+                implode(', ', $this->items) .
+                ")");
+        }
     }
 
     public function querySearch(SearchQuery $query): void {

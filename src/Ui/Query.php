@@ -364,7 +364,13 @@ class Query extends Object_
         $result = Result::new();
 
         if ($this->count) {
-            $result->count = $this->dbQuery()->value("COUNT() AS count");
+            $query = $this->dbQuery();
+
+            foreach ($this->filters as $filter) {
+                $filter->queryDb($query);
+            }
+
+            $result->count = $query->value("COUNT() AS count");
         }
 
         foreach ($this->filters as $filter) {

@@ -1005,8 +1005,10 @@ class Parser extends Object_
             $index = $this->parameter_index++;
 
             $length = $this->previous_pos - $pos;
+            $parameter = $this->parameters[$index];
+
             return Formula\Parameter::new(compact('pos', 
-                'formula', 'index', 'length'));
+                'formula', 'index', 'length', 'parameter'));
         }
 
         if ($this->token_type == static::IDENTIFIER) {

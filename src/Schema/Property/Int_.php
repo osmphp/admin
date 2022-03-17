@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema\Property;
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Ui\Query;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
@@ -46,6 +47,54 @@ class Int_ extends Scalar
 
         if ($this->nullable || !empty($this->if)) {
             $column->nullable();
+        }
+    }
+
+    public function parseUrlFilter(Query $query, string $operator,
+                                   string|array|bool $value): void
+    {
+        if (is_bool($value)) {
+            // string properties ignore URL flags
+            return;
+        }
+
+        if ($this->name == 'id') {
+            $this->parseIdFilter($query, $operator, $value);
+        }
+    }
+
+    protected function parseIdFilter(Query $query, string $operator,
+        array|string $values): void
+    {
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+
+        $items = [];
+
+        foreach ($values as $value) {
+            foreach (explode(' ', $value) as $option) {
+                if ($option === '') {
+                    continue;
+                }
+
+                if (($option = filter_var($option, FILTER_VALIDATE_INT))
+                    === false)
+                {
+                    continue;
+                }
+
+                $items[] = $option;
+            }
+        }
+
+        if (empty($items)) {
+            return;
+        }
+
+        switch($operator) {
+            case '': $query->whereIn($this->name, $items); break;
+            case '-': $query->whereNotIn($this->name, $items); break;
         }
     }
 }

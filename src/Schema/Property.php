@@ -166,6 +166,10 @@ class Property extends Object_
             return true;
         }
 
+        if ($this->name == 'id' && !$this->parent->singleton) {
+            return true;
+        }
+
         foreach ($this->parent->list_views as $list) {
             if ($list->filterable($this->name)) {
                 return true;

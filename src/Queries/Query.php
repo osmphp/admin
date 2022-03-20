@@ -77,8 +77,10 @@ class Query extends Object_
 
     public function select(string|array ...$formulas): static {
         foreach ($formulas as $formula) {
-            $this->selects[] = $this->parse($formula,
+            $parsed = $this->parse($formula,
                 Formula::SELECT_EXPR);
+
+            $this->selects[$parsed->alias] = $parsed;
         }
 
         return $this;

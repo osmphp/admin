@@ -204,7 +204,7 @@ class Query extends Object_
      * @param UrlAction[] $actions
      * @return string
      */
-    public function toUrl(string $routeName, array $actions)
+    public function toUrl(string $routeName, array $actions = [])
         : string
     {
         $url = $this->table->url($routeName);

@@ -5,7 +5,7 @@ namespace Osm\Admin\Ui;
 use Osm\Admin\Schema\Struct;
 use Osm\Core\Exceptions\Required;
 use Osm\Framework\Blade\View as BaseView;
-use function Osm\theme_specific;
+use function Osm\view;
 
 /**
  * Render-time properties:
@@ -39,7 +39,7 @@ class Facets extends BaseView
                 continue;
             }
 
-            $facets[] = theme_specific($property->facet, [
+            $facets[] = view($property->facet, [
                 'query' => $this->query,
             ]);
         }

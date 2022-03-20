@@ -13,7 +13,7 @@ use Osm\Core\Exceptions\Required;
 use Osm\Framework\Blade\View as BaseView;
 use function Osm\__;
 use Osm\Admin\Queries\Formula;
-use function Osm\theme_specific;
+use function Osm\view;
 
 /**
  * @property string[] $selects #[Serialized] Formulas shown as grid columns
@@ -56,7 +56,7 @@ class Grid extends List_
 
         $this->query->select(...$this->selects);
 
-        $this->facets = theme_specific(Facets::class, [
+        $this->facets = view(Facets::class, [
             'struct' => $this->struct,
             'query' => $this->query,
         ]);
@@ -71,7 +71,7 @@ class Grid extends List_
             'result' => $this->result,
             'title' => $this->table->s_objects,
             'create_url' => $this->table->url('GET /create'),
-            'sidebar' => theme_specific(Sidebar::class, [
+            'sidebar' => view(Sidebar::class, [
                 'facets' => $this->facets,
             ]),
             'js' => [

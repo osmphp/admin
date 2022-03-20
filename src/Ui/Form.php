@@ -2,19 +2,21 @@
 
 namespace Osm\Admin\Ui;
 
-use Osm\Admin\Schema\Struct;
-use Osm\Admin\Schema\Table;
 use Osm\Core\Exceptions\NotImplemented;
-use Osm\Core\Exceptions\Required;
 use function Osm\__;
 use function Osm\ui_query;
+use Osm\Core\Attributes\Serialized;
+use Osm\Framework\Blade\Attributes\RenderTime;
 
 /**
- * Render-time properties:
+ * @property array $layout #[Serialized]
+ * @property Form\Chapter[] $chapters #[Serialized]
+ * @property int $count #[RenderTime]
+ * @property \stdClass $item #[RenderTime]
+ * @property string $title #[RenderTime]
+ * @property string $save_url #[RenderTime]
  *
- * @property int $count
- * @property \stdClass $item
- * @property string $title
+ * @uses Serialized, RenderTime
  */
 class Form extends View
 {
@@ -27,6 +29,10 @@ class Form extends View
             ->count();
 
         $query->db_query->select('id', 'title');
+
+        foreach ($this->chapters as $chapter) {
+            $chapter->prepare($query);
+        }
 
         return $query;
     }
@@ -59,9 +65,63 @@ class Form extends View
         throw new NotImplemented($this);
     }
 
+    protected function get_save_url(): string {
+        if ($this->count === 0) {
+            return $this->table->url('POST /create');
+        }
+
+        return $this->query->toUrl('POST /');
+    }
+
     protected function get_data(): array {
         return [
+            'form' => $this,
+            'table' => $this->table,
+            'result' => $this->result,
             'title' => $this->title,
+            'save_url' => $this->save_url,
+            'close_url' => $this->query->toUrl('GET /'),
+            'count' => $this->count,
+            'js' => [
+
+            ],
         ];
+    }
+
+    protected function get_layout(): array {
+        return [
+            // default chapter
+            '' => [
+                'layout' => [
+                    // default section
+                    '' => [
+                        'layout' => [
+                            // default fieldset
+                            '' => [
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    protected function get_chapters(): array {
+        $chapters = [];
+
+        foreach ($this->layout as $name => $data) {
+            $data['name'] = $name;
+            $data['form'] = $this;
+            $chapters[$name] = Form\Chapter::new($data);
+        }
+
+        return $chapters;
+    }
+
+    public function __wakeup(): void
+    {
+        foreach ($this->chapters as $chapter) {
+            $chapter->form = $this;
+        }
     }
 }

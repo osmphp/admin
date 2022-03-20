@@ -8,9 +8,11 @@ use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Routes\Route;
 use Osm\Core\Attributes\Name;
 use Osm\Framework\Areas\Admin;
+use Osm\Framework\Blade\View;
 use Osm\Framework\Http\Exceptions\NotFound;
 use Symfony\Component\HttpFoundation\Response;
 use function Osm\__;
+use function Osm\view;
 use function Osm\view_response;
 
 /**
@@ -19,8 +21,8 @@ use function Osm\view_response;
 #[Ui(Admin::class), Name('GET /edit')]
 class EditPage extends Route
 {
-    protected function get_form_view(): Form {
-        $form = clone $this->table->form_view;
+    protected function get_form_view(): Form|View {
+        $form = view($this->table->form_view);
 
         $form->http_query = $this->http->query;
 

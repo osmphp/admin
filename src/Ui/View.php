@@ -6,23 +6,20 @@ use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Table;
 use Osm\Core\Exceptions\NotSupported;
 use Osm\Core\Exceptions\Required;
-use Osm\Core\Object_;
 use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Blade\View as BaseView;
 use function Osm\__;
+use Osm\Framework\Blade\Attributes\RenderTime;
 
 /**
  * @property Struct $struct
  * @property string $name #[Serialized]
+ * @property Table $table #[RenderTime]
+ * @property array $http_query #[RenderTime]
+ * @property Query $query #[RenderTime]
+ * @property Result $result #[RenderTime]
  *
- * Render-time properties:
- *
- * @property Table $table
- * @property array $http_query
- * @property Query $query
- * @property Result $result
- *
- * @uses Serialized
+ * @uses Serialized, RenderTime
  */
 class View extends BaseView
 {

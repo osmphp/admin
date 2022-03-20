@@ -7,10 +7,10 @@ use Osm\Admin\Ui\Facets;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Sidebar;
-use Osm\Admin\Ui\View;
+use Osm\Admin\Ui\ObjectView;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
-use Osm\Framework\Blade\View as BaseView;
+use Osm\Framework\Blade\View;
 use function Osm\__;
 use Osm\Admin\Queries\Formula;
 use function Osm\view;
@@ -45,7 +45,7 @@ class Grid extends List_
         return ['title'];
     }
 
-    protected function get_facets(): Facets|BaseView {
+    protected function get_facets(): Facets|View {
         $this->configureQueryAndFacets();
 
         return $this->facets;

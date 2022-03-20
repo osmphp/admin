@@ -6,7 +6,7 @@ use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Object_;
-use Osm\Framework\Blade\View as BaseView;
+use Osm\Framework\Blade\View;
 use Osm\Framework\Search\Query as SearchQuery;
 use Osm\Framework\Search\Result as SearchResult;
 
@@ -18,7 +18,7 @@ use Osm\Framework\Search\Result as SearchResult;
  * @property Query $query
  * @property bool $visible
  */
-class Facet extends BaseView
+class Facet extends View
 {
     use RequiredSubTypes;
 

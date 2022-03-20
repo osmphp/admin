@@ -21,7 +21,7 @@ use Osm\Core\Attributes\Serialized;
  *
  * Render-time properties:
  *
- * @property View $view
+ * @property ObjectView $view
  * @property string $name
  * @property string $title
  *

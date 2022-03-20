@@ -7,11 +7,14 @@ use Osm\Admin\Schema\Table;
 use Osm\Core\Exceptions\NotSupported;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Attributes\Serialized;
-use Osm\Framework\Blade\View as BaseView;
+use Osm\Framework\Blade\View;
 use function Osm\__;
 use Osm\Framework\Blade\Attributes\RenderTime;
 
 /**
+ * A view that displays one or more existing objects,
+ * or provides mens for creating a new object.
+ *
  * @property Struct $struct
  * @property string $name #[Serialized]
  * @property Table $table #[RenderTime]
@@ -21,7 +24,7 @@ use Osm\Framework\Blade\Attributes\RenderTime;
  *
  * @uses Serialized, RenderTime
  */
-class View extends BaseView
+class ObjectView extends View
 {
     protected function get_struct(): Struct {
         throw new Required(__METHOD__);

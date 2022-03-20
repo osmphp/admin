@@ -11,7 +11,7 @@ use function Osm\ui_query;
  *
  * @property string $edit_url
  */
-class List_ extends View
+class List_ extends ObjectView
 {
     protected function get_data(): array {
         throw new Required(__METHOD__);

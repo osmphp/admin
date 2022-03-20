@@ -2,7 +2,7 @@
 
 namespace Osm\Admin\Ui;
 
-use Osm\Framework\Blade\View as BaseView;
+use Osm\Framework\Blade\View;
 
 /**
  * Render-time properties:
@@ -10,7 +10,7 @@ use Osm\Framework\Blade\View as BaseView;
  * @property ?Facets $facets
  * @property bool $visible
  */
-class Sidebar extends BaseView
+class Sidebar extends View
 {
     public string $template = 'ui::sidebar';
 

@@ -18,7 +18,7 @@ use Osm\Framework\Blade\Attributes\RenderTime;
  *
  * @uses Serialized, RenderTime
  */
-class Form extends View
+class Form extends ObjectView
 {
     public string $template = 'ui::form';
 

@@ -4,7 +4,7 @@ namespace Osm\Admin\Ui;
 
 use Osm\Admin\Schema\Struct;
 use Osm\Core\Exceptions\Required;
-use Osm\Framework\Blade\View as BaseView;
+use Osm\Framework\Blade\View;
 use function Osm\view;
 
 /**
@@ -15,7 +15,7 @@ use function Osm\view;
  * @property Struct $struct
  * @property bool $visible
  */
-class Facets extends BaseView
+class Facets extends View
 {
     public string $template = 'ui::facets';
 

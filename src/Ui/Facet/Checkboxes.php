@@ -54,7 +54,7 @@ class Checkboxes extends Facet
 
     protected function get_data(): array {
         return [
-            'title' => $this->property->control->title,
+            'title' => $this->property->title,
             'options' => $this->query->result->facets[$this->property->name],
         ];
     }

@@ -4,12 +4,14 @@ namespace Osm\Admin\Queries\Formula;
 
 use Osm\Admin\Queries\Formula;
 use Osm\Admin\Schema\Table;
+use Osm\Admin\Ui\Control;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\Required;
 
 /**
  * @property Formula $expr #[Serialized]
  * @property string $alias #[Serialized]
+ * @property ?Control $control
  *
  * @uses Serialized
  */
@@ -42,5 +44,11 @@ class SelectExpr extends Formula
     {
         return $this->expr->toSql($bindings, $from, $join) .
             " AS `{$this->alias}`";
+    }
+
+    protected function get_control(): ?Control {
+        return $this->expr instanceof Formula\Identifier
+            ? $this->expr->property->control
+            : $this->data_type->default_control;
     }
 }

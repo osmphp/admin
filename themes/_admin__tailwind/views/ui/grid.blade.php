@@ -49,11 +49,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                     <div class="table-row">
                         @include('ui::grid.header.handle')
                         @foreach ($grid->columns as $column)
-                            @if ($column->header_template)
-                                @include($column->header_template, [
-                                    'column' => $column,
-                                ])
-                            @endif
+                            @include($column->template, $column->data)
                         @endforeach
                     </div>
                 </div>
@@ -65,12 +61,8 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                         >
                             @include ('ui::grid.cell.handle')
                             @foreach ($grid->columns as $column)
-                                @if ($column->cell_template)
-                                    @include($column->cell_template, [
-                                        'column' => $column,
-                                        'item' => $item,
-                                    ])
-                                @endif
+                                @include($column->cell_template,
+                                    $column->data($item))
                             @endforeach
                         </div>
                     @empty

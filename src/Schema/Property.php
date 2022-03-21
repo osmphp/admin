@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Str;
 use Osm\Admin\Schema\Traits\AttributeParser;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Admin\Ui\Control;
@@ -48,6 +49,7 @@ use Osm\Framework\Search\Field;
  *      faceted navigation in the sidebar
  * @property ?Control $control #[Serialized]
  * @property ?Facet $facet #[Serialized]
+ * @property string $title
  *
  * Dependencies:
  *
@@ -235,5 +237,9 @@ class Property extends Object_
         string|array|bool $value): void
     {
         // by default, properties ignore URL filters
+    }
+
+    protected function get_title(): string {
+        return Str::title($this->name);
     }
 }

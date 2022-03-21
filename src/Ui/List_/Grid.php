@@ -4,6 +4,7 @@ namespace Osm\Admin\Ui\List_;
 
 use Osm\Admin\Ui\Control;
 use Osm\Admin\Ui\Facets;
+use Osm\Admin\Ui\Grid\Column;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Sidebar;
@@ -14,16 +15,13 @@ use Osm\Framework\Blade\View;
 use function Osm\__;
 use Osm\Admin\Queries\Formula;
 use function Osm\view;
-
+use Osm\Framework\Blade\Attributes\RenderTime;
 /**
  * @property string[] $selects #[Serialized] Formulas shown as grid columns
+ * @property Column[] $columns #[RenderTime]
+ * @property Facets $facets #[RenderTime]
  *
- * Render-time properties:
- *
- * @property Control[] $columns
- * @property Facets $facets
- *
- * @uses Serialized
+ * @uses Serialized, RenderTime
  */
 class Grid extends List_
 {
@@ -88,18 +86,14 @@ class Grid extends List_
     protected function get_columns(): array {
         $columns = [];
 
-        foreach ($this->query->selects as $select) {
-            $control = $select->expr instanceof Formula\Identifier
-                ? $select->expr->property->control
-                : $select->data_type->default_control;
-
-            if (!$control) {
-                continue;
+        foreach ($this->query->selects as $alias => $select) {
+            if ($select->control?->grid_column) {
+                $columns[$alias] = view($select->control->grid_column, [
+                    'grid' => $this,
+                    'name' => $alias,
+                ]);
             }
 
-            $columns[$select->alias] = $control = clone $control;
-            $control->name = $select->alias;
-            $control->view = $this;
         }
 
         return $columns;

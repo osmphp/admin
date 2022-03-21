@@ -8,6 +8,8 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Framework\Blade\View;
 use Osm\Core\Attributes\Serialized;
+use Osm\Framework\Blade\Attributes\RenderTime;
+use function Osm\view;
 
 /**
  * @property Section $section
@@ -16,7 +18,7 @@ use Osm\Core\Attributes\Serialized;
  * @property array $layout #[Serialized]
  * @property Field[] $fields #[Serialized]
  *
- * @uses Serialized
+ * @uses Serialized, RenderTime
  */
 class Fieldset extends View
 {
@@ -48,10 +50,12 @@ class Fieldset extends View
                 continue;
             }
 
-            $fields[$property->name] = Field::new([
-                'fieldset' => $this,
-                'name' => $property->name,
-            ]);
+            $fields[$property->name] = $field =
+                clone $property->control->form_field;
+
+            $field->fieldset = $this;
+            $field->name = $property->name;
+            $field->formula = $property->name;
         }
 
         return $fields;

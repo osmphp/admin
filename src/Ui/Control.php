@@ -13,13 +13,15 @@ use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Admin\Queries\Formula;
 use Osm\Core\Attributes\Serialized;
+use Osm\Framework\Blade\View;
 
 /**
  * @property DataType $data_type
  * @property ?Property $property
  * @property string[] $supported_facets #[Serialized]
  * @property ?Facet $default_facet #[Serialized]
- * @property ?Grid\Column $grid_column #[Serialized]
+ * @property Grid\Column $grid_column #[Serialized]
+ * @property Form\Field $form_field #[Serialized]
  *
  * @uses Serialized
  */
@@ -39,12 +41,19 @@ class Control extends Object_
         return Facet\Checkboxes::new();
     }
 
-    protected function get_grid_column(): Grid\Column {
+    protected function get_grid_column(): Grid\Column|View {
+        return $this->view(Grid\Column::class);
+    }
+
+    protected function get_form_field(): Form\Field|View {
+        return $this->view(Form\Field::class);
+    }
+
+    protected function view(string $className): View {
         global $osm_app; /* @var App $osm_app */
 
         $className = $osm_app->descendants
-            ->byName(Grid\Column::class, Type::class)
-            [$this->type];
+            ->byName($className, Type::class)[$this->type];
 
         $new = "{$className}::new";
 
@@ -54,5 +63,6 @@ class Control extends Object_
     public function __wakeup(): void
     {
         $this->grid_column->control = $this;
+        $this->form_field->control = $this;
     }
 }

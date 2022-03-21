@@ -87,13 +87,12 @@ class Grid extends List_
         $columns = [];
 
         foreach ($this->query->selects as $alias => $select) {
-            if ($select->control?->grid_column) {
+            if ($select->control) {
                 $columns[$alias] = view($select->control->grid_column, [
                     'grid' => $this,
                     'name' => $alias,
                 ]);
             }
-
         }
 
         return $columns;

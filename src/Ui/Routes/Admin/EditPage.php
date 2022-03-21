@@ -22,11 +22,9 @@ use function Osm\view_response;
 class EditPage extends Route
 {
     protected function get_form_view(): Form|View {
-        $form = view($this->table->form_view);
-
-        $form->http_query = $this->http->query;
-
-        return $form;
+        return view($this->table->form_view, [
+            'http_query' => $this->http->query,
+        ]);
     }
 
     public function run(): Response

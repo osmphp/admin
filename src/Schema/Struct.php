@@ -44,6 +44,7 @@ use function Osm\__;
  * @property string $s_deleting_n_objects #[Serialized]
  * @property string $s_n_objects_deleted #[Serialized]
  * @property string $s_no_objects #[Serialized]
+ * @property string $s_title_and_n_more_object_s #[Serialized]
  *
  * @property List_[] $list_views #[Serialized]
  *
@@ -168,6 +169,10 @@ class Struct extends Object_
 
     protected function get_s_no_objects(): string {
         return "There are no {$this->s_objects_lowercase} matching the criteria.";
+    }
+
+    protected function get_s_title_and_n_more_object_s(): string {
+        return ":title And :count More {$this->s_object_s}";
     }
 
     public function parse(): void {

@@ -27,7 +27,8 @@
                     dark:placeholder-gray-400 dark:text-white
                     dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-                <option value="" @if ($value === '') selected @endif></option>
+                <option value="" @if ($value === null) selected @endif
+                >@if ($multiple){{ \Osm\__("<multiple values>")}}@endif</option>
                 @foreach ($options as $option)
                     <option value="{{ $option->value}}"
                         @if ($value === $option->value) selected @endif

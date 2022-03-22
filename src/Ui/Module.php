@@ -10,6 +10,7 @@ class Module extends BaseModule
 {
     public static array $requires = [
         \Osm\Admin\Queries\Module::class,
+        \Osm\Extras\FontAwesome\Module::class,
     ];
 
 }

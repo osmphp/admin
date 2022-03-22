@@ -68,4 +68,11 @@ class Section extends View
             $fieldset->prepare($query);
         }
     }
+
+    public function merge(\stdClass $merged): void
+    {
+        foreach ($this->fieldsets as $fieldset) {
+            $fieldset->merge($merged);
+        }
+    }
 }

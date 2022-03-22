@@ -15,11 +15,14 @@ use Osm\Framework\Blade\Attributes\RenderTime;
  * @property \stdClass $item #[RenderTime]
  * @property string $title #[RenderTime]
  * @property string $save_url #[RenderTime]
+ * @property bool $merge #[RenderTime]
  *
  * @uses Serialized, RenderTime
  */
 class Form extends ObjectView
 {
+    public const MAX_MERGED_RECORDS = 100;
+
     public string $template = 'ui::form';
 
     protected function get_query(): Query {
@@ -50,7 +53,15 @@ class Form extends ObjectView
             return $this->result->items[0];
         }
 
-        throw new NotImplemented($this);
+        $merged = (object)[
+            '_multiple' => [],
+        ];
+
+        foreach ($this->chapters as $chapter) {
+            $chapter->merge($merged);
+        }
+
+        return $merged;
     }
 
     protected function get_title(): string {
@@ -62,7 +73,10 @@ class Form extends ObjectView
             return $this->item->title;
         }
 
-        throw new NotImplemented($this);
+        return __($this->table->s_title_and_n_more_object_s, [
+            'title' => $this->result->items[0]->title,
+            'count' => $this->count - 1,
+        ]);
     }
 
     protected function get_save_url(): string {
@@ -123,5 +137,9 @@ class Form extends ObjectView
         foreach ($this->chapters as $chapter) {
             $chapter->form = $this;
         }
+    }
+
+    protected function get_merge(): bool {
+        return $this->count > 1 && $this->count <= static::MAX_MERGED_RECORDS;
     }
 }

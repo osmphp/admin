@@ -79,4 +79,11 @@ class Fieldset extends View
             $field->prepare($query);
         }
     }
+
+    public function merge(\stdClass $merged): void
+    {
+        foreach ($this->fields as $field) {
+            $field->merge($merged);
+        }
+    }
 }

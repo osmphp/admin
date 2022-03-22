@@ -28,6 +28,13 @@ class Chapter extends View
         }
     }
 
+    public function merge(\stdClass $merged): void
+    {
+        foreach ($this->sections as $section) {
+            $section->merge($merged);
+        }
+    }
+
     protected function get_form(): Form {
         throw new Required(__METHOD__);
     }

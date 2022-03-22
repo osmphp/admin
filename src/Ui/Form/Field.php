@@ -51,11 +51,37 @@ class Field extends View
         return [
             'name' => $this->name,
             'title' => $this->property->title,
-            'multiple' => false,
+            'multiple' => in_array($this->name,
+                $this->form->item->_multiple ?? []),
         ];
     }
 
     protected function get_property(): Property {
         return $this->form->struct->properties[$this->name];
+    }
+
+    public function merge(\stdClass $merged): void
+    {
+        if (!$this->form->merge) {
+            $merged->_multiple[] = $this->name;
+            return;
+        }
+
+        $value = null;
+        foreach ($this->form->result->items as $index => $item) {
+            if ($index == 0) {
+                $value = $item->{$this->name} ?? null;
+                continue;
+            }
+
+            if ($value !== ($item->{$this->name} ?? null)) {
+                $merged->_multiple[] = $this->name;
+                return;
+            }
+        }
+
+        if ($value !== null) {
+            $merged->{$this->name} = $value;
+        }
     }
 }

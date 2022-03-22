@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0014bebcacb4b031b5ae10277eeddb4b",
+    "content-hash": "1e93c7658f690b0fd93306a7083a43bf",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -1716,6 +1716,50 @@
                 "source": "https://github.com/osmphp/core/tree/v0.10.19"
             },
             "time": "2022-03-07T17:53:44+00:00"
+        },
+        {
+            "name": "osmphp/extras",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/osmphp/extras.git",
+                "reference": "78ba266bdab3eb43d203d9c54e88b9a5b307b56b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/osmphp/extras/zipball/78ba266bdab3eb43d203d9c54e88b9a5b307b56b",
+                "reference": "78ba266bdab3eb43d203d9c54e88b9a5b307b56b",
+                "shasum": ""
+            },
+            "require": {
+                "osmphp/framework": "^0.15",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Osm\\Extras\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Osmianskij",
+                    "email": "vlaosm@gmail.com"
+                }
+            ],
+            "description": "Extra libraries for Osm Framework-based projects",
+            "support": {
+                "issues": "https://github.com/osmphp/extras/issues",
+                "source": "https://github.com/osmphp/extras/tree/v0.1.0"
+            },
+            "time": "2022-03-22T15:15:29+00:00"
         },
         {
             "name": "osmphp/framework",

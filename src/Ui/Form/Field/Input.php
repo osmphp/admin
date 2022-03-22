@@ -12,7 +12,7 @@ class Input extends Field
 
     protected function get_data(): array {
         return array_merge(parent::get_data(), [
-            'value' => $this->form->item->{$this->name},
+            'value' => $this->form->item->{$this->name} ?? null,
             'js' => [
 
             ],

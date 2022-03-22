@@ -24,12 +24,17 @@ class Form extends ObjectView
     public const MAX_MERGED_RECORDS = 100;
 
     public string $template = 'ui::form';
+    public bool $load = false;
 
     protected function get_query(): Query {
-        $query = ui_query($this->table->name)
-            ->fromUrl($this->http_query,
-                'limit', 'offset', 'order', 'select')
-            ->count();
+        $query = ui_query($this->table->name);
+
+        if ($this->load) {
+            $query
+                ->fromUrl($this->http_query,
+                    'limit', 'offset', 'order', 'select')
+                ->count();
+        }
 
         $query->db_query->select('id', 'title');
 
@@ -41,7 +46,7 @@ class Form extends ObjectView
     }
 
     protected function get_count(): int {
-        return $this->result->count;
+        return $this->load ? $this->result->count : 0;
     }
 
     protected function get_item(): \stdClass {

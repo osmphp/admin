@@ -18,22 +18,15 @@ use function Osm\view_response;
 /**
  * @property Form $form_view
  */
-#[Ui(Admin::class), Name('GET /edit')]
-class EditPage extends Route
+#[Ui(Admin::class), Name('GET /create')]
+class CreatePage extends Route
 {
     protected function get_form_view(): Form|View {
-        return view($this->table->form_view, [
-            'load' => true,
-            'http_query' => $this->http->query,
-        ]);
+        return view($this->table->form_view);
     }
 
     public function run(): Response
     {
-        if ($this->form_view->count === 0) {
-            throw new NotFound();
-        }
-
         return view_response($this->form_view->template, $this->form_view->data);
     }
 }

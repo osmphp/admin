@@ -25,7 +25,8 @@
                     rounded-lg focus:ring-blue-500 focus:border-blue-500
                     block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600
                     dark:placeholder-gray-400 dark:text-white
-                    dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    dark:focus:ring-blue-500 dark:focus:border-blue-500
+                    appearance-none"
             >
                 <option value="" @if ($value === null) selected @endif
                 >@if ($multiple){{ \Osm\__("<multiple values>")}}@endif</option>
@@ -35,7 +36,13 @@
                     >{{ $option->title }}</option>
                 @endforeach
             </select>
-            <div class="field__actions flex absolute inset-y-0 right-2 my-1">
+            <div class="field__actions flex absolute inset-y-0 right-2 my-1
+                pointer-events-none">
+                <button class="flex items-center p-2 text-gray-600"
+                    tabindex="-1" type="button"
+                >
+                    <i class="fas fa-angle-down"></i>
+                </button>
                 @if ($multiple)
                     <button class="field__action field__clear flex items-center p-2 text-gray-600"
                         title="{{ \Osm\__("Clear all values") }}"

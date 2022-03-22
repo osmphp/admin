@@ -51,11 +51,7 @@ class Field extends View
         return [
             'name' => $this->name,
             'title' => $this->property->title,
-            'value' => $this->form->item->{$this->name},
             'multiple' => false,
-            'js' => [
-
-            ],
         ];
     }
 

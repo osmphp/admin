@@ -23,7 +23,7 @@ class EditPage extends Route
 {
     protected function get_form_view(): Form|View {
         return view($this->table->form_view, [
-            'load' => true,
+            'edit' => true,
             'http_query' => $this->http->query,
         ]);
     }

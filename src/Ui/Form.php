@@ -2,8 +2,11 @@
 
 namespace Osm\Admin\Ui;
 
+use Osm\Admin\Ui\Hints\UrlAction;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Core\Exceptions\NotSupported;
 use function Osm\__;
+use function Osm\merge;
 use function Osm\ui_query;
 use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Blade\Attributes\RenderTime;
@@ -24,12 +27,12 @@ class Form extends ObjectView
     public const MAX_MERGED_RECORDS = 100;
 
     public string $template = 'ui::form';
-    public bool $load = false;
+    public bool $edit = false;
 
     protected function get_query(): Query {
         $query = ui_query($this->table->name);
 
-        if ($this->load) {
+        if ($this->edit) {
             $query
                 ->fromUrl($this->http_query,
                     'limit', 'offset', 'order', 'select')
@@ -46,7 +49,7 @@ class Form extends ObjectView
     }
 
     protected function get_count(): int {
-        return $this->load ? $this->result->count : 0;
+        return $this->edit ? $this->result->count : 0;
     }
 
     protected function get_item(): \stdClass {
@@ -93,18 +96,38 @@ class Form extends ObjectView
     }
 
     protected function get_data(): array {
-        return [
+        $data = [
             'form' => $this,
             'table' => $this->table,
             'result' => $this->result,
             'title' => $this->title,
-            'save_url' => $this->save_url,
-            'close_url' => $this->query->toUrl('GET /'),
+            'save_url' => $this->table->url('POST /create'),
+            'close_url' => $this->table->url('GET /'),
             'count' => $this->count,
             'js' => [
-
+                's_saving' => __("Saving :title ...",
+                    ['title' => $this->title]),
+                's_saved' => __(":title saved successfully.",
+                    ['title' => $this->title]),
             ],
         ];
+
+        if ($this->count > 0) {
+            $data = merge($data, [
+                'close_url' => $this->query->toUrl('GET /',
+                    [UrlAction::removeParameter('id')]),
+                'save_url' => $this->query->toUrl('POST /'),
+                'js' => [
+                    'delete_url' => $this->query->toUrl('DELETE /'),
+                    's_deleting' => __("Deleting :title ...",
+                        ['title' => $this->title]),
+                    's_deleted' => __(":title deleted.",
+                        ['title' => $this->title]),
+                ],
+            ]);
+        }
+
+        return $data;
     }
 
     protected function get_layout(): array {

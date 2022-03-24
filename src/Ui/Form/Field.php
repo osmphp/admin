@@ -13,6 +13,8 @@ use Osm\Core\Exceptions\Required;
 use Osm\Framework\Blade\View;
 use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Blade\Attributes\RenderTime;
+use function Osm\__;
+use function Osm\merge;
 
 /**
  * @property Control $control
@@ -21,6 +23,7 @@ use Osm\Framework\Blade\Attributes\RenderTime;
  * @property ?string $name #[Serialized]
  * @property ?string $formula #[Serialized]
  * @property Formula\SelectExpr $select #[RenderTime]
+ * @property bool $multiple #[RenderTime]
  * @property Property $property
  *
  * @uses Serialized, RenderTime
@@ -48,12 +51,30 @@ class Field extends View
     }
 
     protected function get_data(): array {
-        return [
+        $data = [
             'name' => $this->name,
             'title' => $this->property->title,
-            'multiple' => in_array($this->name,
-                $this->form->item->_multiple ?? []),
+            'multiple' => $this->multiple,
+            'js' => [
+                'edit' => $this->form->edit,
+                'multiple' => $this->multiple,
+            ],
         ];
+
+        if ($this->multiple) {
+            $data = merge($data, [
+                'js' => [
+                    's_empty' => __("<empty>"),
+                    's_multiple_values' => __("<multiple values>"),
+                ],
+            ]);
+        }
+
+        return $data;
+    }
+
+    protected function get_multiple(): bool {
+        return in_array($this->name, $this->form->item->_multiple ?? []);
     }
 
     protected function get_property(): Property {

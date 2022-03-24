@@ -3,6 +3,18 @@ import {register} from '../../js/scripts';
 import {notice, fetch} from '../../messages/var/messages';
 import Field from "./Field";
 
+/**
+ * @property {string} options.s_saving Message shown while the object(s)
+ *      is being saved
+ * @property {string} options.s_saved Message after the object(s) is
+ *      successfully saved
+ * @property {?string} options.delete_url Absolute URL that handles object
+ *      deletion
+ * @property {?string} options.s_deleting Message shown while the object(s)
+ *      is being deleted
+ * @property {?string} options.s_deleted Message after the object(s) is
+ *      successfully deleted
+ */
 export default register('form', class Form extends Controller {
     get events() {
         return Object.assign({}, super.events, {

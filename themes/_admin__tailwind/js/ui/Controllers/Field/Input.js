@@ -1,6 +1,7 @@
 import Field from "../Field";
+import {register} from '../../../js/scripts';
 
-export default class Input extends Field {
+export default register('input-field', class Input extends Field {
     get events() {
         return Object.assign({}, super.events, {
             // event selector
@@ -86,4 +87,4 @@ export default class Input extends Field {
             (this.initial_input_padding_right +
                 this.actions_element.offsetWidth) + "px";
     }
-};
+});

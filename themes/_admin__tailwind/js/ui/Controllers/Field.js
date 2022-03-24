@@ -1,5 +1,12 @@
 import Controller from "../../js/Controller";
 
+/**
+ * @property {boolean} multiple True if the field edits multiple values
+ * @property {?string} s_empty String to show if multiple edited values
+ *      are all cleared by the clear button
+ * @property {?string} s_multiple_values String displaying instead
+ *      of multiple edited values
+ */
 export default class Field extends Controller {
     _cleared = false;
 

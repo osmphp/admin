@@ -5,12 +5,12 @@ export default register('input-field', class Input extends Field {
     get events() {
         return Object.assign({}, super.events, {
             // event selector
-            'input input': 'onInput',
+            'input .field__single-input': 'onInput',
         });
     }
 
     data(data) {
-        if (this._cleared || this.changed) {
+        if (this.changed) {
             data[this.name] = this.value;
         }
     }
@@ -28,38 +28,22 @@ export default register('input-field', class Input extends Field {
     }
 
     get changed() {
-        return this.input_element.value !== this.initial_value;
-    }
-
-    set cleared(cleared) {
-        super.cleared = cleared;
-
-        if (!this.options.multiple) {
-            return;
-        }
-
-        this.input_element.value = this.initial_value;
-        this.input_element.placeholder = cleared
-            ? this.options.s_empty
-            : this.options.s_multiple_values;
+        return this.cleared_all_values ||
+            this.input_element.value !== this.initial_value;
     }
 
     reset() {
         this.input_element.value = this.initial_value;
-        if (this.options.multiple) {
-            this.cleared = false;
-        }
     }
 
     accept() {
-        if (!(this._cleared || this.changed)) {
+        if (!(this.cleared_all_values || this.changed)) {
             return;
         }
 
         this.initial_value = this.input_element.value;
-        this.input_element.placeholder = '';
         this.options.multiple = false;
-        this.cleared = false;
+        this.onResetInitialValue();
     }
 
     get value() {
@@ -73,7 +57,7 @@ export default register('input-field', class Input extends Field {
     }
 
     get input_element() {
-        return this.element.querySelector('input');
+        return this.element.querySelector('.field__single-input');
     }
 
     onInput() {

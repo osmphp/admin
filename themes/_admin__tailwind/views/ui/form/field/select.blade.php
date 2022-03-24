@@ -19,7 +19,8 @@
         </span>
     </label>
     <div class="col-start-1 col-span-12 md:col-start-4 md:col-span-9">
-        <div class="relative">
+        @include ('ui::form.field.multiple')
+        <div class="field__single relative @if ($multiple) hidden @endif">
             <select name="{{ $name }}" id="{{ $name }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
                     rounded-lg focus:ring-blue-500 focus:border-blue-500
@@ -28,8 +29,7 @@
                     dark:focus:ring-blue-500 dark:focus:border-blue-500
                     appearance-none"
             >
-                <option value="" @if ($value === null) selected @endif
-                >@if ($multiple){{ \Osm\__("<multiple values>")}}@endif</option>
+                <option value="" @if ($value === null) selected @endif></option>
                 @foreach ($options as $option)
                     <option value="{{ $option->value}}"
                         @if ($value === $option->value) selected @endif
@@ -43,15 +43,8 @@
                 >
                     <i class="fas fa-angle-down"></i>
                 </button>
-                @if ($multiple)
-                    <button class="field__action field__clear flex items-center p-2 text-gray-600"
-                        title="{{ \Osm\__("Clear all values") }}"
-                        tabindex="-1" type="button"
-                    >
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                @endif
-                <button class="field__action field__reset hidden flex items-center p-2 text-gray-600"
+                <button class="field__action field__reset-initial-value hidden
+                    flex items-center p-2 text-gray-600 pointer-events-auto"
                     title="{{ \Osm\__("Modified. Reset to initial value") }}"
                     tabindex="-1" type="button"
                 >

@@ -51,7 +51,7 @@ class Field extends View
     }
 
     protected function get_data(): array {
-        $data = [
+        return [
             'name' => $this->name,
             'title' => $this->property->title,
             'multiple' => $this->multiple,
@@ -60,17 +60,6 @@ class Field extends View
                 'multiple' => $this->multiple,
             ],
         ];
-
-        if ($this->multiple) {
-            $data = merge($data, [
-                'js' => [
-                    's_empty' => __("<empty>"),
-                    's_multiple_values' => __("<multiple values>"),
-                ],
-            ]);
-        }
-
-        return $data;
     }
 
     protected function get_multiple(): bool {

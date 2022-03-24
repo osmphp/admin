@@ -1,20 +1,15 @@
 import Controller from "../../js/Controller";
 
 /**
+ * @property {boolean} edit True if editing existing record
  * @property {boolean} multiple True if the field edits multiple values
- * @property {?string} s_empty String to show if multiple edited values
- *      are all cleared by the clear button
- * @property {?string} s_multiple_values String displaying instead
- *      of multiple edited values
  */
 export default class Field extends Controller {
-    _cleared = false;
-
     get events() {
         return Object.assign({}, super.events, {
             // event selector
-            'click .field__clear': 'onClear',
-            'click .field__reset': 'onReset',
+            'click .field__clear-multiple-values': 'onClearMultipleValues',
+            'click .field__reset-initial-value': 'onResetInitialValue',
         });
     }
 
@@ -23,7 +18,6 @@ export default class Field extends Controller {
     }
 
     get changed() {
-        // this.value !== this.options.value
         throw 'Not implemented';
     }
 
@@ -31,56 +25,55 @@ export default class Field extends Controller {
         throw 'Not implemented';
     }
 
-    accept() {
-        throw 'Not implemented';
+    get cleared_all_values() {
+        return this.options.multiple &&
+            this.multiple_element.classList.contains('hidden');
     }
 
-    set cleared(cleared) {
-        this._cleared = cleared;
-
-        this.updateActions();
+    accept() {
+        throw 'Not implemented';
     }
 
     get actions_element() {
         return this.element.querySelector('.field__actions');
     }
 
-    get clear_element() {
-        return this.element.querySelector('.field__clear');
+    get multiple_element() {
+        return this.element.querySelector('.field__multiple');
     }
 
-    get reset_element() {
-        return this.element.querySelector('.field__reset');
+    get single_element() {
+        return this.element.querySelector('.field__single');
     }
 
-    onClear() {
-        this.cleared = true;
+    get reset_initial_value_element() {
+        return this.element.querySelector('.field__reset-initial-value');
     }
 
-    onReset() {
+    onClearMultipleValues() {
+        this.multiple_element.classList.add('hidden');
+        this.single_element.classList.remove('hidden');
+
+        this.updateActions();
+    }
+
+    onResetInitialValue() {
         this.reset();
+
+        if (this.options.multiple) {
+            this.single_element.classList.add('hidden');
+            this.multiple_element.classList.remove('hidden');
+        }
 
         this.updateActions();
     }
 
     updateActions() {
-        if (this.options.multiple) {
-            if (!this._cleared) {
-                this.clear_element.classList.remove('hidden');
-            }
-            else {
-                this.clear_element.classList.add('hidden');
-            }
-        }
-        else if (this.clear_element) {
-            this.clear_element.classList.add('hidden');
-        }
-
-        if (this._cleared || this.changed) {
-            this.reset_element.classList.remove('hidden');
+        if (this.changed) {
+            this.reset_initial_value_element.classList.remove('hidden');
         }
         else {
-            this.reset_element.classList.add('hidden');
+            this.reset_initial_value_element.classList.add('hidden');
         }
     }
 };

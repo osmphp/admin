@@ -5,12 +5,12 @@ export default register('select-field', class Select extends Field {
     get events() {
         return Object.assign({}, super.events, {
             // event selector
-            'input input': 'onInput',
+            'change select': 'onChange',
         });
     }
 
     data(data) {
-        if (this._cleared || this.changed) {
+        if (this.changed) {
             data[this.name] = this.value;
         }
     }
@@ -28,42 +28,26 @@ export default register('select-field', class Select extends Field {
     }
 
     get changed() {
-        return this.select_element.value !== this.initial_value;
-    }
-
-    set cleared(cleared) {
-        super.cleared = cleared;
-
-        if (!this.options.multiple) {
-            return;
-        }
-
-        this.select_element.value = this.initial_value;
-        this.select_element.placeholder = cleared
-            ? this.options.s_empty
-            : this.options.s_multiple_values;
+        return this.cleared_all_values ||
+            this.select_element.value !== this.initial_value;
     }
 
     reset() {
         this.select_element.value = this.initial_value;
-        if (this.options.multiple) {
-            this.cleared = false;
-        }
     }
 
     accept() {
-        if (!(this._cleared || this.changed)) {
+        if (!(this.cleared_all_values || this.changed)) {
             return;
         }
 
         this.initial_value = this.select_element.value;
-        this.select_element.placeholder = '';
         this.options.multiple = false;
-        this.cleared = false;
+        this.onResetInitialValue();
     }
 
     get value() {
-        const value = this.select_element.value.trim();
+        const value = this.select_element.value;
 
         return value !== '' ? value : null;
     }
@@ -76,7 +60,7 @@ export default register('select-field', class Select extends Field {
         return this.element.querySelector('select');
     }
 
-    onInput() {
+    onChange() {
         this.updateActions();
     }
 

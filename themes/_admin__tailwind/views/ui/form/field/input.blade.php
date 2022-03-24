@@ -18,27 +18,19 @@
         </span>
     </label>
     <div class="col-start-1 col-span-12 md:col-start-4 md:col-span-9">
-        <div class="relative">
+        @include ('ui::form.field.multiple')
+        <div class="field__single relative @if ($multiple) hidden @endif">
             <input type="text" name="{{ $name }}" id="{{ $name }}"
-                class="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-full
+                class="field__single-input bg-gray-50 border border-gray-300
+                    rounded-lg p-2.5 w-full
                     text-gray-900 sm:text-sm
                     focus:ring-blue-500 focus:border-blue-500"
                     value="{{ $value }}"
-                @if ($multiple)
-                    placeholder="{{ \Osm\__("<multiple values>")}}"
-                @endif
             >
             <div class="field__actions flex absolute inset-y-0 right-2 my-1">
-                @if ($multiple)
-                    <button class="field__action field__clear flex items-center p-2 text-gray-600"
-                        title="{{ \Osm\__("Clear all values") }}"
-                        tabindex="-1" type="button"
-                    >
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                @endif
-                <button class="field__action field__reset hidden flex items-center p-2 text-gray-600"
-                    title="{{ \Osm\__("Modified. Reset to initial value") }}"
+                <button class="field__action field__reset-initial-value hidden
+                    flex items-center p-2 text-gray-600"
+                    title="{{ \Osm\__("Modified. Reset initial value") }}"
                     tabindex="-1" type="button"
                 >
                     <i class="fas fa-pencil-alt"></i>

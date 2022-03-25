@@ -1,4 +1,4 @@
-@around({{ $footer ?? '' }})
+@around(@include('std-pages::footer'))
     @proceed
     <div id="message-bar" class="fixed left-4 right-4 bottom-4 z-50
         pointer-events-none flex flex-col items-center">

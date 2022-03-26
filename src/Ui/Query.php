@@ -156,7 +156,6 @@ class Query extends Object_
             }
 
             switch ($key) {
-                case 'all':
                 case 'limit':
                 case 'offset':
                 case 'order':

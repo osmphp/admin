@@ -12,7 +12,7 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
 @extends('ui::layout')
 @section('title', $title)
 @section('main')
-    <div data-js-grid='{!! \Osm\js($js) !!}'>
+    <div class="grid_" data-js-grid='{!! \Osm\js($js) !!}'>
         <section>
             <h1 class="text-2xl sm:text-4xl my-6">
                 {{ $title }}

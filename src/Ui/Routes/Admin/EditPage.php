@@ -30,6 +30,8 @@ class EditPage extends Route
 
     public function run(): Response
     {
+        $this->assertSafe($this->form_view->query);
+
         if ($this->form_view->count === 0) {
             throw new NotFound();
         }

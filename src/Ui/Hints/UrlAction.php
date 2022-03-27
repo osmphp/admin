@@ -67,7 +67,7 @@ class UrlAction
     }
 
     /**
-     * Removes specified multi-value filter option from the URL.
+     * Sets specified parameter.
      *
      * String syntax: 'color=red'
      *
@@ -86,7 +86,7 @@ class UrlAction
     }
 
     /**
-     * Removes specified multi-value filter option from the URL.
+     * Adds an option to specified multi-value filter.
      *
      * String syntax: '+color=red'
      *

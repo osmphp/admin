@@ -2,6 +2,20 @@ import Controller from "../../js/Controller";
 import {register, controller} from '../../js/scripts';
 import {notice, fetch} from '../../messages/var/messages';
 
+/**
+ * @property {boolean} options.s_selected Text says how many objects are
+ *      currently selected.
+ * @property {int} options.count Number of matching objects.
+ * @property {string} options.edit_url Edit page URL, without filter parameters
+ * @property {string} options.delete_url Delete route URL, without
+ *      filter parameters
+ * @property {string} options.s_deleting Message that shows up while selected
+ *      objects are being deleted
+ * @property {string} options.s_deleted Message informing that the selected
+ *      objects have been successfully deleted
+ * @property {string[]} options.url_parameters Currently applied filters, orders
+ *      and other URL actions
+ */
 export default register('grid', class Grid extends Controller {
     _inverse_selection = false;
 
@@ -95,7 +109,12 @@ export default register('grid', class Grid extends Controller {
             this.action_elements.forEach(element => {
                 element.classList.remove('hidden');
             });
-            this.edit_action_element.href = this.filterUrl(this.options.edit_url);
+
+            // noinspection UnnecessaryLocalVariableJS
+            let url = this.toUrl(this.options.edit_url, true,
+                this.idFilter());
+
+            this.edit_action_element.href = url;
         }
         else {
             this.action_elements.forEach(element => {
@@ -105,21 +124,176 @@ export default register('grid', class Grid extends Controller {
         }
     }
 
-    filterUrl(url) {
-        if (this._inverse_selection) {
-            const ids = this.ids(false);
-            return url + (ids.length
-                ? `?id-=${this.ids(false).join('+')}`
-                : '?all'
-            );
+    idFilter() {
+        const ids = this.ids(!this._inverse_selection).join(' ');
+
+        let urlActions = ['-id', '-id-'];
+        if (!ids.length) {
+            return urlActions;
         }
-        else {
-            return url + `?id=${this.ids(true).join('+')}`;
+
+        urlActions.push(this._inverse_selection ? `id-=${ids}` : `id=${ids}`);
+
+        return urlActions;
+    }
+
+    toUrl(url, safe, actions) {
+        let parameters = JSON.parse(
+            JSON.stringify(this.options.url_parameters || {}));
+
+        actions.forEach(action => {
+            this.applyUrlAction(parameters, action);
+        });
+
+        if (safe && !this.urlHasFilters(parameters)) {
+            parameters.all = true;
+        }
+
+        const urlParameters = this.renderUrlParameters(parameters);
+
+        return urlParameters.length ? `${url}?${urlParameters}` : url;
+    }
+
+    renderUrlParameters(parameters) {
+        let url = '';
+
+        for (let param in parameters) {
+            if (!parameters.hasOwnProperty(param)) {
+                continue;
+            }
+            const values = parameters[param];
+
+            if (url.length) {
+                url += '&';
+            }
+
+            url += this.urlEncode(param);
+            url += this.renderUrlValues(values);
+        }
+
+        return url;
+    }
+
+    renderUrlValues(values) {
+        if (values === true) {
+            return '';
+        }
+
+        let url = '';
+        if (typeof values === 'string') {
+            return url + '=' + this.urlEncode(values);
+        }
+
+        values.forEach(value => {
+            if (url.length) {
+                url += '+';
+            }
+
+            url += this.urlEncode(value);
+        });
+
+        return '=' + url;
+    }
+
+    urlHasFilters(parameters) {
+        for (let param in parameters) {
+            if (parameters.hasOwnProperty(param) && this.isFilter(param)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isFilter(param) {
+        return this.non_filter_url_parameter_names.indexOf(param) === -1;
+    }
+
+    get non_filter_url_parameter_names() {
+        return ['limit', 'offset', 'order', 'q', 'select'];
+    }
+
+    urlEncode(value) {
+        return encodeURIComponent(value).replace('%20', '+');
+    }
+
+    applyUrlAction(parameters, action) {
+        let parsed = action.match(/^([-+])?([^=]*)(?:=(.*))?$/);
+
+        if (parsed === null) {
+            throw `Invalid URL action syntax '${action}'`;
+        }
+
+        switch (parsed[1]) {
+            case '-':
+                if (parsed[2] === undefined) {
+                    return this.removeUrlFilters(parameters);
+                }
+                if (parsed[3] === undefined) {
+                    return this.removeUrlParameter(parameters, parsed[2]);
+                }
+
+                return this.removeUrlOption(parameters, parsed[2], parsed[3]);
+            case '+':
+                if (parsed[2] === undefined || parsed[3] === undefined) {
+                    throw `Invalid URL action syntax '${action}'`;
+                }
+
+                this.addUrlOption(parameters, parsed[2], parsed[3]);
+                break;
+            case undefined:
+                if (parsed[2] === undefined || parsed[3] === undefined) {
+                    throw `Invalid URL action syntax '${action}'`;
+                }
+
+                this.setUrlParameter(parameters, parsed[2], parsed[3]);
+                break;
+            default:
+                throw `Invalid URL action syntax '${action}'`;
         }
     }
 
+    removeUrlFilters(parameters) {
+        for (let param in parameters) {
+            if (parameters.hasOwnProperty(param) && this.isFilter(param)) {
+                delete parameters[param];
+            }
+        }
+    }
+
+    removeUrlParameter(parameters, param) {
+        delete parameters[param];
+    }
+
+    removeUrlOption(parameters, param, value) {
+        if (!Array.isArray(parameters[param])) {
+            return;
+        }
+
+        const index = parameters[param].indexOf(value);
+        if (index !== -1) {
+            parameters[param].splice(index, 1);
+        }
+    }
+
+    addUrlOption(parameters, param, value) {
+        if (!Array.isArray(parameters[param])) {
+            parameters[param] = [];
+        }
+
+        parameters[param].push(value);
+    }
+
+    setUrlParameter(parameters, param, value) {
+        parameters[param] = value;
+    }
+
     onDelete() {
-        fetch(this.filterUrl(this.options.delete_url), {
+        let url = this.toUrl(this.options.delete_url, true, [
+            this.idFilter(),
+        ]);
+
+        fetch(url, {
             method: 'DELETE',
             message: this.options.s_deleting
                 .replace(':selected', this.selected_count),

@@ -5,6 +5,7 @@ namespace Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Control;
 use Osm\Admin\Ui\Facets;
 use Osm\Admin\Ui\Grid\Column;
+use Osm\Admin\Ui\Hints\UrlAction;
 use Osm\Admin\Ui\List_;
 use Osm\Admin\Ui\Query;
 use Osm\Admin\Ui\Sidebar;
@@ -79,6 +80,7 @@ class Grid extends List_
                 'delete_url' => $this->table->url('DELETE /'),
                 's_deleting' => __($this->table->s_deleting_n_objects),
                 's_deleted' => __($this->table->s_n_objects_deleted),
+                'url_parameters' => (object)$this->query->url_parameters,
             ],
         ];
     }

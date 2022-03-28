@@ -388,4 +388,8 @@ class Query extends Object_
 
         return $osm_app->http->query;
     }
+
+    public function insert(\stdClass $item): int {
+        return $this->db_query->insert((array)$item);
+    }
 }

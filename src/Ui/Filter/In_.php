@@ -35,9 +35,11 @@ class In_ extends Filter
             $query->where("{$this->property_name} = ?", $this->items[0]);
         }
         else {
-            $query->where("{$this->property_name} IN (" .
-                implode(', ', $this->items) .
-                ")");
+            $questionMarks = implode(', ',
+                array_fill(0, count($this->items), '?'));
+
+            $query->where("{$this->property_name} IN ($questionMarks)",
+                ...$this->items);
         }
     }
 

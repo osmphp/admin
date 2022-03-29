@@ -66,7 +66,20 @@ global $osm_app; /* @var \Osm\Core\App $osm_app */
                             @endforeach
                         </div>
                     @empty
-                        {{ \Osm\__($table->s_no_objects) }}
+                        <div class="table-row bg-white border-b relative
+                            dark:bg-gray-800 dark:border-gray-700"
+                        >
+                            <div class="table-cell py-3 px-6 text-xs
+                                tracking-wider absolute left-0 right-0
+                                text-center h-20 top-1/2 [transform:translateY(-25%)]"
+                            >
+                                {{ \Osm\__($table->s_no_objects) }}
+                            </div>
+                            @foreach ($grid->columns as $column)
+                                <div class="table-cell py-3 px-6 text-xs
+                                    tracking-wider h-20"></div>
+                            @endforeach
+                        </div>
                     @endforelse
                 </div>
             </div>

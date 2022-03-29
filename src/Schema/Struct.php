@@ -168,7 +168,7 @@ class Struct extends Object_
     }
 
     protected function get_s_no_objects(): string {
-        return "There are no {$this->s_objects_lowercase} matching the criteria.";
+        return "No {$this->s_objects_lowercase}.";
     }
 
     protected function get_s_title_and_n_more_object_s(): string {

@@ -19,6 +19,7 @@ use Osm\Framework\Search\Search;
  * @property Search $search
  * @property string[] $after #[Serialized]
  * @property Indexer[] $indexers
+ * @property Indexer[] $listeners
  *
  * @uses Serialized
  */
@@ -59,6 +60,10 @@ class Table extends Struct
 
         $this->search->create($this->table_name, function(SearchBlueprint $index) {
             foreach ($this->properties as $property) {
+                if ($property->name === 'id') {
+                    continue;
+                }
+
                 if ($property->index) {
                     $field = $property->createIndex($index);
 
@@ -80,6 +85,10 @@ class Table extends Struct
                 }
             }
         });
+
+        foreach ($this->listeners as $listener) {
+            $listener->createNotificationTables($this);
+        }
     }
 
     public function alter(Table $current): void
@@ -123,5 +132,10 @@ class Table extends Struct
         return [
             'search' => Indexer\Search::new(),
         ];
+    }
+
+    protected function get_listeners(): array {
+        return array_map(fn(string $name) => $this->schema->indexers[$name],
+            $this->schema->listener_names[$this->name]);
     }
 }

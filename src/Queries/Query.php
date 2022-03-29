@@ -163,7 +163,8 @@ class Query extends Object_
             $sql = $this->generateInsert($data, $bindings);
 
             $this->db->connection->insert($sql, $bindings);
-            $id = (int)$this->db->connection->getPdo()->lastInsertId();
+            $data['id'] = $id =
+                (int)$this->db->connection->getPdo()->lastInsertId();
 
             // compute regular, self and ID-based indexing expressions by
             // running an additional UPDATE. Note that property-level validation
@@ -179,7 +180,7 @@ class Query extends Object_
 
                 // create notification records for the dependent objects in
                 // other tables, and for search index entries
-                $this->notifyDependentObjects(static::INSERTED, $data);
+                $this->notifyListeners(static::INSERTED, $data);
             });
 
             // register a callback that is executed after a successful transaction
@@ -226,7 +227,7 @@ class Query extends Object_
 
                 // create notification records for the dependent objects in
                 // other tables, and for search index entries
-                $this->notifyDependentObjects(static::UPDATED, $data);
+                $this->notifyListeners(static::UPDATED, $data);
             });
 
             // register a callback that is executed after a successful transaction
@@ -257,7 +258,7 @@ class Query extends Object_
 
                 // create notification records for the dependent objects in
                 // other tables, and for search index entries
-                $this->notifyDependentObjects(static::DELETED, []);
+                $this->notifyListeners(static::DELETED);
             });
 
             // register a callback that is executed after a successful transaction
@@ -536,9 +537,10 @@ EOT;
         //throw new NotImplemented($this);
     }
 
-    protected function notifyDependentObjects(string $event, array $data): void
-    {
-        //throw new NotImplemented($this);
+    protected function notifyListeners(string $event, array $data = []): void {
+        foreach ($this->table->listeners as $listener) {
+            $listener->notify($this, $event, $data);
+        }
     }
 
     protected function updateDependentObjects(): void {

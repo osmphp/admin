@@ -3,7 +3,6 @@
 namespace Osm\Admin\Schema\Indexer;
 
 use Osm\Admin\Queries\Query;
-use Osm\Admin\Schema\Hints\IndexerStatus;
 use Osm\Admin\Schema\Indexer;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
@@ -16,8 +15,19 @@ use function Osm\query;
  */
 class Search extends Indexer
 {
+
     protected function get_after_regexes(): array {
         return ['/__regular$/', '/__aggregate__$/'];
+    }
+
+    protected function get_listens_to(): array {
+        return [
+            $this->table->name => [
+                Query::INSERTED => 'inserts',
+                Query::UPDATED => 'updates',
+                Query::DELETED => 'deletes',
+            ],
+        ];
     }
 
     public function index(string $mode): void {

@@ -6,6 +6,8 @@ use Osm\Admin\Ui\Query;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Framework\Search\Blueprint as SearchBlueprint;
+use Osm\Framework\Search\Field;
 
 /**
  * @property bool $unsigned #[Serialized]
@@ -96,5 +98,10 @@ class Int_ extends Scalar
             case '': $query->whereIn($this->name, $items); break;
             case '-': $query->whereNotIn($this->name, $items); break;
         }
+    }
+
+    public function createIndex(SearchBlueprint $index): Field
+    {
+        return $index->int($this->name);
     }
 }

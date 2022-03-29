@@ -2,8 +2,9 @@
 
 namespace Osm\Admin\Schema;
 
-use Osm\Admin\Schema\Hints\IndexerStatus;
+use Osm\Admin\Schema\Hints\Indexer\Status;
 use Osm\Core\App;
+use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Class_ as CoreClass;
 use Osm\Core\Exceptions\NotImplemented;
@@ -13,7 +14,6 @@ use Osm\Framework\Cache\Descendants;
 use Osm\Framework\Db\Db;
 use function Osm\dehydrate;
 use function Osm\hydrate;
-use Osm\Core\Attributes\Serialized;
 use function Osm\sort_by_dependency;
 
 /**
@@ -26,6 +26,7 @@ use function Osm\sort_by_dependency;
  * @property Table[] $singletons
  * @property Db $db
  * @property Descendants $descendants
+ * @property array $listener_names #[Serialized]
  *
  * @uses Serialized
  */
@@ -297,12 +298,24 @@ class Schema extends Object_
     }
 
     /**
-     * @return IndexerStatus[]
+     * @return Status[]
      */
     protected function getIndexerStatus(): array {
         return $this->db->table('indexers')
             ->get(['id', 'requires_partial_reindex', 'requires_full_reindex'])
             ->keyBy('id')
             ->toArray();
+    }
+
+    protected function get_listener_names(): array {
+        $listenerNames = array_map(fn(Table $table) => [], $this->tables);
+
+        foreach ($this->indexers as $indexer) {
+            foreach (array_keys($indexer->listens_to) as $tableName) {
+                $listenerNames[$tableName][] = $indexer->name;
+            }
+        }
+
+        return $listenerNames;
     }
 }

@@ -2,12 +2,14 @@
 
 namespace Osm\Admin\Schema;
 
-use Osm\Admin\Schema\Hints\IndexerStatus;
+use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Queries\Query;
+use Osm\Admin\Schema\Hints\Indexer\Status;
 use Osm\Core\App;
+use Osm\Core\Attributes\Serialized;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
-use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Db\Db;
 
 /**
@@ -20,6 +22,7 @@ use Osm\Framework\Db\Db;
  * @property string[] $after_regexes #[Serialized]
  * @property Table $table
  * @property Db $db
+ * @property array $listens_to #[Serialized]
  *
  * @uses Serialized
  */
@@ -29,7 +32,7 @@ class Indexer extends Object_
     public const FULL = 'full';
 
     /**
-     * @param IndexerStatus[] $status
+     * @param Status[] $status
      * @param string $mode
      * @return ?string
      */
@@ -55,7 +58,7 @@ class Indexer extends Object_
     }
 
     /**
-     * @param IndexerStatus[] $status
+     * @param Status[] $status
      */
     public function markAsIndexed(array &$status): void {
         $status[$this->id]->requires_partial_reindex = false;
@@ -67,6 +70,75 @@ class Indexer extends Object_
                 'requires_partial_reindex' => false,
                 'requires_full_reindex' => false,
             ]);
+    }
+
+    public function markAsRequiringPartialReindex(): void {
+        $this->db->table('indexers')
+            ->where('id', $this->id)
+            ->update([
+                'requires_partial_reindex' => true,
+            ]);
+    }
+
+    public function createNotificationTables(Table $source): void  {
+        $listensTo = $this->listens_to[$source->name];
+
+        if ($inserted = $listensTo[Query::INSERTED] ?? null) {
+            $this->createNotificationTable($source, $inserted, cascade: true);
+        }
+
+        if (($updated = $listensTo[Query::UPDATED] ?? null) &&
+            $updated != $inserted)
+        {
+            $this->createNotificationTable($source, $updated, cascade: true);
+        }
+
+        if ($deleted = $listensTo[Query::DELETED] ?? null) {
+            $this->createNotificationTable($source, $deleted, cascade: true);
+        }
+    }
+
+    protected function createNotificationTable(Table $source, string $suffix,
+        bool $cascade = false): void
+    {
+        $this->db->create($this->getNotificationTableName($source, $suffix),
+            function(Blueprint $table) use ($source, $cascade) {
+                $table->integer('id')->unsigned()->unique();
+
+                if ($cascade) {
+                    $table->foreign('id')
+                        ->references('id')
+                        ->on($source->table_name)
+                        ->onDelete('cascade');
+                }
+            }
+        );
+    }
+
+    protected function get_listens_to(): array {
+        throw new NotImplemented($this);
+    }
+
+    public function notify(Query $query, string $event, array $data): void {
+        $listensTo = $this->listens_to[$query->table->name];
+
+        if (!($suffix = $listensTo[$event] ?? null)) {
+            // do nothing if the indexer is not listening to $event
+            return;
+        }
+
+        $tableName = $this->getNotificationTableName($query->table, $suffix);
+
+        if ($event == Query::INSERTED) {
+            $this->db->table($tableName)->insert([
+                'id' => $data['id'],
+            ]);
+        }
+        else {
+            $query->clone()->select('id')->into($tableName);
+        }
+
+        $this->markAsRequiringPartialReindex();
     }
 
     protected function get_after_regexes(): array {
@@ -121,5 +193,11 @@ class Indexer extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
+    }
+
+    protected function getNotificationTableName(Table $table, string $suffix)
+        : string
+    {
+        return "zi{$this->id}__{$table->table_name}__{$suffix}";
     }
 }

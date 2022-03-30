@@ -19,7 +19,14 @@ class Migrate extends Command
         $osm_app->migrations()->fresh();
         $osm_app->migrations()->up();
 
-        $this->schema->migrate();
+        // `$osm_app->schema` is stored in cache. It contains information
+        // fetched from the database, for example, indexer IDs. Hence, after
+        // resetting the database it's necessary to "forget" the currently
+        // cached schema and reflect it from code anew
+        $osm_app->cache->deleteItem('schema');
+        unset($osm_app->schema);
+
+        $osm_app->schema->migrate();
     }
 
     protected function get_schema(): Schema {

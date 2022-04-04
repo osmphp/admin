@@ -31,25 +31,57 @@ class Search extends Indexer
     }
 
     public function index(string $mode): void {
-        if ($mode = static::FULL) {
+        if ($mode == static::FULL) {
             $this->fullReindex();
         }
         else {
-            throw new NotImplemented($this);
+            $this->partialReindex();
         }
     }
 
     protected function fullReindex(): void {
-        // TODO: use an API that clears all index entries with one call -
-        // there should be one!
-        foreach ($this->searchQuery()->ids() as $id) {
-            $this->searchQuery()->delete($id);
-        }
+        $this->searchQuery()->deleteAll();
 
         // TODO: implement and use `chunk()` method, and insert in bulks
         foreach ($this->query()->get() as $item) {
             $this->searchQuery()->insert((array)$item);
         }
+    }
+
+    protected function partialReindex(): void {
+        $listensTo = $this->listens_to[$this->table->name];
+
+        // copy new entries
+        $query = $this->query()->joinInsertNotifications($this);
+        foreach ($query->get() as $item) {
+            $this->searchQuery()->insert((array)$item);
+        }
+
+        // delete processed insert notifications
+        $notificationTable = $this->getNotificationTableName($this->table,
+            $listensTo[Query::INSERTED]);
+        $this->db->table($notificationTable)->delete();
+
+        // update existing entries
+        $query = $this->query()->joinUpdateNotifications($this);
+        foreach ($query->get() as $item) {
+            $this->searchQuery()->update($item->id, (array)$item);
+        }
+
+        // delete processed update notifications
+        $notificationTable = $this->getNotificationTableName($this->table,
+            $listensTo[Query::UPDATED]);
+        $this->db->table($notificationTable)->delete();
+
+        // delete removed entries
+        $notificationTable = $this->getNotificationTableName($this->table,
+            $listensTo[Query::DELETED]);
+        foreach ($this->db->table($notificationTable)->pluck('id') as $id) {
+            $this->searchQuery()->delete($id);
+        }
+
+        // delete processed delete notifications
+        $this->db->table($notificationTable)->delete();
     }
 
     protected function get_search(): SearchEngine {

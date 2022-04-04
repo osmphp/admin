@@ -195,7 +195,7 @@ class Indexer extends Object_
         return $osm_app->db;
     }
 
-    protected function getNotificationTableName(Table $table, string $suffix)
+    public function getNotificationTableName(Table $table, string $suffix)
         : string
     {
         return "zi{$this->id}__{$table->table_name}__{$suffix}";

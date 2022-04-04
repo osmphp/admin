@@ -3,6 +3,7 @@
 namespace Osm\Admin\Queries;
 
 use Osm\Admin\Queries\Exceptions\InvalidQuery;
+use Osm\Admin\Schema\Indexer;
 use Osm\Admin\Schema\Table;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
@@ -42,6 +43,8 @@ class Query extends Object_
      * @var Formula[]
      */
     public array $orders = [];
+
+    public array $notification_joins = [];
 
     /**
      * @var Query[]
@@ -106,6 +109,32 @@ class Query extends Object_
 
     public function hydrate(bool $hydrate = false): static {
         $this->hydrate = $hydrate;
+
+        return $this;
+    }
+
+    public function joinInsertNotifications(Indexer $indexer,
+        string $identifier = 'id'): static
+    {
+        return $this->joinNotifications($indexer, static::INSERTED,
+            $identifier);
+    }
+
+    public function joinUpdateNotifications(Indexer $indexer,
+        string $identifier = 'id'): static
+    {
+        return $this->joinNotifications($indexer, static::UPDATED,
+            $identifier);
+    }
+
+    public function joinNotifications(Indexer $indexer, string $event,
+        string $identifier): static
+    {
+        $this->notification_joins[] = [
+            'identifier' => $this->parse($identifier, Formula::IDENTIFIER),
+            'notification_table' => $indexer->getNotificationTableName(
+                $this->table, $indexer->listens_to[$this->table->name][$event]),
+        ];
 
         return $this;
     }
@@ -306,6 +335,7 @@ class Query extends Object_
         $where = $this->generateWhere($bindings, $from);
         $select = $this->generateSelects($bindings, $from);
         $orderBy = $this->generateOrderBy($bindings, $from);
+        $this->generateNotificationJoins($bindings, $from);
 
         return <<<EOT
 {$select}
@@ -366,6 +396,21 @@ EOT;
         }
 
         return "SELECT {$sql}";
+    }
+
+    protected function generateNotificationJoins(array &$bindings,
+        array &$from): void
+    {
+        foreach ($this->notification_joins as $join) {
+            $table = $join['notification_table'];
+            /* @var Formula\Identifier $identifier */
+            $identifier = $join['identifier'];
+
+            $from[$table] = <<<EOT
+INNER JOIN `$table`
+        ON `$table`.`id` = {$identifier->toSql($bindings, $from, 'INNER')}
+EOT;
+        }
     }
 
     protected function generateFrom(array $from): string

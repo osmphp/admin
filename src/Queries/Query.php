@@ -589,7 +589,7 @@ EOT;
     }
 
     protected function updateDependentObjects(): void {
-        //throw new NotImplemented($this);
+        $this->table->schema->index();
     }
 
     protected function computeProperties(string $event, array $data): void {

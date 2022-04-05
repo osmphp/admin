@@ -109,6 +109,41 @@ class Formula extends Object_
         throw new NotImplemented($this);
     }
 
+    public function clone(): Formula {
+        $formula = static::new();
+
+        foreach ($this as $propertyName => $value) {
+            if (!($property = $this->__class->properties[$propertyName] ?? null)) {
+                continue;
+            }
+
+            if (!isset($property->attributes[Serialized::class])) {
+                continue;
+            }
+
+            if (!is_a($property->type, Formula::class, true)) {
+                $formula->$propertyName = $value;
+                continue;
+            }
+
+            if (!$property->array) {
+                /* @var Formula $value */
+                $formula->$propertyName = $value->clone();
+                $value->parent = $formula;
+                continue;
+            }
+
+            /* @var Formula[] $value */
+            $formula->$propertyName = [];
+            foreach ($value as $key => $item) {
+                $formula->$propertyName[$key] = $item->clone();
+                $item->parent = $formula;
+            }
+        }
+
+        return $formula;
+    }
+
     protected function get_data_types(): array {
         global $osm_app; /* @var App $osm_app */
 

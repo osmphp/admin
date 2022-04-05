@@ -135,7 +135,10 @@ class Indexer extends Object_
             ]);
         }
         else {
-            $query->clone()->select('id')->into($tableName);
+            $query
+                ->clone(where: true)
+                ->select('id')
+                ->intoNotificationTable($tableName);
         }
 
         $this->markAsRequiringPartialReindex();

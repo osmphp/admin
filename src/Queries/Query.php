@@ -595,4 +595,24 @@ EOT;
     protected function computeProperties(string $event, array $data): void {
         //throw new NotImplemented($this);
     }
+
+    public function clone(bool $where = false): static {
+        $query = static::new(['table' => $this->table]);
+
+        if ($where) {
+            foreach ($this->filters as $formula) {
+                $query->filters[] = $formula->clone();
+            }
+        }
+
+        return $query;
+    }
+
+    public function intoNotificationTable(string $tableName): void {
+        $bindings = [];
+        $sql = "INSERT IGNORE INTO `{$tableName}` (`id`)\n";
+        $sql .= $this->generateSelect($bindings);
+
+        $this->db->connection->insert($sql, $bindings);
+    }
 }

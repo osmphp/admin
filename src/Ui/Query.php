@@ -392,4 +392,12 @@ class Query extends Object_
     public function insert(\stdClass $item): int {
         return $this->db_query->insert((array)$item);
     }
+
+    public function update(\stdClass $item): void {
+        foreach ($this->filters as $filter) {
+            $filter->queryDb($this->db_query);
+        }
+
+        $this->db_query->update((array)$item);
+    }
 }

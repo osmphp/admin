@@ -15,7 +15,7 @@ use Osm\Core\Exceptions\Required;
 use function Osm\__;
 
 /**
- * @property mixed $parameter
+ * @property mixed $parameter #[Serialized]
  * @property int $index #[Serialized]
  *
  * @uses Serialized

@@ -19,12 +19,12 @@ use function Osm\__;
  *
  * Resolved properties:
  *
- * @property Property[] $properties
- * @property string[]|bool[] $from
- * @property string $alias
- * @property string $column
- * @property ?string $path
- * @property Property $property
+ * @property Property[] $properties #[Serialized]
+ * @property string[]|bool[] $from #[Serialized]
+ * @property string $alias #[Serialized]
+ * @property string $column #[Serialized]
+ * @property ?string $path #[Serialized]
+ * @property Property $property #[Serialized]
  *
  * @uses Serialized
  */

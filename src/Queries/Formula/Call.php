@@ -21,7 +21,7 @@ use function Osm\__;
  *
  * Resolved properties:
  *
- * @property Function_ $function
+ * @property Function_ $function #[Serialized]
  *
  * @uses Serialized
  */

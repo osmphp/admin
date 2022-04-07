@@ -94,12 +94,12 @@ class Indexer extends Object_
         }
 
         if ($deleted = $listensTo[Query::DELETED] ?? null) {
-            $this->createNotificationTable($source, $deleted, cascade: true);
+            $this->createNotificationTable($source, $deleted, cascade: false);
         }
     }
 
     protected function createNotificationTable(Table $source, string $suffix,
-        bool $cascade = false): void
+        bool $cascade): void
     {
         $this->db->create($this->getNotificationTableName($source, $suffix),
             function(Blueprint $table) use ($source, $cascade) {

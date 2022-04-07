@@ -289,9 +289,8 @@ export default register('grid', class Grid extends Controller {
     }
 
     onDelete() {
-        let url = this.toUrl(this.options.delete_url, true, [
-            this.idFilter(),
-        ]);
+        let url = this.toUrl(this.options.delete_url, true,
+            this.idFilter());
 
         fetch(url, {
             method: 'DELETE',

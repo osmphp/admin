@@ -274,6 +274,10 @@ class Query extends Object_
 
     public function delete(): void {
         $this->db->transaction(function() {
+            // create notification records for the dependent objects in
+            // other tables, and for search index entries
+            $this->notifyListeners(static::DELETED);
+
             // generate and execute SQL DELETE statement
             $bindings = [];
             $sql = $this->generateDelete($bindings);
@@ -284,10 +288,6 @@ class Query extends Object_
                 // validate modified objects as a whole, and their
                 // dependent objects
                 $this->validateObjects(static::DELETED);
-
-                // create notification records for the dependent objects in
-                // other tables, and for search index entries
-                $this->notifyListeners(static::DELETED);
             });
 
             // register a callback that is executed after a successful transaction

@@ -400,4 +400,12 @@ class Query extends Object_
 
         $this->db_query->update((array)$item);
     }
+
+    public function delete(): void {
+        foreach ($this->filters as $filter) {
+            $filter->queryDb($this->db_query);
+        }
+
+        $this->db_query->delete();
+    }
 }

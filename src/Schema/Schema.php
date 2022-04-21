@@ -2,6 +2,9 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Schema\Attributes\Fixture;
+use Osm\Admin\Schema\Exceptions\InvalidFixture;
+use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Admin\Schema\Hints\Indexer\Status;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
@@ -12,11 +15,16 @@ use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Cache\Descendants;
 use Osm\Framework\Db\Db;
+use function Osm\__;
 use function Osm\dehydrate;
 use function Osm\hydrate;
 use function Osm\sort_by_dependency;
 
 /**
+ * @property ?string $fixture_class_name #[Serialized]
+ * @property ?int $fixture_version #[Serialized]
+ * @property ?string $fixture_namespace #[Serialized]
+ * @property ?string $fixture_version_namespace #[Serialized]
  * @property Class_[] $classes #[Serialized]
  * @property Table[] $tables #[Serialized]
  * @property Option[] $option_handlers
@@ -54,17 +62,14 @@ class Schema extends Object_
         }
     }
 
-    public function migrate(): void {
-        $current = null;
-
-        if ($json = $this->db->table('schema')->value('current')) {
-            $current = hydrate(Schema::class, json_decode($json));
+    public function migrate(\stdClass|Schema $old = null): void {
+        if (!$old &&
+            ($json = $this->db->table('schema')->value('current')))
+        {
+            $old = json_decode($json);
         }
 
-        //$this->migrateDown($current);
-        $this->migrateUp($current);
-//        $this->migrateIndexers();
-//        $this->seed($current);
+        $this->diff($old)->migrate();
 
         $this->db->table('schema')->update([
             'current' => json_encode(dehydrate($this)),
@@ -77,10 +82,10 @@ class Schema extends Object_
         return $osm_app->db;
     }
 
-    protected function migrateUp(?Schema $current): void
+    protected function migrateUp(\stdClass|Schema|null $current): void
     {
         foreach ($this->tables as $table) {
-            $currentTable = $current->tables[$table->name] ?? null;
+            $currentTable = $current->tables->{$table->name} ?? null;
             if ($currentTable) {
                 $table->alter($currentTable);
             }
@@ -105,7 +110,19 @@ class Schema extends Object_
         $recordClass = $osm_app->classes[Record::class];
 
         foreach ($recordClass->child_class_names as $baseClassName) {
-            $this->parseTable($osm_app->classes[$baseClassName]);
+            if ($this->belongs($baseClassName)) {
+                $this->parseTable($osm_app->classes[$baseClassName]);
+            }
+        }
+
+        if ($this->fixture_version_namespace) {
+            // in a schema migration test, fail if there is not a single
+            // data class defined for a given fixture version
+            if (empty($this->tables)) {
+                throw new InvalidFixture(__(
+                    "No data classes defined in the ':namespace' schema fixture version namespace",
+                    ['namespace' => $this->fixture_version_namespace]));
+            }
         }
 
         foreach ($this->tables as $table) {
@@ -126,13 +143,15 @@ class Schema extends Object_
     }
 
     protected function parseTable(CoreClass $reflection): void {
-        if (isset($this->tables[$reflection->name])) {
+        $name = $this->getUnversionedName($reflection->name);
+
+        if (isset($this->tables[$name])) {
             return;
         }
 
-        $this->tables[$reflection->name] = $table = Table::new([
+        $this->tables[$name] = $table = Table::new([
             'schema' => $this,
-            'name' => $reflection->name,
+            'name' => $name,
             'reflection' => $reflection,
         ]);
 
@@ -144,9 +163,10 @@ class Schema extends Object_
             return;
         }
 
-        $this->classes[$reflection->name] = $class = Class_::new([
+        $name = $this->getUnversionedName($reflection->name);
+        $this->classes[$name] = $class = Class_::new([
             'schema' => $this,
-            'name' => $reflection->name,
+            'name' => $name,
             'reflection' => $reflection,
         ]);
 
@@ -318,4 +338,130 @@ class Schema extends Object_
 
         return $listenerNames;
     }
+
+    public function isNameVersioned(string $className): bool {
+        return (bool)preg_match('/\\\\V\d{3}\\\\/', $className);
+    }
+
+    protected function get_fixture_namespace(): ?string {
+        if (!$this->fixture_class_name) {
+            return null;
+        }
+
+        if (!preg_match('/\\\\V\d{3}\\\\/',
+            $this->fixture_class_name, $match,
+            PREG_OFFSET_CAPTURE))
+        {
+            throw new InvalidFixture(__(
+                "Schema fixture class name ':class' doesn't have version namespace, for example, 'V001'",
+                ['class' => $this->fixture_class_name]));
+        }
+
+        return substr($this->fixture_class_name, 0,
+            $match[0][1] + 1);
+    }
+
+    protected function get_fixture_version_namespace(): ?string {
+        return $this->fixture_namespace
+            ? $this->fixture_namespace . 'V' .
+                sprintf('%03d', $this->fixture_version) . '\\'
+            : null;
+    }
+
+    protected function belongs(mixed $className): bool {
+        global $osm_app; /* @var App $osm_app */
+
+        $class = $osm_app->classes[$className];
+
+        if ($this->fixture_version_namespace) {
+            // in a schema migration test, load all record classes marked with
+            // the `#[Fixture]` attribute and under the
+            // fixture version namespace, for example,
+            // `\Osm\Admin\Samples\Migrations\String_\V001\`
+            return isset($class->attributes[Fixture::class]) &&
+                str_starts_with($className, $this->fixture_version_namespace);
+        }
+        else {
+            // in production, load all record classes except having the
+            // `#[Fixture]` attribute
+            return !isset($class->attributes[Fixture::class]);
+        }
+    }
+
+    public function getUnversionedName(string $className): string {
+        if (!$this->fixture_class_name) {
+            return $className;
+        }
+
+        if (!$this->isNameVersioned($className)) {
+            return $className;
+        }
+
+        return $this->fixture_namespace . substr($className,
+            strlen($this->fixture_version_namespace));
+    }
+
+    public function getVersionedName(string $className): string {
+        if (!$this->fixture_class_name) {
+            return $className;
+        }
+
+        return $this->fixture_version_namespace . substr($className,
+                strlen($this->fixture_namespace));
+    }
+
+    protected function diff(\stdClass|Schema|null $old): Migrator\Schema
+    {
+        $migrator = Migrator\Schema::new();
+
+        foreach ($this->tables as $table) {
+            if ($table->rename) {
+                $name = $table->rename;
+                if (!isset($old->tables->$name)) {
+                    if (isset($old->tables->{$table->name})) {
+                        // once #[Rename] migrated, during another migration,
+                        // "old" schema will already contain new name.
+                        $name = $table->name;
+                    }
+                    else {
+                        throw new InvalidRename(__(
+                            "Previous schema doesn't contain the ':old_name' table referenced in the #[Rename] attribute of the ':new_name' table.", [
+                                'old_name' => $table->rename,
+                                'new_name' => $table->name,
+                            ]
+                        ));
+                    }
+                }
+            }
+            else {
+                $name = $table->name;
+            }
+
+            $table->diff($migrator, $old->tables->$name ?? null);
+        }
+
+        if ($old) {
+            foreach ($old->tables as $table) {
+                if (isset($this->tables[$table->name])) {
+                    continue;
+                }
+
+                $migrator->drop_tables[] = Migrator\Table\Drop::new([
+                    'table_name' => $table->table_name,
+                ]);
+
+                $migrator->drop_search_indexes[] = Migrator\Index\Drop::new([
+                    'index_name' => $table->table_name,
+                ]);
+
+                $migrator->drop_all_notifications[] = Migrator\Notification\DropAll::new([
+                    'table_name' => $table->table_name,
+                ]);
+
+            }
+        }
+
+        return $migrator;
+    }
+
 }

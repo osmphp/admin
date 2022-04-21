@@ -10,13 +10,19 @@ namespace Osm {
     function query(string $className, array $data = []): Query {
         global $osm_app; /* @var App $osm_app */
 
-        return Query::new(['table' => $osm_app->schema->tables[$className]]);
+        return Query::new([
+            'table' => $osm_app->schema->tables[
+                $osm_app->schema->getUnversionedName($className)],
+        ]);
     }
 
     function ui_query(string $className): UiQuery
     {
         global $osm_app; /* @var App $osm_app */
 
-        return UiQuery::new(['table' => $osm_app->schema->tables[$className]]);
+        return UiQuery::new([
+            'table' => $osm_app->schema->tables[
+                $osm_app->schema->getUnversionedName($className)],
+        ]);
     }
 }

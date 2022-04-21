@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
@@ -10,6 +11,7 @@ use Osm\Framework\Db\Db;
 use Osm\Core\Attributes\Serialized;
 use Osm\Framework\Search\Blueprint as SearchBlueprint;
 use Osm\Framework\Search\Search;
+use function Osm\__;
 
 /**
  * @property string $table_name #[Serialized]
@@ -91,7 +93,7 @@ class Table extends Struct
         }
     }
 
-    public function alter(Table $current): void
+    public function alter(\stdClass|Table $current): void
     {
         throw new NotImplemented($this);
     }
@@ -137,5 +139,86 @@ class Table extends Struct
     protected function get_listeners(): array {
         return array_map(fn(string $name) => $this->schema->indexers[$name],
             $this->schema->listener_names[$this->name]);
+    }
+
+    public function diff(Migrator\Schema $schema,
+        \stdClass|Table|null $old): void
+    {
+        if ($old) {
+            $schema->alter_tables[] = $table = Migrator\Table\Alter::new([
+                'table_name' => $this->table_name,
+            ]);
+
+            if ($this->table_name !== $old->table_name) {
+                $schema->rename_tables[] = $table = Migrator\Table\Rename::new([
+                    'old_table_name' => $old->table_name,
+                    'table_name' => $this->table_name,
+                ]);
+                $schema->drop_search_indexes[] = $index = Migrator\Index\Drop::new([
+                    'old_index_name' => $old->table_name,
+                    'index_name' => $old->table_name,
+                ]);
+                $schema->rename_all_notifications[] = Migrator\Notification\RenameAll::new([
+                    'old_table_name' => $old->table_name,
+                    'table_name' => $table->table_name,
+                ]);
+            }
+        }
+        else {
+            $schema->create_tables[] = $table = Migrator\Table\Create::new([
+                'table_name' => $this->table_name,
+            ]);
+        }
+
+        $schema->create_notifications[] = $createNotifications =
+            Migrator\Notification\Create::new([
+                'table_name' => $table->table_name,
+            ]);
+        $schema->drop_notifications[] = $dropNotifications =
+            Migrator\Notification\Drop::new([
+                'table_name' => $table->table_name,
+            ]);
+
+        foreach ($this->properties as $property) {
+            if ($property->rename) {
+                $name = $property->rename;
+                if (!isset($old->properties->$name)) {
+                    if (isset($old->properties->{$property->name})) {
+                        // once #[Rename] migrated, during another migration,
+                        // "old" schema will already contain new name.
+                        $name = $property->name;
+                    }
+                    else {
+                        throw new InvalidRename(__(
+                            "Previous schema of ':table' table doesn't contain the ':old_name' property referenced in the #[Rename] attribute of the ':new_name' property.", [
+                                'table' => $this->name,
+                                'old_name' => $property->rename,
+                                'new_name' => $property->name,
+                            ]
+                        ));
+                    }
+                }
+            }
+            else {
+                $name = $property->name;
+            }
+
+            $property->diff($schema, $table, $old->properties->$name ?? null);
+        }
+
+        if ($old) {
+            foreach ($old->properties as $property) {
+                if (isset($this->properties[$property->name])) {
+                    continue;
+                }
+
+                // drop table columns and index fields if they exist
+                throw new NotImplemented($this);
+            }
+        }
+
+        foreach ($this->listeners as $listener) {
+            throw new NotImplemented($this);
+        }
     }
 }

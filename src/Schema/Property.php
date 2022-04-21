@@ -24,6 +24,7 @@ use Osm\Framework\Search\Field;
  * @property Struct $parent
  * @property CoreProperty $reflection
  * @property string $name #[Serialized]
+ * @property ?string $rename #[Serialized]
  * @property array $if #[Serialized]
  * @property bool $nullable #[Serialized]
  * @property bool $array #[Serialized]
@@ -241,5 +242,12 @@ class Property extends Object_
 
     protected function get_title(): string {
         return Str::title($this->name);
+    }
+
+    public function diff(Migrator\Schema $schema,
+        Migrator\Table\Create|Migrator\Table\Alter $table,
+        \stdClass|Property|null $old)
+    {
+        throw new NotImplemented($this);
     }
 }

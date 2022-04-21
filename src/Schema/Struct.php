@@ -25,6 +25,7 @@ use function Osm\__;
  * @property Schema $schema
  * @property CoreClass $reflection
  * @property string $name #[Serialized]
+ * @property ?string $rename #[Serialized]
  * @property Property[] $properties #[Serialized]
  * @property string[]|null $type_class_names #[Serialized]
  * @property Object_ $instance
@@ -64,7 +65,7 @@ class Struct extends Object_
     protected function get_reflection(): CoreClass {
         global $osm_app; /* @var App $osm_app */
 
-        return $osm_app->classes[$this->name];
+        return $osm_app->classes[$this->schema->getVersionedName($this->name)];
     }
 
     protected function get_name(): string {

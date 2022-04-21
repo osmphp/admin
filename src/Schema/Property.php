@@ -244,10 +244,7 @@ class Property extends Object_
         return Str::title($this->name);
     }
 
-    public function diff(Migrator\Schema $schema,
-        Migrator\Table\Create|Migrator\Table\Alter $table,
-        \stdClass|Property|null $old)
-    {
+    public function diff(Migrator\Property $property): void {
         throw new NotImplemented($this);
     }
 }

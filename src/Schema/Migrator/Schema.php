@@ -2,105 +2,59 @@
 
 namespace Osm\Admin\Schema\Migrator;
 
+use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Admin\Schema\Migrator;
 use Osm\Admin\Schema\Schema as SchemaObject;
+use Osm\Admin\Schema\Table as TableObject;
 use Osm\Core\Exceptions\Required;
+use Symfony\Component\Console\Output\OutputInterface;
+use function Osm\__;
 
+/**
+ * @property \stdClass|SchemaObject|null $old
+ * @property SchemaObject $new
+ */
 class Schema extends Migrator
 {
-    /**
-     * @var Migrator[]
-     */
-    public array $create_tables = [];
+    protected array $tables = [];
 
-    /**
-     * @var Migrator[]
-     */
-    public array $alter_tables = [];
+    protected function get_new(): SchemaObject {
+        throw new Required(__METHOD__);
+    }
 
-    /**
-     * @var Migrator[]
-     */
-    public array $rename_tables = [];
+    public function table(TableObject $table): Table {
+        if (!isset($this->tables[$table->name])) {
+            if ($table->rename) {
+                $name = $table->rename;
+                if (!isset($this->old->tables->$name)) {
+                    if (isset($this->old->tables->{$table->name})) {
+                        // once #[Rename] migrated, during another migration,
+                        // "old" schema will already contain new name.
+                        $name = $table->name;
+                    }
+                    else {
+                        throw new InvalidRename(__(
+                            "Previous schema doesn't contain the ':old_name' table referenced in the #[Rename] attribute of the ':new_name' table.", [
+                                'old_name' => $table->rename,
+                                'new_name' => $table->name,
+                            ]
+                        ));
+                    }
+                }
+            }
+            else {
+                $name = $table->name;
+            }
 
-    /**
-     * @var Migrator[]
-     */
-    public array $drop_tables = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $drop_search_indexes = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $create_notifications = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $rename_all_notifications = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $drop_notifications = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $drop_all_notifications = [];
-
-    /**
-     * @var Migrator[]
-     */
-    public array $data_conversions = [];
-
-    /**
-     * indexer name => true
-     *
-     * @var bool[]
-     */
-    public array $indexers_to_be_rebuilt = [];
-
-    public function migrate(): void
-    {
-        foreach ($this->create_tables as $migrator) {
-            $migrator->migrate();
+            $this->tables[$table->name] = Table::new([
+                'old' => $this->old->tables->$name ?? null,
+                'new' => $table,
+                'schema' => $this,
+                'output' => $this->output,
+                'dry_run' => $this->dry_run,
+            ]);
         }
 
-        foreach ($this->alter_tables as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->drop_tables as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->create_indexes as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->alter_indexes as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->drop_search_indexes as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->create_notifications as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->drop_notifications as $migrator) {
-            $migrator->migrate();
-        }
-
-        foreach ($this->data_conversions as $migrator) {
-            $migrator->migrate();
-        }
+        return $this->tables[$table->name];
     }
 }

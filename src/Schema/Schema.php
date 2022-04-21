@@ -15,6 +15,8 @@ use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
 use Osm\Framework\Cache\Descendants;
 use Osm\Framework\Db\Db;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use function Osm\__;
 use function Osm\dehydrate;
 use function Osm\hydrate;
@@ -62,14 +64,25 @@ class Schema extends Object_
         }
     }
 
-    public function migrate(\stdClass|Schema $old = null): void {
+    public function migrate(\stdClass|Schema $old = null,
+        OutputInterface $output = null, bool $dryRun = false): void
+    {
         if (!$old &&
             ($json = $this->db->table('schema')->value('current')))
         {
             $old = json_decode($json);
         }
 
-        $this->diff($old)->migrate();
+        $migrator = Migrator\Schema::new([
+            'old' => $old,
+            'new' => $this,
+            'output' => $output ?? new BufferedOutput(),
+            'dry_run' => $dryRun,
+        ]);
+
+        $this->diff($migrator);
+
+        $migrator->migrate();
 
         $this->db->table('schema')->update([
             'current' => json_encode(dehydrate($this)),
@@ -410,58 +423,23 @@ class Schema extends Object_
                 strlen($this->fixture_namespace));
     }
 
-    protected function diff(\stdClass|Schema|null $old): Migrator\Schema
+    public function diff(Migrator\Schema $schema): void
     {
-        $migrator = Migrator\Schema::new();
-
         foreach ($this->tables as $table) {
-            if ($table->rename) {
-                $name = $table->rename;
-                if (!isset($old->tables->$name)) {
-                    if (isset($old->tables->{$table->name})) {
-                        // once #[Rename] migrated, during another migration,
-                        // "old" schema will already contain new name.
-                        $name = $table->name;
-                    }
-                    else {
-                        throw new InvalidRename(__(
-                            "Previous schema doesn't contain the ':old_name' table referenced in the #[Rename] attribute of the ':new_name' table.", [
-                                'old_name' => $table->rename,
-                                'new_name' => $table->name,
-                            ]
-                        ));
-                    }
-                }
-            }
-            else {
-                $name = $table->name;
-            }
-
-            $table->diff($migrator, $old->tables->$name ?? null);
+            $table->diff($schema->table($table));
         }
 
-        if ($old) {
-            foreach ($old->tables as $table) {
-                if (isset($this->tables[$table->name])) {
-                    continue;
-                }
-
-                $migrator->drop_tables[] = Migrator\Table\Drop::new([
-                    'table_name' => $table->table_name,
-                ]);
-
-                $migrator->drop_search_indexes[] = Migrator\Index\Drop::new([
-                    'index_name' => $table->table_name,
-                ]);
-
-                $migrator->drop_all_notifications[] = Migrator\Notification\DropAll::new([
-                    'table_name' => $table->table_name,
-                ]);
-
+        if ($schema->old) {
+            foreach ($schema->old->tables as $table) {
+                $this->planDeletingTable($schema, $table);
             }
         }
+    }
 
-        return $migrator;
+    protected function planDeletingTable(Migrator\Schema $schema,
+        \stdClass|Table $table): void
+    {
+        throw new NotImplemented($this);
     }
 
 }

@@ -5,6 +5,7 @@ namespace Osm\Admin\Schema\Diff;
 use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
+use Osm\Admin\Schema\Traits\RequiredSubTypes;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 
@@ -17,6 +18,8 @@ use Osm\Core\Exceptions\Required;
  */
 class Property extends Diff
 {
+    use RequiredSubTypes;
+
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
     }
@@ -47,10 +50,20 @@ class Property extends Diff
     }
 
     protected function create(Blueprint $table): void {
-        $this->new->create($table);
+        throw new NotImplemented($this);
     }
 
     protected function alter(Blueprint $table): void {
-        $this->new->alter($table, $this);
+        throw new NotImplemented($this);
+    }
+
+    public function diff(): void {
+        $this->alter = $this->old != null;
+        $this->rename = $this->old
+            && $this->new->name !== $this->old->name
+                ? $this->old->name
+                : null;
+
+        //throw new NotImplemented($this);
     }
 }

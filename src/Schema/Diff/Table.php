@@ -8,6 +8,7 @@ use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Table as TableObject;
 use Osm\Core\App;
+use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Framework\Db\Db;
@@ -45,6 +46,8 @@ class Table extends Diff
     }
 
     public function property(PropertyObject $property): Property {
+        global $osm_app; /* @var App $osm_app */
+
         if (!isset($this->properties[$property->name])) {
             if ($property->rename) {
                 $name = $property->rename;
@@ -69,7 +72,11 @@ class Table extends Diff
                 $name = $property->name;
             }
 
-            $this->properties[$property->name] = Property::new([
+            $classNames = $osm_app->descendants->byName(Property::class,
+                Type::class);
+            $new = "{$classNames[$property->type]}::new";
+
+            $this->properties[$property->name] = $new([
                 'old' => $this->old->properties->$name ?? null,
                 'new' => $property,
                 'table' => $this,
@@ -113,5 +120,27 @@ class Table extends Diff
 
     protected function get_requires_alter(): bool {
         throw new NotImplemented($this);
+    }
+
+    public function diff(): void {
+        $this->alter = $this->old != null;
+        $this->rename = $this->old &&
+            $this->new->table_name !== $this->old->table_name
+                ? $this->old->table_name
+                : null;
+
+        foreach ($this->new->properties as $property) {
+            $this->property($property)->diff();
+        }
+
+        if ($this->old) {
+            foreach ($this->old->properties as $property) {
+                $this->planDroppingProperty($property);
+            }
+        }
+    }
+
+    protected function planDroppingProperty(\stdClass|Property $property): void {
+        //throw new NotImplemented($this);
     }
 }

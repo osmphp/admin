@@ -65,14 +65,4 @@ class NotificationTable extends Object_
 
         throw new NotImplemented($this);
     }
-
-    public function diff(Diff\NotificationTable $table): void
-    {
-//        $table->rename = $table->old &&
-//            $table->new->table->table_name !== $table->old->table->table_name
-//                ? $table->old->table->table_name
-//                : null;
-//
-//        throw new NotImplemented($this);
-    }
 }

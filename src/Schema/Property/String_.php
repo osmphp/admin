@@ -28,24 +28,6 @@ class String_ extends Scalar
         return static::SMALL;
     }
 
-    public function create(Blueprint $table): void {
-        if ($this->max_length && $this->max_length <= static::VARCHAR_LENGTH) {
-            $column = $table->string($this->name, $this->max_length);
-        }
-        else {
-            $column = match ($this->size) {
-                static::TINY => $table->tinyText($this->name),
-                static::SMALL => $table->text($this->name),
-                static::MEDIUM => $table->mediumText($this->name),
-                static::LONG => $table->longText($this->name),
-            };
-        }
-
-        if ($this->nullable || !empty($this->if)) {
-            $column->nullable();
-        }
-    }
-
     public function createIndex(SearchBlueprint $index): Field
     {
         return $index->string($this->name);

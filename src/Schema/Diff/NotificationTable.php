@@ -63,4 +63,8 @@ class NotificationTable extends Diff
             }
         });
     }
+
+    public function diff(): void {
+//        throw new NotImplemented($this);
+    }
 }

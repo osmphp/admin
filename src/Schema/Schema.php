@@ -86,7 +86,7 @@ class Schema extends Object_
             'dry_run' => $dryRun,
         ]);
 
-        $this->diff($schema);
+        $schema->diff();
 
         $schema->migrate();
 
@@ -99,19 +99,6 @@ class Schema extends Object_
         global $osm_app; /* @var App $osm_app */
 
         return $osm_app->db;
-    }
-
-    protected function migrateUp(\stdClass|Schema|null $current): void
-    {
-        foreach ($this->tables as $table) {
-            $currentTable = $current->tables->{$table->name} ?? null;
-            if ($currentTable) {
-                $table->alter($currentTable);
-            }
-            else {
-                $table->create();
-            }
-        }
     }
 
     protected function get_descendants(): Descendants {
@@ -427,41 +414,6 @@ class Schema extends Object_
 
         return $this->fixture_version_namespace . substr($className,
                 strlen($this->fixture_namespace));
-    }
-
-    public function diff(Diff\Schema $schema): void
-    {
-        foreach ($this->tables as $table) {
-            $table->diff($schema->table($table));
-        }
-
-        if ($schema->old) {
-            foreach ($schema->old->tables as $table) {
-                $this->planDeletingTable($schema, $table);
-            }
-        }
-
-        foreach ($this->notification_tables as $table) {
-            $table->diff($schema->notificationTable($table));
-        }
-
-        if ($schema->old) {
-            foreach ($schema->old->notification_tables as $table) {
-                $this->planDeletingNotificationTable($schema, $table);
-            }
-        }
-    }
-
-    protected function planDeletingTable(Diff\Schema $schema,
-        \stdClass|Table $table): void
-    {
-        //throw new NotImplemented($this);
-    }
-
-    protected function planDeletingNotificationTable(Diff\Schema $schema,
-        \stdClass|NotificationTable $table): void
-    {
-        //throw new NotImplemented($this);
     }
 
     protected function get_notification_tables(): array {

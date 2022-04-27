@@ -116,4 +116,36 @@ class Schema extends Diff
 
         return $this->notification_tables[$table->name];
     }
+
+    public function diff(): void
+    {
+        foreach ($this->new->tables as $table) {
+            $this->table($table)->diff();
+        }
+
+        foreach ($this->new->notification_tables as $table) {
+            $this->notificationTable($table)->diff();
+        }
+
+        if ($this->old) {
+            foreach ($this->old->tables as $table) {
+                $this->planDroppingTable($table);
+            }
+
+            foreach ($this->old->notification_tables as $table) {
+                $this->planDroppingNotificationTable($table);
+            }
+        }
+    }
+
+    protected function planDroppingTable(\stdClass|Table $table): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function planDroppingNotificationTable(
+        \stdClass|NotificationTable $table): void
+    {
+        //throw new NotImplemented($this);
+    }
+
 }

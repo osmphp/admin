@@ -43,61 +43,6 @@ class Table extends Struct
         return false;
     }
 
-    public function create(): void
-    {
-        $this->db->create($this->table_name, function(Blueprint $table) {
-            foreach ($this->properties as $property) {
-                if ($property->explicit) {
-                    $property->create($table);
-                }
-            }
-
-            $table->json('_data')->nullable();
-            $table->json('_overrides')->nullable();
-        });
-
-        if ($this->search->exists($this->table_name)) {
-            $this->search->drop($this->table_name);
-        }
-
-        $this->search->create($this->table_name, function(SearchBlueprint $index) {
-            foreach ($this->properties as $property) {
-                if ($property->name === 'id') {
-                    continue;
-                }
-
-                if ($property->index) {
-                    $field = $property->createIndex($index);
-
-                    if ($property->index_filterable) {
-                        $field->filterable();
-                    }
-
-                    if ($property->index_sortable) {
-                        $field->sortable();
-                    }
-
-                    if ($property->index_searchable) {
-                        $field->searchable();
-                    }
-
-                    if ($property->index_faceted) {
-                        $field->faceted();
-                    }
-                }
-            }
-        });
-
-        foreach ($this->listeners as $listener) {
-            $listener->createNotificationTables($this);
-        }
-    }
-
-    public function alter(\stdClass|Table $current): void
-    {
-        throw new NotImplemented($this);
-    }
-
     protected function get_db(): Db {
         global $osm_app; /* @var App $osm_app */
 
@@ -139,29 +84,5 @@ class Table extends Struct
     protected function get_listeners(): array {
         return array_map(fn(string $name) => $this->schema->indexers[$name],
             $this->schema->listener_names[$this->name]);
-    }
-
-    public function diff(Diff\Table $table): void {
-        $table->alter = $table->old != null;
-        $table->rename = $table->old &&
-            $table->new->table_name !== $table->old->table_name
-                ? $table->old->table_name
-                : null;
-
-        foreach ($this->properties as $property) {
-            $property->diff($table->property($property));
-        }
-
-        if ($table->old) {
-            foreach ($table->old->properties as $property) {
-                $this->planDeletingProperty($table, $property);
-            }
-        }
-    }
-
-    protected function planDeletingProperty(Diff\Table $table,
-        \stdClass|Property $property): void
-    {
-        //throw new NotImplemented($this);
     }
 }

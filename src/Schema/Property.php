@@ -247,14 +247,4 @@ class Property extends Object_
     protected function get_title(): string {
         return Str::title($this->name);
     }
-
-    public function diff(Diff\Property $property): void {
-        $property->alter = $property->old != null;
-        $property->rename = $property->old
-            && $property->new->name !== $property->old->name
-                ? $property->old->name
-                : null;
-
-        //throw new NotImplemented($this);
-    }
 }

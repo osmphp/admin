@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Attributes\Fixture;
 use Osm\Admin\Schema\Exceptions\InvalidFixture;
 use Osm\Admin\Schema\Exceptions\InvalidRename;
@@ -33,6 +34,7 @@ use function Osm\sort_by_dependency;
  * @property array $options #[Serialized]
  * @property string[] $singleton_class_names #[Serialized]
  * @property Indexer[] $indexers #[Serialized]
+ * @property NotificationTable[] $notification_tables #[Serialized]
  * @property Table[] $singletons
  * @property Db $db
  * @property Descendants $descendants
@@ -62,6 +64,10 @@ class Schema extends Object_
         foreach ($this->indexers as $indexer) {
             $indexer->schema = $this;
         }
+
+        foreach ($this->notification_tables as $notificationTable) {
+            $notificationTable->schema = $this;
+        }
     }
 
     public function migrate(\stdClass|Schema $old = null,
@@ -73,16 +79,16 @@ class Schema extends Object_
             $old = json_decode($json);
         }
 
-        $migrator = Migrator\Schema::new([
+        $schema = Diff\Schema::new([
             'old' => $old,
             'new' => $this,
             'output' => $output ?? new BufferedOutput(),
             'dry_run' => $dryRun,
         ]);
 
-        $this->diff($migrator);
+        $this->diff($schema);
 
-        $migrator->migrate();
+        $schema->migrate();
 
         $this->db->table('schema')->update([
             'current' => json_encode(dehydrate($this)),
@@ -423,7 +429,7 @@ class Schema extends Object_
                 strlen($this->fixture_namespace));
     }
 
-    public function diff(Migrator\Schema $schema): void
+    public function diff(Diff\Schema $schema): void
     {
         foreach ($this->tables as $table) {
             $table->diff($schema->table($table));
@@ -434,12 +440,72 @@ class Schema extends Object_
                 $this->planDeletingTable($schema, $table);
             }
         }
+
+        foreach ($this->notification_tables as $table) {
+            $table->diff($schema->notificationTable($table));
+        }
+
+        if ($schema->old) {
+            foreach ($schema->old->notification_tables as $table) {
+                $this->planDeletingNotificationTable($schema, $table);
+            }
+        }
     }
 
-    protected function planDeletingTable(Migrator\Schema $schema,
+    protected function planDeletingTable(Diff\Schema $schema,
         \stdClass|Table $table): void
     {
-        throw new NotImplemented($this);
+        //throw new NotImplemented($this);
     }
 
+    protected function planDeletingNotificationTable(Diff\Schema $schema,
+        \stdClass|NotificationTable $table): void
+    {
+        //throw new NotImplemented($this);
+    }
+
+    protected function get_notification_tables(): array {
+        $tables = [];
+
+        foreach ($this->tables as $table) {
+            foreach ($table->listeners as $indexer) {
+                $listensTo = $indexer->listens_to[$table->name];
+
+                if ($inserted = $listensTo[Query::INSERTED] ?? null) {
+                    $this->registerNotificationTable($tables, $table,
+                        $indexer, $inserted, cascade: true);
+                }
+
+                if (($updated = $listensTo[Query::UPDATED] ?? null) &&
+                    $updated != $inserted)
+                {
+                    $this->registerNotificationTable($tables, $table,
+                        $indexer, $updated, cascade: true);
+                }
+
+                if ($deleted = $listensTo[Query::DELETED] ?? null) {
+                    $this->registerNotificationTable($tables, $table,
+                        $indexer, $deleted, cascade: false);
+                }
+            }
+        }
+
+        return $tables;
+    }
+
+    protected function registerNotificationTable(array &$tables, Table $table,
+        Indexer $indexer, mixed $suffix, bool $cascade): void
+    {
+        $notificationTable = NotificationTable::new([
+            'schema' => $this,
+            'table_name' => $table->name,
+            'table' => $table,
+            'indexer_id' => $indexer->id,
+            'indexer' => $indexer,
+            'suffix' => $suffix,
+            'cascade' => $cascade,
+        ]);
+
+        $tables[$notificationTable->name] = $notificationTable;
+    }
 }

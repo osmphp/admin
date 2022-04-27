@@ -1,11 +1,13 @@
 <?php
 
-namespace Osm\Admin\Schema\Migrator;
+namespace Osm\Admin\Schema\Diff;
 
 use Osm\Admin\Schema\Exceptions\InvalidRename;
-use Osm\Admin\Schema\Migrator;
+use Osm\Admin\Schema\Diff;
+use Osm\Admin\Schema\NotificationTable as NotificationTableObject;
 use Osm\Admin\Schema\Schema as SchemaObject;
 use Osm\Admin\Schema\Table as TableObject;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Symfony\Component\Console\Output\OutputInterface;
 use function Osm\__;
@@ -14,9 +16,22 @@ use function Osm\__;
  * @property \stdClass|SchemaObject|null $old
  * @property SchemaObject $new
  */
-class Schema extends Migrator
+class Schema extends Diff
 {
+    /**
+     * @var Table[]
+     */
     protected array $tables = [];
+
+    /**
+     * @var NotificationTable[]
+     */
+    protected array $notification_tables = [];
+
+    /**
+     * @var string[]
+     */
+    protected array $dropped_notification_tables = [];
 
     protected function get_new(): SchemaObject {
         throw new Required(__METHOD__);
@@ -56,5 +71,49 @@ class Schema extends Migrator
         }
 
         return $this->tables[$table->name];
+    }
+
+    public function migrate(): void {
+        foreach ($this->tables as $table) {
+            $table->migrate();
+        }
+
+        foreach ($this->dropped_notification_tables as $table) {
+            $this->drop($table);
+        }
+
+        foreach ($this->notification_tables as $table) {
+            $table->migrate();
+        }
+    }
+
+    protected function drop(string $table): void {
+        $this->db->drop($table);
+    }
+
+    public function notificationTable(NotificationTableObject $table)
+        : NotificationTable
+    {
+        if (!isset($this->notification_tables[$table->name])) {
+            if ($table->rename) {
+                $name = $table->rename;
+                if (!isset($this->old->notification_tables->$name)) {
+                    $name = $table->name;
+                }
+            }
+            else {
+                $name = $table->name;
+            }
+
+            $this->notification_tables[$table->name] = NotificationTable::new([
+                'old' => $this->old->notification_tables->$name ?? null,
+                'new' => $table,
+                'schema' => $this,
+                'output' => $this->output,
+                'dry_run' => $this->dry_run,
+            ]);
+        }
+
+        return $this->notification_tables[$table->name];
     }
 }

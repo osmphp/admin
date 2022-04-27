@@ -2,16 +2,19 @@
 
 namespace Osm\Admin\Schema;
 
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Osm\Core\Object_;
+use Osm\Framework\Db\Db;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @property OutputInterface $output
  * @property bool $dry_run
+ * @property Db $db
  */
-class Migrator extends Object_
+class Diff extends Object_
 {
     protected function get_output(): OutputInterface {
         throw new Required(__METHOD__);
@@ -21,7 +24,9 @@ class Migrator extends Object_
         throw new Required(__METHOD__);
     }
 
-    public function migrate(): void {
-        throw new NotImplemented($this);
+    protected function get_db(): Db {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->db;
     }
 }

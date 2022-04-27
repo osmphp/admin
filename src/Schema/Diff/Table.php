@@ -1,21 +1,31 @@
 <?php
 
-namespace Osm\Admin\Schema\Migrator;
+namespace Osm\Admin\Schema\Diff;
 
+use Illuminate\Database\Schema\Blueprint;
 use Osm\Admin\Schema\Exceptions\InvalidRename;
-use Osm\Admin\Schema\Migrator;
+use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Table as TableObject;
+use Osm\Core\App;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
+use Osm\Framework\Db\Db;
 use function Osm\__;
 
 /**
  * @property Schema $schema
  * @property \stdClass|TableObject|null $old
  * @property TableObject $new
+ * @property bool $alter
+ * @property ?string $rename
+ * @property bool $requires_alter
  */
-class Table extends Migrator
+class Table extends Diff
 {
+    /**
+     * @var Property[]
+     */
     protected array $properties = [];
 
     protected function get_schema(): Schema {
@@ -23,6 +33,14 @@ class Table extends Migrator
     }
 
     protected function get_new(): TableObject {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_alter(): bool {
+        throw new Required(__METHOD__);
+    }
+
+    protected function get_rename(): ?string {
         throw new Required(__METHOD__);
     }
 
@@ -61,5 +79,39 @@ class Table extends Migrator
         }
 
         return $this->properties[$property->name];
+    }
+
+    public function migrate(): void {
+        if ($this->alter) {
+            $this->alter();
+        }
+        else {
+            $this->create();
+        }
+    }
+
+    protected function create(): void {
+        $this->db->create($this->new->table_name, function(Blueprint $table) {
+            foreach ($this->properties as $property) {
+                $property->migrate($table);
+            }
+
+            $table->json('_data')->nullable();
+            $table->json('_overrides')->nullable();
+        });
+    }
+
+    protected function alter(): void {
+        if ($this->requires_alter) {
+            $this->db->alter($this->new->table_name, function(Blueprint $table) {
+                foreach ($this->properties as $property) {
+                    $property->migrate($table);
+                }
+            });
+        }
+    }
+
+    protected function get_requires_alter(): bool {
+        throw new NotImplemented($this);
     }
 }

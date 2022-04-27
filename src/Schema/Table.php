@@ -141,7 +141,13 @@ class Table extends Struct
             $this->schema->listener_names[$this->name]);
     }
 
-    public function diff(Migrator\Table $table): void {
+    public function diff(Diff\Table $table): void {
+        $table->alter = $table->old != null;
+        $table->rename = $table->old &&
+            $table->new->table_name !== $table->old->table_name
+                ? $table->old->table_name
+                : null;
+
         foreach ($this->properties as $property) {
             $property->diff($table->property($property));
         }
@@ -153,9 +159,9 @@ class Table extends Struct
         }
     }
 
-    protected function planDeletingProperty(Migrator\Table $table,
-        Property $property): void
+    protected function planDeletingProperty(Diff\Table $table,
+        \stdClass|Property $property): void
     {
-        throw new NotImplemented($this);
+        //throw new NotImplemented($this);
     }
 }

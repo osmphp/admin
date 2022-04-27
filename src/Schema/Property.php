@@ -133,6 +133,10 @@ class Property extends Object_
         throw new NotImplemented($this);
     }
 
+    public function alter(Blueprint $table, Diff\Property $diff): void {
+        throw new NotImplemented($this);
+    }
+
     public function createIndex(SearchBlueprint $index): Field
     {
         throw new NotImplemented($this);
@@ -244,7 +248,13 @@ class Property extends Object_
         return Str::title($this->name);
     }
 
-    public function diff(Migrator\Property $property): void {
-        throw new NotImplemented($this);
+    public function diff(Diff\Property $property): void {
+        $property->alter = $property->old != null;
+        $property->rename = $property->old
+            && $property->new->name !== $property->old->name
+                ? $property->old->name
+                : null;
+
+        //throw new NotImplemented($this);
     }
 }

@@ -20,7 +20,8 @@ use function Osm\__;
  * @property TableObject $new
  * @property bool $alter
  * @property ?string $rename
- * @property bool $requires_alter
+ * @property bool $requires_alter `true` if any property diff contributes
+ *      changes to the database table structure, and `false` otherwise
  */
 class Table extends Diff
 {
@@ -112,14 +113,22 @@ class Table extends Diff
         if ($this->requires_alter) {
             $this->db->alter($this->new->table_name, function(Blueprint $table) {
                 foreach ($this->properties as $property) {
-                    $property->migrate($table);
+                    if ($property->requires_alter) {
+                        $property->migrate($table);
+                    }
                 }
             });
         }
     }
 
     protected function get_requires_alter(): bool {
-        throw new NotImplemented($this);
+        foreach ($this->properties as $property) {
+            if ($property->requires_alter) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function diff(): void {

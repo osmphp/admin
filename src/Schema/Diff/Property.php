@@ -15,6 +15,8 @@ use Osm\Core\Exceptions\Required;
  * @property PropertyObject $new
  * @property bool $alter
  * @property ?string $rename
+ * @property bool $requires_alter `true` if this property diff contributes
+ *      changes to the database table structure, and `false` otherwise
  */
 class Property extends Diff
 {
@@ -66,4 +68,13 @@ class Property extends Diff
 
         //throw new NotImplemented($this);
     }
+
+    protected function get_requires_alter(): bool {
+        if (!$this->old) {
+            return $this->new->explicit;
+        }
+
+        return false;
+    }
+
 }

@@ -4,9 +4,11 @@ namespace Osm\Admin\Schema\Diff\Property;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Property\String_ as StringPropertyObject;
 use Osm\Core\Attributes\Type;
+use Osm\Core\Exceptions\NotImplemented;
 
 #[Type('string')]
 class String_ extends Scalar
@@ -39,5 +41,21 @@ class String_ extends Scalar
             PropertyObject::MEDIUM => $table->mediumText($this->new->name),
             PropertyObject::LONG => $table->longText($this->new->name),
         };
+    }
+
+    public function convert(Query $query = null): bool {
+        $formula = $this->new->name;
+
+        $formula = $this->convertToNonNull($formula);
+
+        if ($query && $formula !== $this->new->name) {
+            $query->select("{$formula} AS {$this->new->name}");
+        }
+
+        return $formula !== $this->new->name;
+    }
+
+    protected function get_non_null_formula(): string {
+        return "'-'";
     }
 }

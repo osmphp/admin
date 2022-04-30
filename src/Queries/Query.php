@@ -272,6 +272,19 @@ class Query extends Object_
         });
     }
 
+    /**
+     * Runs UPDATE query that assigns new values using formulas provided
+     * using `select()` method calls:
+     *
+     *      UPDATE products
+     *      SET description = IF(description IS NULL, '-', description)
+     *
+     * @return void
+     */
+    public function bulkUpdate(): void {
+        throw new NotImplemented($this);
+    }
+
     public function delete(): void {
         $this->db->transaction(function() {
             // create notification records for the dependent objects in

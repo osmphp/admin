@@ -30,6 +30,7 @@
         "psr-4": {
             "Osm\\Admin\\Tests\\": "tests/",
             "Osm\\Admin\\TestsMigrations\\": "tests_migrations/",
+            "Osm\\Admin\\TestsQueries\\": "tests_queries/",
             "Osm\\Admin\\Samples\\": "samples/"
         }
     }

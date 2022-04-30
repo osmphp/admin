@@ -4,8 +4,10 @@ namespace Osm\Admin\Schema\Diff\Property;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Core\Attributes\Type;
+use Osm\Core\Exceptions\NotImplemented;
 
 #[Type('int')]
 class Int_ extends Scalar
@@ -53,5 +55,13 @@ class Int_ extends Scalar
             static::PRE_ALTER => $changed,
             static::POST_ALTER => false,
         };
+    }
+
+    public function convert(Query $query = null): bool {
+        return false;
+    }
+
+    protected function get_non_null_formula(): string {
+        return "0";
     }
 }

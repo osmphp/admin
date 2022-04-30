@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
@@ -24,6 +25,8 @@ use function Osm\__;
  *      changes to the database table structure in pre-alter phase
  * @property bool $requires_post_alter `true` if any property diff contributes
  *      changes to the database table structure in post-alter phase
+ * @property bool $requires_convert `true` if any property diff requires
+ *      existing data conversion
  */
 class Table extends Diff
 {
@@ -117,7 +120,15 @@ class Table extends Diff
     }
 
     protected function convert(): void {
-        //throw new NotImplemented($this);
+        $query = Query::new(['table' => $this->new]);
+
+        if ($this->requires_convert) {
+            foreach ($this->properties as $property) {
+                $property->convert($query);
+            }
+
+            $query->bulkUpdate();
+        }
     }
 
     protected function validate(): void {
@@ -191,6 +202,16 @@ class Table extends Diff
             }
 
             if ($property->migrate(Property::POST_ALTER)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function get_requires_convert(): bool {
+        foreach ($this->properties as $property) {
+            if ($property->convert()) {
                 return true;
             }
         }

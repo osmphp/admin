@@ -4,6 +4,7 @@ namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
@@ -15,6 +16,7 @@ use Osm\Core\Exceptions\Required;
  * @property \stdClass|PropertyObject|null $old
  * @property PropertyObject $new
  * @property ?string $rename
+ * @property string $non_null_formula
  */
 class Property extends Diff
 {
@@ -44,6 +46,10 @@ class Property extends Diff
         throw new NotImplemented($this);
     }
 
+    public function convert(Query $query = null): bool {
+        throw new NotImplemented($this);
+    }
+
     public function diff(): void {
         $this->rename = $this->old
             && $this->new->name !== $this->old->name
@@ -59,18 +65,18 @@ class Property extends Diff
 
         // defer conversion from nullable to non-nullable from pre-alter
         // to post-alter phase
-        $deferred = $mode !== static::CREATE &&
+        $makeNonNull = $mode !== static::CREATE &&
             $this->old->actually_nullable &&
             !$this->new->actually_nullable;
 
-        $column?->nullable($deferred
+        $column?->nullable($makeNonNull
             ? $mode === static::PRE_ALTER
             : $this->new->actually_nullable);
 
         return match($mode) {
             static::CREATE => true,
-            static::PRE_ALTER => $changed && !$deferred,
-            static::POST_ALTER => $changed && $deferred,
+            static::PRE_ALTER => $changed && !$makeNonNull,
+            static::POST_ALTER => $changed && $makeNonNull,
         };
     }
 
@@ -78,5 +84,22 @@ class Property extends Diff
         if ($mode !== static::CREATE) {
             $column?->change();
         }
+    }
+
+    protected function convertToNonNull(string $formula): string {
+        if (!$this->old) {
+            return $formula;
+        }
+
+        $makeNonNull = $this->old->actually_nullable &&
+            !$this->new->actually_nullable;
+
+        return $makeNonNull
+            ? "{$formula} ?? {$this->non_null_formula}"
+            : $formula;
+    }
+
+    protected function get_non_null_formula(): string {
+        throw new NotImplemented($this);
     }
 }

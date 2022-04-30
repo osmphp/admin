@@ -20,8 +20,10 @@ use function Osm\__;
  * @property TableObject $new
  * @property bool $alter
  * @property ?string $rename
- * @property bool $requires_alter `true` if any property diff contributes
- *      changes to the database table structure, and `false` otherwise
+ * @property bool $requires_pre_alter `true` if any property diff contributes
+ *      changes to the database table structure in pre-alter phase
+ * @property bool $requires_post_alter `true` if any property diff contributes
+ *      changes to the database table structure in post-alter phase
  */
 class Table extends Diff
 {
@@ -98,10 +100,54 @@ class Table extends Diff
         }
     }
 
+    protected function preAlter(): void {
+        if ($this->requires_pre_alter) {
+            $this->db->alter($this->new->table_name, function(Blueprint $table) {
+                foreach ($this->properties as $property) {
+                    if (!$property->new->explicit) {
+                        continue;
+                    }
+
+                    $property->migrate($property->old?->explicit
+                        ? Property::PRE_ALTER
+                        : Property::CREATE, $table);
+                }
+            });
+        }
+    }
+
+    protected function convert(): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function validate(): void {
+        //throw new NotImplemented($this);
+    }
+
+    protected function postAlter(): void {
+        if ($this->requires_post_alter) {
+            $this->db->alter($this->new->table_name, function(Blueprint $table) {
+                foreach ($this->properties as $property) {
+                    if (!$property->new->explicit) {
+                        continue;
+                    }
+
+                    if ($property->old?->explicit) {
+                        $property->migrate(Property::POST_ALTER, $table);
+                    }
+                }
+            });
+        }
+    }
+
     protected function create(): void {
         $this->db->create($this->new->table_name, function(Blueprint $table) {
             foreach ($this->properties as $property) {
-                $property->migrate($table);
+                if (!$property->new->explicit) {
+                    continue;
+                }
+
+                $property->migrate(Property::CREATE, $table);
             }
 
             $table->json('_data')->nullable();
@@ -110,20 +156,41 @@ class Table extends Diff
     }
 
     protected function alter(): void {
-        if ($this->requires_alter) {
-            $this->db->alter($this->new->table_name, function(Blueprint $table) {
-                foreach ($this->properties as $property) {
-                    if ($property->requires_alter) {
-                        $property->migrate($table);
-                    }
-                }
-            });
-        }
+        $this->preAlter();
+        $this->convert();
+        $this->validate();
+        $this->postAlter();
     }
 
-    protected function get_requires_alter(): bool {
+    protected function get_requires_pre_alter(): bool {
         foreach ($this->properties as $property) {
-            if ($property->requires_alter) {
+            if (!$property->new->explicit) {
+                continue;
+            }
+
+            if (!$property->old?->explicit) {
+                return true;
+            }
+
+            if ($property->migrate(Property::PRE_ALTER)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function get_requires_post_alter(): bool {
+        foreach ($this->properties as $property) {
+            if (!$property->new->explicit) {
+                continue;
+            }
+
+            if (!$property->old?->explicit) {
+                continue;
+            }
+
+            if ($property->migrate(Property::POST_ALTER)) {
                 return true;
             }
         }

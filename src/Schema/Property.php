@@ -27,6 +27,7 @@ use Osm\Framework\Search\Field;
  * @property ?string $rename #[Serialized]
  * @property array $if #[Serialized]
  * @property bool $nullable #[Serialized]
+ * @property bool $actually_nullable #[Serialized]
  * @property bool $array #[Serialized]
  * @property bool $explicit #[Serialized]
  * @property ?string $formula #[Serialized]
@@ -246,5 +247,9 @@ class Property extends Object_
 
     protected function get_title(): string {
         return Str::title($this->name);
+    }
+
+    protected function get_actually_nullable(): bool {
+        return $this->nullable || !empty($this->if);
     }
 }

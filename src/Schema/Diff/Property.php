@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
@@ -13,14 +14,15 @@ use Osm\Core\Exceptions\Required;
  * @property Table $table
  * @property \stdClass|PropertyObject|null $old
  * @property PropertyObject $new
- * @property bool $alter
  * @property ?string $rename
- * @property bool $requires_alter `true` if this property diff contributes
- *      changes to the database table structure, and `false` otherwise
  */
 class Property extends Diff
 {
     use RequiredSubTypes;
+
+    public const CREATE = 'create';
+    public const PRE_ALTER = 'pre_alter';
+    public const POST_ALTER = 'post_alter';
 
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
@@ -38,29 +40,11 @@ class Property extends Diff
         throw new Required(__METHOD__);
     }
 
-    public function migrate(Blueprint $table): void {
-        if (!$this->new->explicit) {
-            return;
-        }
-
-        if ($this->alter) {
-            $this->alter($table);
-        }
-        else {
-            $this->create($table);
-        }
-    }
-
-    protected function create(Blueprint $table): void {
-        throw new NotImplemented($this);
-    }
-
-    protected function alter(Blueprint $table): void {
+    public function migrate(string $mode, Blueprint $table = null): bool {
         throw new NotImplemented($this);
     }
 
     public function diff(): void {
-        $this->alter = $this->old != null;
         $this->rename = $this->old
             && $this->new->name !== $this->old->name
                 ? $this->old->name
@@ -69,12 +53,30 @@ class Property extends Diff
         //throw new NotImplemented($this);
     }
 
-    protected function get_requires_alter(): bool {
-        if (!$this->old) {
-            return $this->new->explicit;
-        }
+    protected function nullable(string $mode, ?ColumnDefinition $column): bool {
+        $changed = $mode === static::CREATE ||
+            $this->old->actually_nullable != $this->new->actually_nullable;
 
-        return false;
+        // defer conversion from nullable to non-nullable from pre-alter
+        // to post-alter phase
+        $deferred = $mode !== static::CREATE &&
+            $this->old->actually_nullable &&
+            !$this->new->actually_nullable;
+
+        $column?->nullable($deferred
+            ? $mode === static::PRE_ALTER
+            : $this->new->actually_nullable);
+
+        return match($mode) {
+            static::CREATE => true,
+            static::PRE_ALTER => $changed && !$deferred,
+            static::POST_ALTER => $changed && $deferred,
+        };
     }
 
+    protected function change(string $mode, ?ColumnDefinition $column): void {
+        if ($mode !== static::CREATE) {
+            $column?->change();
+        }
+    }
 }

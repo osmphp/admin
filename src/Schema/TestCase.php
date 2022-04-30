@@ -15,4 +15,10 @@ class TestCase extends BaseTestCase
             ])->parse()
         );
     }
+
+    protected function clear(): void {
+        $this->app->cache->clear();
+        $this->app->migrations()->fresh();
+        $this->app->migrations()->up();
+    }
 }

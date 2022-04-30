@@ -11,6 +11,7 @@ use Osm\Framework\Search\Field;
 
 /**
  * @property bool $unsigned #[Serialized]
+ * @property bool $actually_unsigned #[Serialized]
  * @property string $size #[Serialized]
  * @property bool $auto_increment #[Serialized]
  *
@@ -82,5 +83,9 @@ class Int_ extends Scalar
     public function createIndex(SearchBlueprint $index): Field
     {
         return $index->int($this->name);
+    }
+
+    protected function get_actually_unsigned(): bool {
+        return $this->unsigned || $this->auto_increment;
     }
 }

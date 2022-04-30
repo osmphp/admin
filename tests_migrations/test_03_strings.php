@@ -24,7 +24,7 @@ class test_03_strings extends TestCase
         $this->assertTrue($this->app->db->exists('products'));
     }
 
-    public function test_add_column() {
+    public function test_add_explicit_property() {
         // GIVEN database with `V1` schema and some data
         $id = ui_query(Product::class)->insert((object)[
             'title' => 'Lorem ipsum',
@@ -42,10 +42,23 @@ class test_03_strings extends TestCase
         $this->assertNull($this->app->db->table('products')
             ->where('id', $id)
             ->value('description'));
+    }
 
-        // FINALLY, clear the cache and DB for other tests
-        $this->app->cache->clear();
-        $this->app->migrations()->fresh();
-        $this->app->migrations()->up();
+    public function test_make_explicit_property_non_nullable() {
+        // GIVEN database with `V2` schema and some data
+
+        // WHEN you run `V3` migration
+        $this->loadSchema(Product::class, 3);
+        $this->app->schema->migrate();
+    }
+
+    public function disabled_test_clear() {
+        // GIVEN database altered by previous tests
+
+        // WHEN you clear the cache and DB for other tests
+        $this->clear();
+
+        // THEN `products` and other tables no longer exist
+        $this->assertFalse($this->app->db->exists('products'));
     }
 }

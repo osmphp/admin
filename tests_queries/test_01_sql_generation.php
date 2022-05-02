@@ -24,7 +24,7 @@ class test_01_sql_generation extends TestCase
         $this->assertEquals(0, $count);
     }
 
-    public function test_bulk_insert(): void {
+    public function test_bulk_update(): void {
         // GIVEN a schema defined in the `Osm\Admin\Samples\Queries\V001`
         // namespace, and some data
         $id = query(Product::class)->insert([

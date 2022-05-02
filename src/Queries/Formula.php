@@ -149,4 +149,21 @@ class Formula extends Object_
 
         return $osm_app->modules[\Osm\Admin\Schema\Module::class]->data_types;
     }
+
+    protected function castTo(string $dataType): Formula {
+        if ($this->data_type->type === $dataType) {
+            return $this;
+        }
+
+        $cast = Formula\Cast::new([
+            'formula' => $this,
+            'parent' => $this->parent,
+            'data_type' => $this->data_types[$dataType],
+            'array' => $this->array,
+        ]);
+
+        $this->parent = $cast;
+
+        return $cast;
+    }
 }

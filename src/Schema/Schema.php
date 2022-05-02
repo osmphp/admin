@@ -44,6 +44,9 @@ use function Osm\sort_by_dependency;
  */
 class Schema extends Object_
 {
+    protected int $dont_index_depth = 0;
+    protected bool $dont_index_requested = false;
+
     protected function get_classes(): array {
         throw new Required(__METHOD__);
     }
@@ -88,11 +91,17 @@ class Schema extends Object_
 
         $schema->diff();
 
-        $schema->migrate();
+        $requiresReindex = $this->dontIndex(function() use($schema) {
+            $schema->migrate();
+        });
 
         $this->db->table('schema')->update([
             'current' => json_encode(dehydrate($this)),
         ]);
+
+        if ($requiresReindex) {
+            $this->index();
+        }
     }
 
     protected function get_db(): Db {
@@ -281,6 +290,11 @@ class Schema extends Object_
      * @param string $mode `Indexer::PARTIAL` or `Indexer::FULL`
      */
     public function index(string $mode = Indexer::PARTIAL): void {
+        if ($this->dont_index_depth) {
+            $this->dont_index_requested = true;
+            return;
+        }
+
         $status = $this->getIndexerStatus();
 
         foreach ($this->indexers as $indexer) {
@@ -293,6 +307,24 @@ class Schema extends Object_
                 });
 
             }
+        }
+    }
+
+    public function dontIndex(callable $callback): bool {
+        if (!$this->dont_index_depth) {
+            $this->dont_index_requested = true;
+        }
+
+        $this->dont_index_depth++;
+
+        try {
+            $callback();
+        }
+        finally {
+            $this->dont_index_depth--;
+            return $this->dont_index_depth
+                ? false
+                : $this->dont_index_requested;
         }
     }
 

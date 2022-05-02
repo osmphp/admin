@@ -175,7 +175,7 @@ class Parser extends Object_
         self::BINARY => 'int',
         self::TRUE_ => 'bool',
         self::FALSE_ => 'bool',
-        self::NULL_ => 'null',
+        self::NULL_ => 'mixed',
     ];
     protected static string $identifier_starting_char =
         '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

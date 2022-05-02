@@ -44,7 +44,7 @@ class Operator extends Formula
             case Formula::LOGICAL_OR:
             case Formula::LOGICAL_XOR:
             case Formula::LOGICAL_AND:
-                $this->cast('bool');
+                $this->castOperandsTo('bool');
                 $this->data_type = $this->data_types['bool'];
                 $this->array = false;
                 break;
@@ -67,7 +67,7 @@ class Operator extends Formula
             case Formula::MULTIPLY:
             case Formula::BIT_XOR:
             case Formula::COALESCE:
-                $this->data_type = $this->data_types[$this->castToFirstNonNull()];
+                $this->data_type = $this->data_types[$this->castOperandsToFirstNonNull()];
                 $this->array = false;
                 break;
             default:
@@ -77,12 +77,24 @@ class Operator extends Formula
         }
     }
 
-    protected function cast(string $dataType): void {
-        throw new NotImplemented($this);
+    protected function castOperandsTo(string $dataType): void {
+        foreach ($this->operands as &$operand) {
+            $operand = $operand->castTo($dataType);
+        }
     }
 
-    protected function castToFirstNonNull(): string {
-        throw new NotImplemented($this);
+    protected function castOperandsToFirstNonNull(): string {
+        $dataType = 'mixed';
+        foreach ($this->operands as $operand) {
+            if ($operand->data_type->type !== 'mixed') {
+                $dataType = $operand->data_type->type;
+                break;
+            }
+        }
+
+        $this->castOperandsTo($dataType);
+
+        return $dataType;
     }
 
     public function toSql(array &$bindings, array &$from, string $join): string

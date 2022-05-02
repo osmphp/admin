@@ -282,7 +282,33 @@ class Query extends Object_
      * @return void
      */
     public function bulkUpdate(): void {
-        throw new NotImplemented($this);
+        $this->db->transaction(function() {
+            // generate and execute SQL UPDATE statement
+            $bindings = [];
+            $sql = $this->generateBulkUpdate($bindings);
+            $this->db->connection->update($sql, $bindings);
+
+            $this->db->committing(function() {
+                // validate modified objects as a whole, and their
+                // dependent objects
+                $this->validateObjects(static::UPDATED);
+
+                // create notification records for the dependent objects in
+                // other tables, and for search index entries
+                $this->notifyListeners(static::UPDATED);
+            });
+
+            // register a callback that is executed after a successful transaction
+            $this->db->committed(function()
+            {
+                // successful transaction guarantees that current objects are
+                // fully up-to-date (except aggregations), so it's a good time to
+                //make sure that asynchronous indexing is queued, or to execute
+                // it right away if queue is not configured. All types of asynchronous
+                // indexing are queued/executed: regular, aggregation and search.
+                $this->updateDependentObjects();
+            });
+        });
     }
 
     public function delete(): void {
@@ -373,6 +399,18 @@ EOT;
     protected function generateUpdate(array $data, array &$bindings): string {
         $from = [$this->table->table_name => true];
         $updates = $this->generateUpdates($data, $bindings);
+        $where = $this->generateWhere($bindings, $from);
+
+        return <<<EOT
+UPDATE {$this->generateFrom($from)}
+SET {$updates}
+{$where}
+EOT;
+    }
+
+    protected function generateBulkUpdate(array &$bindings): string {
+        $from = [$this->table->table_name => true];
+        $updates = $this->generateBulkUpdates($bindings, $from);
         $where = $this->generateWhere($bindings, $from);
 
         return <<<EOT
@@ -554,6 +592,27 @@ EOT;
 
             $sql .= "`$columnName` = $updateSql";
             $bindings = array_merge($bindings, $updateBindings);
+        }
+
+        return $sql;
+    }
+
+    protected function generateBulkUpdates(array &$bindings, array &$from)
+        : string
+    {
+        $sql = '';
+
+        if (empty($this->selects)) {
+            throw new InvalidQuery(__("Add a select expression to the query."));
+        }
+
+        foreach ($this->selects as $formula) {
+            if ($sql) {
+                $sql .= ', ';
+            }
+
+            $sql .= "`{$formula->alias}` = " .
+                $formula->expr->toSql($bindings, $from, 'LEFT OUTER');
         }
 
         return $sql;

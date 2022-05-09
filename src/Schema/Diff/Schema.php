@@ -2,11 +2,13 @@
 
 namespace Osm\Admin\Schema\Diff;
 
+use Monolog\Logger;
 use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\NotificationTable as NotificationTableObject;
 use Osm\Admin\Schema\Schema as SchemaObject;
 use Osm\Admin\Schema\Table as TableObject;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,6 +17,7 @@ use function Osm\__;
 /**
  * @property \stdClass|SchemaObject|null $old
  * @property SchemaObject $new
+ * @property Logger $log
  */
 class Schema extends Diff
 {
@@ -74,6 +77,13 @@ class Schema extends Diff
     }
 
     public function migrate(): void {
+        $this->log('---------------------------------------------');
+        if ($this->new->fixture_class_name) {
+            $this->log(__("Migrating ':namespace' schema fixture", [
+                'namespace' => $this->new->fixture_version_namespace,
+            ]));
+        }
+
         foreach ($this->tables as $table) {
             $table->migrate();
         }
@@ -148,4 +158,13 @@ class Schema extends Diff
         //throw new NotImplemented($this);
     }
 
+    protected function log(string $message): void {
+        $this->log->notice($message);
+    }
+
+    protected function get_log(): Logger {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->logs->migrations;
+    }
 }

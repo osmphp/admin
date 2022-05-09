@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Monolog\Logger;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Exceptions\InvalidRename;
 use Osm\Admin\Schema\Diff;
@@ -27,6 +28,7 @@ use function Osm\__;
  *      changes to the database table structure in post-alter phase
  * @property bool $requires_convert `true` if any property diff requires
  *      existing data conversion
+ * @property Logger $log
  */
 class Table extends Diff
 {
@@ -105,6 +107,10 @@ class Table extends Diff
 
     protected function preAlter(): void {
         if ($this->requires_pre_alter) {
+            $this->log(__("Pre-altering ':table' table", [
+                'table' => $this->new->table_name,
+            ]));
+
             $this->db->alter($this->new->table_name, function(Blueprint $table) {
                 foreach ($this->properties as $property) {
                     if (!$property->new->explicit) {
@@ -123,6 +129,10 @@ class Table extends Diff
         $query = Query::new(['table' => $this->new]);
 
         if ($this->requires_convert) {
+            $this->log(__("Converting ':table' table", [
+                'table' => $this->new->table_name,
+            ]));
+
             foreach ($this->properties as $property) {
                 $property->convert($query);
             }
@@ -137,6 +147,10 @@ class Table extends Diff
 
     protected function postAlter(): void {
         if ($this->requires_post_alter) {
+            $this->log(__("Post-altering ':table' table", [
+                'table' => $this->new->table_name,
+            ]));
+
             $this->db->alter($this->new->table_name, function(Blueprint $table) {
                 foreach ($this->properties as $property) {
                     if (!$property->new->explicit) {
@@ -152,6 +166,10 @@ class Table extends Diff
     }
 
     protected function create(): void {
+        $this->log(__("Creating ':table' table", [
+            'table' => $this->new->table_name,
+        ]));
+
         $this->db->create($this->new->table_name, function(Blueprint $table) {
             foreach ($this->properties as $property) {
                 if (!$property->new->explicit) {
@@ -160,6 +178,8 @@ class Table extends Diff
 
                 $property->migrate(Property::CREATE, $table);
             }
+
+            $this->log(__("    Creating system columns: '_data', `_overrides`"));
 
             $table->json('_data')->nullable();
             $table->json('_overrides')->nullable();
@@ -239,5 +259,15 @@ class Table extends Diff
 
     protected function planDroppingProperty(\stdClass|Property $property): void {
         //throw new NotImplemented($this);
+    }
+
+    protected function log(string $message): void {
+        $this->log->notice($message);
+    }
+
+    protected function get_log(): Logger {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->logs->migrations;
     }
 }

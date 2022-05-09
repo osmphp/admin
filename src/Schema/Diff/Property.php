@@ -4,10 +4,12 @@ namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Monolog\Logger;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 
@@ -17,6 +19,7 @@ use Osm\Core\Exceptions\Required;
  * @property PropertyObject $new
  * @property ?string $rename
  * @property string $non_null_formula
+ * @property Logger $log
  */
 class Property extends Diff
 {
@@ -122,5 +125,15 @@ class Property extends Diff
 
     protected function get_non_null_formula(): string {
         throw new NotImplemented($this);
+    }
+
+    protected function log(string $message): void {
+        $this->log->notice($message);
+    }
+
+    protected function get_log(): Logger {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->logs->migrations;
     }
 }

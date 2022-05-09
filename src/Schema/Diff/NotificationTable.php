@@ -3,10 +3,12 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Monolog\Logger;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Indexer;
 use Osm\Admin\Schema\Table as TableObject;
 use Osm\Admin\Schema\NotificationTable as NotificationTableObject;
+use Osm\Core\App;
 use Osm\Core\Exceptions\Required;
 
 /**
@@ -20,6 +22,7 @@ use Osm\Core\Exceptions\Required;
  * @property bool $changed
  * @property string $old_db_table_name
  * @property string $new_db_table_name
+ * @property Logger $log
  */
 class NotificationTable extends Diff
 {
@@ -112,5 +115,15 @@ class NotificationTable extends Diff
 
     protected function drop(): void {
         $this->db->drop($this->old_db_table_name);
+    }
+
+    protected function log(string $message): void {
+        $this->log->notice($message);
+    }
+
+    protected function get_log(): Logger {
+        global $osm_app; /* @var App $osm_app */
+
+        return $osm_app->logs->migrations;
     }
 }

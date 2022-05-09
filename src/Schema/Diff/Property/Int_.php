@@ -8,11 +8,25 @@ use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
+use function Osm\__;
 
 #[Type('int')]
 class Int_ extends Scalar
 {
     public function migrate(string $mode, Blueprint $table = null): bool {
+        if ($table) {
+            if ($mode === static::CREATE) {
+                $this->log(__("    Creating ':property' property", [
+                    'property' => $this->new->name,
+                ]));
+            }
+            else {
+                $this->log(__("    Altering ':property' property", [
+                    'property' => $this->new->name,
+                ]));
+            }
+        }
+
         // if it's a new property, migration should run no matter what
         $run = $mode === static::CREATE;
 

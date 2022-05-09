@@ -59,6 +59,27 @@ class Property extends Diff
         //throw new NotImplemented($this);
     }
 
+    protected function type(string $mode, ?Blueprint $table): bool
+    {
+        if ($mode == static::CREATE) {
+            return true;
+        }
+
+        if ($this->old->type === $this->new->type) {
+            return false;
+        }
+
+        $this->fromType($mode, $table);
+
+        return true;
+    }
+
+    protected function fromType(string $mode, ?Blueprint $table): bool {
+        // by default, trust MySql to do all the data conversion
+        // implicitly during DDL type change
+        return false;
+    }
+
     protected function nullable(string $mode, ?ColumnDefinition $column): bool {
         $changed = $mode === static::CREATE ||
             $this->old->actually_nullable != $this->new->actually_nullable;

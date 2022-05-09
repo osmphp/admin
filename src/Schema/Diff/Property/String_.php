@@ -18,6 +18,7 @@ class String_ extends Scalar
         $run = $mode === static::CREATE;
 
         $column = $this->column($table);
+        $run = $this->type($mode, $table) || $run;
         $run = $this->nullable($mode, $column) || $run;
         $this->change($mode, $column);
 

@@ -61,6 +61,54 @@ class test_03_strings extends TestCase
             ->value('description'));
     }
 
+    public function test_conversion_from_int() {
+        // GIVEN database with `V4` schema and some data
+        $this->loadSchema(Product::class, 4);
+        $this->app->schema->migrate();
+
+        $id = query(Product::class)
+            ->where("title = 'Lorem ipsum'")
+            ->value("id");
+
+        query(Product::class)
+            ->where("id = {$id}")
+            ->update(['color' => 0xFFFFFF]);
+
+        // WHEN you run `V5` migration
+        $this->loadSchema(Product::class, 5);
+        $this->app->schema->migrate();
+
+        // THEN `color` is converted from int
+        $this->assertSame((string)0xFFFFFF,
+            $this->app->db->table('products')
+                ->where('id', $id)
+                ->value('color'));
+    }
+
+    public function test_conversion_to_int() {
+        // GIVEN database with `V5` schema and some data
+        $id1 = query(Product::class)
+            ->where("title = 'Lorem ipsum'")
+            ->value("id");
+        $id2 = ui_query(Product::class)->insert((object)[
+            'title' => 'Invalid color',
+            'description' => 'Invalid color',
+            'color' => 'black', // non-numeric
+        ]);
+
+        // WHEN you run `V6` migration
+        $this->loadSchema(Product::class, 6);
+        $this->app->schema->migrate();
+
+        // THEN `color` is converted to int
+        $this->assertSame(0xFFFFFF, $this->app->db->table('products')
+            ->where('id', $id1)
+            ->value('color'));
+        $this->assertSame(0, $this->app->db->table('products')
+            ->where('id', $id2)
+            ->value('color'));
+    }
+
     public function disabled_test_clear() {
         // GIVEN database altered by previous tests
 

@@ -14,7 +14,7 @@ use function Osm\__;
 #[Type('string')]
 class String_ extends Scalar
 {
-    public function migrate(string $mode, Blueprint $table = null): bool {
+    public function doMigrate(string $mode, Blueprint $table = null): bool {
         if ($table) {
             if ($mode === static::CREATE) {
                 $this->log(__("    Creating ':property' property", [

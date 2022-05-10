@@ -113,13 +113,7 @@ class Table extends Diff
 
             $this->db->alter($this->new->table_name, function(Blueprint $table) {
                 foreach ($this->properties as $property) {
-                    if (!$property->new->explicit) {
-                        continue;
-                    }
-
-                    $property->migrate($property->old?->explicit
-                        ? Property::PRE_ALTER
-                        : Property::CREATE, $table);
+                    $property->migrate(Property::PRE_ALTER, $table);
                 }
             });
         }
@@ -153,13 +147,7 @@ class Table extends Diff
 
             $this->db->alter($this->new->table_name, function(Blueprint $table) {
                 foreach ($this->properties as $property) {
-                    if (!$property->new->explicit) {
-                        continue;
-                    }
-
-                    if ($property->old?->explicit) {
-                        $property->migrate(Property::POST_ALTER, $table);
-                    }
+                    $property->migrate(Property::POST_ALTER, $table);
                 }
             });
         }
@@ -172,10 +160,6 @@ class Table extends Diff
 
         $this->db->create($this->new->table_name, function(Blueprint $table) {
             foreach ($this->properties as $property) {
-                if (!$property->new->explicit) {
-                    continue;
-                }
-
                 $property->migrate(Property::CREATE, $table);
             }
 
@@ -195,15 +179,7 @@ class Table extends Diff
 
     protected function get_requires_pre_alter(): bool {
         foreach ($this->properties as $property) {
-            if (!$property->new->explicit) {
-                continue;
-            }
-
-            if (!$property->old?->explicit) {
-                return true;
-            }
-
-            if ($property->migrate(Property::PRE_ALTER)) {
+            if ($property->requiresMigration(Property::PRE_ALTER)) {
                 return true;
             }
         }
@@ -213,15 +189,7 @@ class Table extends Diff
 
     protected function get_requires_post_alter(): bool {
         foreach ($this->properties as $property) {
-            if (!$property->new->explicit) {
-                continue;
-            }
-
-            if (!$property->old?->explicit) {
-                continue;
-            }
-
-            if ($property->migrate(Property::POST_ALTER)) {
+            if ($property->requiresMigration(Property::POST_ALTER)) {
                 return true;
             }
         }

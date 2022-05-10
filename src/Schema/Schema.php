@@ -322,10 +322,11 @@ class Schema extends Object_
         }
         finally {
             $this->dont_index_depth--;
-            return $this->dont_index_depth
-                ? false
-                : $this->dont_index_requested;
         }
+
+        return $this->dont_index_depth
+            ? false
+            : $this->dont_index_requested;
     }
 
     /**

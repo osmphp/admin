@@ -20,6 +20,7 @@ use Osm\Core\Exceptions\Required;
  * @property ?string $rename
  * @property string $non_null_formula
  * @property Logger $log
+ * @property string $migration_class_name
  */
 class Property extends Diff
 {
@@ -28,6 +29,11 @@ class Property extends Diff
     public const CREATE = 'create';
     public const PRE_ALTER = 'pre_alter';
     public const POST_ALTER = 'post_alter';
+
+    /**
+     * @var Migration[]
+     */
+    protected array $migrations = [];
 
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
@@ -45,8 +51,35 @@ class Property extends Diff
         throw new Required(__METHOD__);
     }
 
-    public function migrate(string $mode, Blueprint $table = null): bool {
-        throw new NotImplemented($this);
+    public function migrate(string $mode, Blueprint $table): void {
+        if (!$this->requiresMigration($mode)) {
+            return;
+        }
+
+        $new = "{$this->migration_class_name}::new";
+
+        $new([
+            'property' => $this,
+            'mode' => $mode,
+            'table' => $table,
+        ])->migrate();
+    }
+
+    public function requiresMigration(string $mode): bool {
+        if (!isset($this->migrations[$mode])) {
+            $new = "{$this->migration_class_name}::new";
+            $this->migrations[$mode] = $new([
+                'property' => $this,
+                'mode' => $mode,
+            ]);
+        }
+
+        return $this->migrations[$mode]->migrate();
+    }
+
+    protected function get_migration_class_name(): string {
+        return str_replace('\\Property\\', '\\Migration\\',
+            $this->__class->name);
     }
 
     public function convert(Query $query = null): bool {

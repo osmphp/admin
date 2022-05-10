@@ -13,35 +13,15 @@ use function Osm\__;
 #[Type('int')]
 class Int_ extends Scalar
 {
-    public function migrate(string $mode, Blueprint $table = null): bool {
-        if ($table) {
-            if ($mode === static::CREATE) {
-                $this->log(__("    Creating ':property' property", [
-                    'property' => $this->new->name,
-                ]));
-            }
-            else {
-                $this->log(__("    Altering ':property' property", [
-                    'property' => $this->new->name,
-                ]));
-            }
-        }
-
-        // if it's a new property, migration should run no matter what
-        $run = $mode === static::CREATE;
-
-        $column = $this->column($table);
-        $run = $this->type($mode, $table) || $run;
-        $run = $this->unsigned($mode, $column) || $run;
-        $run = $this->nullable($mode, $column) || $run;
-        $this->change($mode, $column);
-
-        if ($this->new->auto_increment) {
-            // this is not supposed to change
-            $column?->autoIncrement();
-        }
-
-        return $run;
+    protected function doMigrate(): array {
+        return [
+            $this->type(),
+            $this->nullable(),
+            $this->explicit(),
+            $this->size(),
+            $this->unsigned(),
+            $this->autoIncrement(),
+        ];
     }
 
     protected function column(?Blueprint $table): ?ColumnDefinition {

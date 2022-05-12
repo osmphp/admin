@@ -5,7 +5,7 @@ namespace Osm\Admin\Schema\Diff;
 use Illuminate\Database\Schema\Blueprint;
 use Monolog\Logger;
 use Osm\Admin\Queries\Query;
-use Osm\Admin\Schema\Exceptions\InvalidRename;
+use Osm\Admin\Schema\Exceptions\InvalidChange;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Table as TableObject;
@@ -66,7 +66,7 @@ class Table extends Diff
                         $name = $property->name;
                     }
                     else {
-                        throw new InvalidRename(__(
+                        throw new InvalidChange(__(
                             "Previous schema of ':table' table doesn't contain the ':old_name' property referenced in the #[Rename] attribute of the ':new_name' property.", [
                                 'table' => $this->new->name,
                                 'old_name' => $property->rename,

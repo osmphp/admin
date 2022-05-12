@@ -5,7 +5,7 @@ namespace Osm\Admin\Schema;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Attributes\Fixture;
 use Osm\Admin\Schema\Exceptions\InvalidFixture;
-use Osm\Admin\Schema\Exceptions\InvalidRename;
+use Osm\Admin\Schema\Exceptions\InvalidChange;
 use Osm\Admin\Schema\Hints\Indexer\Status;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;

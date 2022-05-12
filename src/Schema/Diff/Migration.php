@@ -232,6 +232,35 @@ class Migration extends Object_
     }
 
     protected function nullable(): void {
-        throw new NotImplemented($this);
+        if (!$this->property->new->actually_nullable &&
+            $this->property->old?->actually_nullable)
+        {
+            $this->becomeNonNullable();
+        }
+        elseif ($this->mode == Property::CREATE ||
+                $this->mode == Property::PRE_ALTER)
+        {
+            if ($this->column) {
+                $this->column->nullable($this->property->new->actually_nullable);
+            }
+            $this->run = true;
+        }
+    }
+
+    protected function becomeNonNullable(): void {
+        switch ($this->mode) {
+            case Property::CREATE:
+            case Property::PRE_ALTER:
+                break;
+            case Property::CONVERT:
+                $this->new_value = "{$this->new_value} ?? $this->default_value";
+                break;
+            case Property::POST_ALTER:
+                if ($this->column) {
+                    $this->column->nullable(false);
+                }
+                $this->run = true;
+                break;
+        }
     }
 }

@@ -3,7 +3,7 @@
 namespace Osm\Admin\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
-use Osm\Admin\Schema\Exceptions\InvalidRename;
+use Osm\Admin\Schema\Exceptions\InvalidChange;
 use Osm\Core\App;
 use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;

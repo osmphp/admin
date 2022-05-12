@@ -3,7 +3,7 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Monolog\Logger;
-use Osm\Admin\Schema\Exceptions\InvalidRename;
+use Osm\Admin\Schema\Exceptions\InvalidChange;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\NotificationTable as NotificationTableObject;
 use Osm\Admin\Schema\Schema as SchemaObject;
@@ -51,7 +51,7 @@ class Schema extends Diff
                         $name = $table->name;
                     }
                     else {
-                        throw new InvalidRename(__(
+                        throw new InvalidChange(__(
                             "Previous schema doesn't contain the ':old_name' table referenced in the #[Rename] attribute of the ':new_name' table.", [
                                 'old_name' => $table->rename,
                                 'new_name' => $table->name,

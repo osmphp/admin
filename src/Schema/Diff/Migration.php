@@ -61,6 +61,19 @@ class Migration extends Object_
             case Property::CREATE:
             case Property::PRE_ALTER:
             case Property::POST_ALTER:
+                if ($this->table) {
+                    if ($this->property->old) {
+                        $this->logProperty(__("Altering property ':property'", [
+                            'property' => $this->property->new->name,
+                        ]));
+                    }
+                    else {
+                        $this->logProperty(__("Creating property ':property'", [
+                            'property' => $this->property->new->name,
+                        ]));
+                    }
+                }
+
                 // in a DDL migration, prepare a column definition
                 // that *may* be used in actual DDL statement if other
                 // methods of this class report that such a migration is needed.
@@ -90,6 +103,10 @@ class Migration extends Object_
     }
 
     protected function explicit(): void {
+        if ($this->table) {
+            $this->logAttribute('explicit');
+        }
+
         if ($this->property->new->explicit) {
             if (!$this->property->old?->explicit) {
                 $this->becomeExplicit();
@@ -110,11 +127,11 @@ class Migration extends Object_
         switch ($this->mode) {
             case Property::CREATE:
             case Property::PRE_ALTER:
-                $this->run = true;
+                $this->run('explicit');
                 break;
             case Property::CONVERT:
                 if ($this->property->old) {
-                    $this->run = true;
+                    $this->run('explicit');
                 }
                 break;
             case Property::POST_ALTER:
@@ -133,14 +150,13 @@ class Migration extends Object_
                 break;
             case Property::CONVERT:
                 if ($this->property->old) {
-                    $this->run = true;
+                    $this->run('explicit');
                 }
                 break;
             case Property::POST_ALTER:
-                $this->run = true;
+                $this->run('explicit');
                 if ($this->table) {
-                    $this->logAttribute(__(
-                        "Changing explicit: true -> false"));
+                    $this->logAttribute('explicit');
                     $this->table->dropColumn($this->property->old->name);
                 }
                 break;
@@ -148,6 +164,10 @@ class Migration extends Object_
     }
 
     protected function type(): void {
+        if ($this->table) {
+            $this->logAttribute('type');
+        }
+
         if (!$this->property->old ||
             $this->property->old->type === $this->property->new->type)
         {
@@ -157,23 +177,23 @@ class Migration extends Object_
         if ($this->property->new->explicit && $this->property->old->explicit &&
             $this->changeTypeByDbMeans())
         {
-            $this->runCreateOrPreAlterMigration();
+            $this->runCreateOrPreAlterMigration('type');
         }
         else {
-            $this->renameOldColumn();
+            $this->renameOldColumn('type');
             $this->convertType();
         }
     }
 
-    protected function runCreateOrPreAlterMigration(): void {
+    protected function runCreateOrPreAlterMigration(string $attr): void {
         if ($this->mode == Property::CREATE ||
             $this->mode == Property::PRE_ALTER)
         {
-            $this->run = true;
+            $this->run($attr);
         }
     }
 
-    protected function renameOldColumn(): void {
+    protected function renameOldColumn(string $attr): void {
         if (!$this->property->new->explicit || !$this->property->old->explicit) {
             return;
         }
@@ -192,12 +212,12 @@ class Migration extends Object_
                     $this->table->renameColumn($this->property->old->name,
                         "old__{$this->property->old->name}");
                 }
-                $this->run = true;
+                $this->run($attr);
                 break;
             case Property::CONVERT:
                 $this->old_value = $this->value(
                     "old__{$this->property->old->name}");
-                $this->run = true;
+                $this->run($attr);
                 break;
             case Property::POST_ALTER:
                 if ($this->table) {
@@ -232,6 +252,10 @@ class Migration extends Object_
     }
 
     protected function nullable(): void {
+        if ($this->table) {
+            $this->logAttribute('nullable');
+        }
+
         if (!$this->property->new->actually_nullable &&
             $this->property->old?->actually_nullable)
         {
@@ -243,7 +267,12 @@ class Migration extends Object_
             if ($this->column) {
                 $this->column->nullable($this->property->new->actually_nullable);
             }
-            $this->run = true;
+
+            if ($this->property->new->actually_nullable !==
+                $this->property->old?->actually_nullable)
+            {
+                $this->run('nullable');
+            }
         }
     }
 
@@ -259,8 +288,42 @@ class Migration extends Object_
                 if ($this->column) {
                     $this->column->nullable(false);
                 }
-                $this->run = true;
+                $this->run('nullable');
                 break;
+        }
+    }
+
+    protected function logAttribute(string $attr): void {
+        $old = var_export($this->property->old->$attr ?? null,
+            true);
+        $new = var_export($this->property->new->$attr, true);
+
+        if ($this->property->old) {
+            if ($old === $new) {
+                return;
+            }
+
+            $message = __(":attribute: :old => :new", [
+                'attribute' => $attr,
+                'old' => $old,
+                'new' => $new,
+            ]);
+        }
+        else {
+            $message = __(":attribute: :new", [
+                'attribute' => $attr,
+                'new' => $new,
+            ]);
+        }
+
+        $this->log->notice('        ' . $message);
+    }
+
+    protected function run(string $attr): void {
+        $this->run = true;
+
+        if ($this->table && $this->property->old) {
+            $this->log->notice("        !{$attr}");
         }
     }
 }

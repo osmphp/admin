@@ -57,6 +57,10 @@ class String_ extends Migration
     }
 
     protected function size(): void {
+        if ($this->table) {
+            $this->logAttribute('size');
+        }
+
         if ($this->property->new->max_length) {
             return;
         }
@@ -71,7 +75,7 @@ class String_ extends Migration
         }
 
         if ($this->becomingShorter()) {
-            $this->truncate();
+            $this->truncate('size');
             $this->postSize();
         }
         else {
@@ -97,7 +101,7 @@ class String_ extends Migration
         if ($this->column) {
             $this->column->type(
                 $this->sizes[$this->property->new->size]->sql_type);
-            $this->run = true;
+            $this->run('size');
         }
     }
 
@@ -120,7 +124,7 @@ class String_ extends Migration
         return $this->sizes[$property->size]->max_length;
     }
 
-    protected function truncate(): void {
+    protected function truncate(string $attr): void {
         if ($this->truncate) {
             return;
         }
@@ -133,11 +137,15 @@ class String_ extends Migration
             $this->new_value =
                 "IF(LENGTH({$this->new_value} ?? '') > $maxLength, " .
                 "LEFT({$this->new_value}, $maxLength), {$this->new_value})";
-            $this->run = true;
+            $this->run($attr);
         }
     }
 
     protected function length(): void {
+        if ($this->table) {
+            $this->logAttribute('max_length');
+        }
+
         if (!$this->property->new->max_length) {
             return;
         }
@@ -154,7 +162,7 @@ class String_ extends Migration
         }
 
         if ($this->becomingShorter()) {
-            $this->truncate();
+            $this->truncate('max_length');
             $this->postLength();
         }
         else {
@@ -183,7 +191,7 @@ class String_ extends Migration
             /** @noinspection PhpUndefinedMethodInspection */
             $this->column->length($this->property->new->max_length);
 
-            $this->run = true;
+            $this->run('max_length');
         }
     }
 

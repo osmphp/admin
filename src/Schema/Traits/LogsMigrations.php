@@ -23,8 +23,4 @@ trait LogsMigrations
     protected function logProperty(string $message): void {
         $this->log->notice('    ' . $message);
     }
-
-    protected function logAttribute(string $message): void {
-        $this->log->notice('        ' . $message);
-    }
 }

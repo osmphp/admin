@@ -63,6 +63,10 @@ class Int_ extends Migration
     }
 
     protected function size(): void {
+        if ($this->table) {
+            $this->logAttribute('size');
+        }
+
         if (!$this->property->old) {
             $this->preSize();
             return;
@@ -73,7 +77,7 @@ class Int_ extends Migration
         }
 
         if ($this->becomingSmaller()) {
-            $this->checkRange();
+            $this->checkRange('size');
             $this->postSize();
         }
         else {
@@ -99,7 +103,7 @@ class Int_ extends Migration
         if ($this->column) {
             $this->column->type(
                 $this->sizes[$this->property->new->size]->sql_type);
-            $this->run = true;
+            $this->run('size');
         }
     }
 
@@ -109,7 +113,7 @@ class Int_ extends Migration
             array_search($this->property->new->size, array_keys($this->sizes));
     }
 
-    protected function checkRange(): void {
+    protected function checkRange(string $attr): void {
         if ($this->check_range) {
             return;
         }
@@ -128,15 +132,21 @@ class Int_ extends Migration
 
             $this->new_value = "IF({$this->new_value} > $max, $max, " .
                 "IF({$this->new_value} < $min, $min, {$this->new_value}))";
-            $this->run = true;
+            $this->run($attr);
         }
     }
 
     protected function unsigned(): void {
+        if ($this->table) {
+            $this->logAttribute('unsigned');
+        }
+
         if (!$this->property->old) {
             $this->preUnsigned();
             return;
         }
+
+        $this->preOldUnsigned();
 
         if ($this->property->old->actually_unsigned ===
             $this->property->new->actually_unsigned)
@@ -144,7 +154,7 @@ class Int_ extends Migration
             return;
         }
 
-        $this->checkRange();
+        $this->checkRange('unsigned');
         $this->postUnsigned();
     }
 
@@ -162,16 +172,32 @@ class Int_ extends Migration
         }
     }
 
+    protected function preOldUnsigned(): void {
+        if ($this->mode == Property::CREATE ||
+            $this->mode == Property::PRE_ALTER)
+        {
+            if ($this->column && $this->property->old->explicit) {
+                if ($this->property->old->actually_unsigned) {
+                    $this->column->unsigned();
+                }
+            }
+        }
+    }
+
     protected function setUnsigned(): void {
         if ($this->column) {
             if ($this->property->new->actually_unsigned) {
                 $this->column->unsigned();
             }
-            $this->run = true;
+            $this->run('unsigned');
         }
     }
 
     protected function autoIncrement(): void {
+        if ($this->table) {
+            $this->logAttribute('auto_increment');
+        }
+
         if ($this->property->old &&
             $this->property->old->auto_increment !==
             $this->property->new->auto_increment)
@@ -191,7 +217,7 @@ class Int_ extends Migration
         {
             if ($this->column) {
                 $this->column->autoIncrement();
-                $this->run = true;
+                $this->run('auto_increment');
             }
         }
     }

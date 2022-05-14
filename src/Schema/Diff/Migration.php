@@ -272,7 +272,7 @@ class Migration extends Object_
                 $this->property->old?->actually_nullable)
             {
                 $this->run('nullable');
-                // test
+                // test2
             }
         }
     }

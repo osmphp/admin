@@ -103,9 +103,7 @@ class Migration extends Object_
     }
 
     protected function explicit(): void {
-        if ($this->table) {
-            $this->logAttribute('explicit');
-        }
+        $this->logAttribute('explicit');
 
         if ($this->property->new->explicit) {
             if (!$this->property->old?->explicit) {
@@ -155,18 +153,14 @@ class Migration extends Object_
                 break;
             case Property::POST_ALTER:
                 $this->run('explicit');
-                if ($this->table) {
-                    $this->logAttribute('explicit');
-                    $this->table->dropColumn($this->property->old->name);
-                }
+                $this->logAttribute('explicit');
+                $this->table?->dropColumn($this->property->old->name);
                 break;
         }
     }
 
     protected function type(): void {
-        if ($this->table) {
-            $this->logAttribute('type');
-        }
+        $this->logAttribute('type');
 
         if (!$this->property->old ||
             $this->property->old->type === $this->property->new->type)
@@ -229,7 +223,7 @@ class Migration extends Object_
     }
 
     protected function changeTypeByDbMeans(): bool {
-        throw new NotImplemented($this);
+        return false;
     }
 
     protected function cantAlterPropertyOnCreate(): void {
@@ -252,9 +246,7 @@ class Migration extends Object_
     }
 
     protected function nullable(): void {
-        if ($this->table) {
-            $this->logAttribute('nullable');
-        }
+        $this->logAttribute('nullable');
 
         if (!$this->property->new->actually_nullable &&
             $this->property->old?->actually_nullable)
@@ -264,15 +256,12 @@ class Migration extends Object_
         elseif ($this->mode == Property::CREATE ||
                 $this->mode == Property::PRE_ALTER)
         {
-            if ($this->column) {
-                $this->column->nullable($this->property->new->actually_nullable);
-            }
+            $this->column?->nullable($this->property->new->actually_nullable);
 
             if ($this->property->new->actually_nullable !==
                 $this->property->old?->actually_nullable)
             {
                 $this->run('nullable');
-                // test2
             }
         }
     }
@@ -284,17 +273,20 @@ class Migration extends Object_
                 break;
             case Property::CONVERT:
                 $this->new_value = "{$this->new_value} ?? $this->default_value";
+                $this->run('nullable');
                 break;
             case Property::POST_ALTER:
-                if ($this->column) {
-                    $this->column->nullable(false);
-                }
+                $this->column?->nullable(false);
                 $this->run('nullable');
                 break;
         }
     }
 
     protected function logAttribute(string $attr): void {
+        if (!($this->table || $this->query)) {
+            return;
+        }
+
         $old = var_export($this->property->old->$attr ?? null,
             true);
         $new = var_export($this->property->new->$attr, true);
@@ -323,7 +315,7 @@ class Migration extends Object_
     protected function run(string $attr): void {
         $this->run = true;
 
-        if ($this->table && $this->property->old) {
+        if (($this->table || $this->query) && $this->property->old) {
             $this->log->notice("        !{$attr}");
         }
     }

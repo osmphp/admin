@@ -199,7 +199,7 @@ class Table extends Diff
 
     protected function get_requires_convert(): bool {
         foreach ($this->properties as $property) {
-            if ($property->convert()) {
+            if ($property->requiresMigration(Property::CONVERT)) {
                 return true;
             }
         }

@@ -63,9 +63,7 @@ class Int_ extends Migration
     }
 
     protected function size(): void {
-        if ($this->table) {
-            $this->logAttribute('size');
-        }
+        $this->logAttribute('size');
 
         if (!$this->property->old) {
             $this->preSize();
@@ -130,19 +128,23 @@ class Int_ extends Migration
                 $max = $this->sizes[$this->property->new->size]->max;
             }
 
-            $this->new_value = "IF({$this->new_value} > $max, $max, " .
-                "IF({$this->new_value} < $min, $min, {$this->new_value}))";
+            $this->new_value = "{$this->new_value} > $max ? $max : " .
+                "({$this->new_value} < $min ? $min : {$this->new_value})";
             $this->run($attr);
         }
     }
 
     protected function unsigned(): void {
-        if ($this->table) {
-            $this->logAttribute('unsigned');
-        }
+        $this->logAttribute('unsigned');
 
         if (!$this->property->old) {
             $this->preUnsigned();
+            return;
+        }
+
+        if ($this->property->old->type !== $this->property->new->type) {
+            $this->checkRange('unsigned');
+            $this->postUnsigned();
             return;
         }
 
@@ -194,11 +196,13 @@ class Int_ extends Migration
     }
 
     protected function autoIncrement(): void {
-        if ($this->table) {
-            $this->logAttribute('auto_increment');
-        }
+        $this->logAttribute('auto_increment');
+
+        // old->auto_increment may be not set if property type is changed,
+        // for example, from `string`
 
         if ($this->property->old &&
+            isset($this->property->old->auto_increment) &&
             $this->property->old->auto_increment !==
             $this->property->new->auto_increment)
         {
@@ -220,5 +224,11 @@ class Int_ extends Migration
                 $this->run('auto_increment');
             }
         }
+    }
+
+    protected function get_default_value(): string {
+        return $this->property->new->actually_nullable
+            ? "NULL"
+            : "0";
     }
 }

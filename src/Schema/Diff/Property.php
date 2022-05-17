@@ -3,9 +3,11 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
 use Osm\Admin\Schema\Traits\RequiredSubTypes;
+use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 
 /**
@@ -57,6 +59,27 @@ class Property extends Diff
             'mode' => $mode,
             'table' => $table,
         ])->migrate();
+    }
+
+    public function convert(Query $query): void {
+        if (!$this->requiresMigration(static::CONVERT)) {
+            return;
+        }
+
+        $new = "{$this->migration_class_name}::new";
+
+        /* @var Migration $migration */
+        $migration = $new([
+            'property' => $this,
+            'mode' => static::CONVERT,
+            'query' => $query,
+        ]);
+
+        $migration->migrate();
+
+        $formula = str_replace('{{old_value}}', $migration->old_value,
+            $migration->new_value);
+        $query->select("{$formula} AS {$this->new->name}");
     }
 
     public function requiresMigration(string $mode): bool {

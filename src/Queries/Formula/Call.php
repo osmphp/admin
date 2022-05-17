@@ -22,6 +22,10 @@ use function Osm\__;
  * Resolved properties:
  *
  * @property Function_ $function #[Serialized]
+ * @property ?string $alias #[Serialized] COLUMN function remembers the main
+ *      table alias
+ * @property ?string $column_name #[Serialized] COLUMN function remembers
+ *      the column name passed as an argument
  *
  * @uses Serialized
  */
@@ -62,7 +66,7 @@ class Call extends Formula
             $arg->resolve($table);
         }
 
-        $this->function->resolve($this);
+        $this->function->resolve($this, $table);
     }
 
     public function toSql(array &$bindings, array &$from, string $join): string

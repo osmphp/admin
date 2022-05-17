@@ -106,7 +106,7 @@ class Formula extends Object_
 
     public function toSql(array &$bindings, array &$from, string $join): string
     {
-        throw new NotImplemented($this);
+        return $this->data_type->castToSql($this->formula, $bindings, $from, $join);
     }
 
     public function clone(): Formula {
@@ -150,7 +150,7 @@ class Formula extends Object_
         return $osm_app->modules[\Osm\Admin\Schema\Module::class]->data_types;
     }
 
-    protected function castTo(string $dataType): Formula {
+    public function castTo(string $dataType): Formula {
         if ($this->data_type->type === $dataType) {
             return $this;
         }
@@ -166,4 +166,34 @@ class Formula extends Object_
 
         return $cast;
     }
+
+    /**
+     * @param string $dataType
+     * @param Formula[] $formulas
+     * @return void
+     */
+    protected function castAllTo(string $dataType, array $formulas): void {
+        foreach ($formulas as &$formula) {
+            $formula = $formula->castTo($dataType);
+        }
+    }
+
+    /**
+     * @param Formula[] $formulas
+     * @return string
+     */
+    protected function castAllToFirstNonNull(array $formulas): string {
+        $dataType = 'mixed';
+        foreach ($formulas as $formula) {
+            if ($formula->data_type->type !== 'mixed') {
+                $dataType = $formula->data_type->type;
+                break;
+            }
+        }
+
+        $this->castAllTo($dataType, $formulas);
+
+        return $dataType;
+    }
+
 }

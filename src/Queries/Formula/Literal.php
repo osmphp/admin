@@ -36,7 +36,13 @@ class Literal extends Formula
 
     public function toSql(array &$bindings, array &$from, string $join): string
     {
-        $bindings[] = match($this->token) {
+        $bindings[] = $this->value();
+
+        return '?';
+    }
+
+    public function value(): mixed {
+        return match($this->token) {
             Parser::STRING_ => Parser::unescapeString($this->value),
             Parser::INT_ => intval($this->value),
             Parser::FLOAT_ => floatval($this->value),
@@ -46,11 +52,9 @@ class Literal extends Formula
             Parser::FALSE_ => false,
             Parser::NULL_ => null,
             default =>
-                throw new NotSupported(__(
+            throw new NotSupported(__(
                 "Literal token type ':type' not supported",
-                    ['type' => Parser::getTokenTitle(Parser::STRING_)])),
+                ['type' => Parser::getTokenTitle(Parser::STRING_)])),
         };
-
-        return '?';
     }
 }

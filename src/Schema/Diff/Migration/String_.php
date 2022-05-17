@@ -57,9 +57,7 @@ class String_ extends Migration
     }
 
     protected function size(): void {
-        if ($this->table) {
-            $this->logAttribute('size');
-        }
+        $this->logAttribute('size');
 
         if ($this->property->new->max_length) {
             return;
@@ -117,7 +115,7 @@ class String_ extends Migration
             return 0;
         }
 
-        if ($property->max_length) {
+        if ($property->max_length ?? null) {
             return $property->max_length;
         }
 
@@ -135,16 +133,14 @@ class String_ extends Migration
             $maxLength = $this->maxLength($this->property->new);
 
             $this->new_value =
-                "IF(LENGTH({$this->new_value} ?? '') > $maxLength, " .
-                "LEFT({$this->new_value}, $maxLength), {$this->new_value})";
+                "LENGTH({$this->new_value} ?? '') > $maxLength ? " .
+                "LEFT({$this->new_value}, $maxLength) : {$this->new_value}";
             $this->run($attr);
         }
     }
 
     protected function length(): void {
-        if ($this->table) {
-            $this->logAttribute('max_length');
-        }
+        $this->logAttribute('max_length');
 
         if (!$this->property->new->max_length) {
             return;
@@ -195,4 +191,13 @@ class String_ extends Migration
         }
     }
 
+    protected function get_default_value(): string {
+        return $this->property->new->actually_nullable
+            ? "NULL"
+            : "'-'";
+    }
+
+    protected function changeTypeByDbMeans(): bool {
+        return true;
+    }
 }

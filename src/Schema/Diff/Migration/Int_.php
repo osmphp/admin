@@ -70,6 +70,12 @@ class Int_ extends Migration
             return;
         }
 
+        if ($this->property->old->type !== $this->property->new->type) {
+            $this->checkRange('size');
+            $this->postSize();
+            return;
+        }
+
         if ($this->property->old->size === $this->property->new->size) {
             return;
         }

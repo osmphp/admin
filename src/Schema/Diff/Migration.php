@@ -238,6 +238,7 @@ class Migration extends Object_
             $this->new_value = "CONVERT({$this->new_value}, " .
                 "'{$this->property->old->type}', '" .
                 "{$this->property->new->type}', $this->default_value)";
+            $this->run('type');
         }
     }
 

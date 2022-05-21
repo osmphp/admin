@@ -3,6 +3,7 @@
 namespace Osm\Admin\Schema\Diff;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Diff;
 use Osm\Admin\Schema\Property as PropertyObject;
@@ -26,6 +27,20 @@ class Property extends Diff
     public const CONVERT = 'convert';
     public const POST_ALTER = 'post_alter';
 
+    protected ?string $attribute_name = null;
+    protected bool $create_column = false;
+    protected bool $drop_column = false;
+    protected bool $create_json = false;
+    protected bool $drop_json = false;
+    /**
+     * @var callable[]
+     */
+    protected array $convert = [];
+    /**
+     * @var callable[]
+     */
+    protected array $column = [];
+
     /**
      * @var Migration[]
      */
@@ -47,66 +62,142 @@ class Property extends Diff
         throw new Required(__METHOD__);
     }
 
-    public function migrate(string $mode, Blueprint $table): void {
-        if (!$this->requiresMigration($mode)) {
-            return;
-        }
-
-        $new = "{$this->migration_class_name}::new";
-
-        $new([
-            'property' => $this,
-            'mode' => $mode,
-            'table' => $table,
-        ])->migrate();
-    }
-
-    public function convert(Query $query): void {
-        if (!$this->requiresMigration(static::CONVERT)) {
-            return;
-        }
-
-        $new = "{$this->migration_class_name}::new";
-
-        /* @var Migration $migration */
-        $migration = $new([
-            'property' => $this,
-            'mode' => static::CONVERT,
-            'query' => $query,
-        ]);
-
-        $migration->migrate();
-
-        $formula = str_replace('{{old_value}}', $migration->old_value,
-            $migration->new_value);
-        $query->select("{$formula} AS {$this->new->name}");
-    }
-
-    public function requiresMigration(string $mode): bool {
-        if (!isset($this->migrations[$mode])) {
-            $new = "{$this->migration_class_name}::new";
-            $this->migrations[$mode] = $new([
-                'property' => $this,
-                'mode' => $mode,
-            ]);
-
-            $this->migrations[$mode]->migrate();
-        }
-
-        return $this->migrations[$mode]->run;
-    }
-
     protected function get_migration_class_name(): string {
         return str_replace('\\Property\\', '\\Migration\\',
             $this->__class->name);
     }
 
     public function diff(): void {
-        $this->rename = $this->old
-            && $this->new->name !== $this->old->name
-                ? $this->old->name
-                : null;
+//        $this->rename = $this->old
+//            && $this->new->name !== $this->old->name
+//                ? $this->old->name
+//                : null;
 
-        //throw new NotImplemented($this);
+        throw new NotImplemented($this);
+    }
+
+    protected function attribute(string $attributeName, callable $callback)
+        : void
+    {
+        $this->attribute_name = $attributeName;
+
+        try {
+            $callback();
+        }
+        finally {
+            $this->attribute_name = null;
+        }
+    }
+
+    protected function explicit(): void {
+        $this->attribute('explicit', function() {
+            if ($this->new->explicit) {
+                if ($this->old) {
+                    if (!$this->old->explicit) {
+                        $this->createColumn();
+                        $this->convert();
+                        $this->dropJson();
+                    }
+                }
+                else {
+                    $this->createColumn();
+                }
+
+            }
+            else { // !$this->new->explicit
+                if ($this->old?->explicit) {
+                    $this->createJson();
+                    $this->convert();
+                    $this->dropColumn();
+                }
+            }
+        });
+    }
+
+    protected function type(): void {
+        $this->attribute('type', function() {
+        });
+    }
+
+    protected function nullable(): void {
+        $this->attribute('nullable', function() {
+        });
+    }
+
+    /**
+     * Forces data conversion of the property, and `$callback`, if provided,
+     * modifies the data conversion formula.
+     *
+     * @param ?callable $callback
+     */
+    protected function convert(callable $callback = null): void {
+        $this->convert[$this->attribute_name] = $callback;
+    }
+
+    protected function createColumn(): void {
+        $this->create_column = true;
+    }
+
+    protected function dropColumn(): void {
+        $this->drop_column = true;
+    }
+
+    protected function createJson(): void {
+        $this->create_json = true;
+    }
+
+    protected function dropJson(): void {
+        $this->drop_json = true;
+    }
+
+    protected function define(Blueprint $table): ColumnDefinition {
+        throw new NotImplemented($this);
+    }
+
+    public function migrate(string $mode, Blueprint $table = null,
+        Query $query = null): bool
+    {
+        return match ($mode) {
+            static::CREATE =>
+                $this->migrateWithoutData($table),
+            static::PRE_ALTER => empty($this->convert)
+                ? $this->migrateWithoutData($table)
+                : $this->beforeMigratingData($table),
+            static::CONVERT =>
+                !empty($this->convert) && $this->migrateData($query),
+            static::POST_ALTER =>
+                !empty($this->convert) && $this->afterMigratingData($table),
+        };
+    }
+
+    protected function migrateWithoutData(?Blueprint $table): bool {
+        $run = false;
+        if ($this->new->explicit) {
+            $column = $table ? $this->define($table): null;
+
+            if ($this->create_column) {
+                $run = true;
+            }
+            else {
+                $column?->change();
+            }
+
+            foreach ($this->column as $callback) {
+                $run = $run || $callback($column, $table);
+            }
+        }
+        return $run;
+    }
+
+    protected function beforeMigratingData(?Blueprint $table): bool {
+        throw new NotImplemented($this);
+    }
+
+    protected function migrateData(Query $query = null): bool {
+        throw new NotImplemented($this);
+    }
+
+    protected function afterMigratingData(?Blueprint $table): bool {
+        throw new NotImplemented($this);
     }
 }

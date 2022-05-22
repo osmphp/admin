@@ -8,10 +8,12 @@ use Osm\Core\Attributes\Type;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Framework\Search\Blueprint as SearchBlueprint;
 use Osm\Framework\Search\Field;
+use Osm\Admin\Schema\DataType;
 
 /**
  * @property ?int $max_length #[Serialized]
  * @property string $size #[Serialized]
+ * @property DataType\String_ $data_type
  *
  * @uses Serialized
  */

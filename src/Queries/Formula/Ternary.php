@@ -54,7 +54,7 @@ class Ternary extends Formula
     public function toSql(array &$bindings, array &$from, string $join): string
     {
         return "IF({$this->condition->toSql($bindings, $from, $join)}, ".
-            "{$this->then->args[1]->toSql($bindings, $from, $join)}, " .
+            "{$this->then->toSql($bindings, $from, $join)}, " .
             "{$this->else_->toSql($bindings, $from, $join)})";
     }
 }

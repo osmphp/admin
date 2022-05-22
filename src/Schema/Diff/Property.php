@@ -270,16 +270,69 @@ class Property extends Diff
             static::CREATE =>
                 $this->migrateWithoutData($table),
             static::PRE_ALTER => count($this->convert)
-                ? $this->migrateWithoutData($table)
-                : $this->beforeMigratingData($table),
+                ? $this->beforeMigratingData($table)
+                : $this->migrateWithoutData($table),
             static::CONVERT =>
-                !count($this->convert) && $this->migrateData($query),
+                count($this->convert) && $this->migrateData($query),
             static::POST_ALTER =>
-                !count($this->convert) && $this->afterMigratingData($table),
+                count($this->convert) && $this->afterMigratingData($table),
         };
     }
 
     protected function migrateWithoutData(?Blueprint $table): bool {
+        return $this->migrateColumn($table);
+    }
+
+    protected function beforeMigratingData(?Blueprint $table): bool {
+        $run = false;
+
+        if ($this->rename_old_column) {
+            $this->migrateColumn($table);
+            $table?->renameColumn($this->old->name, "old__{$this->old->name}");
+            $run = true;
+        }
+
+        return $run;
+    }
+
+    protected function migrateData(Query $query = null): bool {
+        if (!count($this->convert)) {
+            return false;
+        }
+
+        $propertyName = $this->rename_old_column
+            ? "old__{$this->old->name}":
+            $this->old->name;
+
+        $value = $this->old->explicit
+            ? "COLUMN('{$propertyName}', '{$this->old->type}')"
+            : "DATA('{$propertyName}', '{$this->old->type}')";
+
+        foreach ($this->convert as $callback) {
+            if ($callback === true) {
+                continue;
+            }
+
+            $value = $callback($value);
+        }
+
+        $query?->select("{$value} AS {$this->new->name}");
+        return true;
+    }
+
+    protected function afterMigratingData(?Blueprint $table): bool {
+        if ($this->rename_old_column) {
+            $table?->dropColumn("old__{$this->old->name}");
+            $run = true;
+        }
+        else {
+            $run = $this->migrateColumn($table);
+        }
+
+        return $run;
+    }
+
+    protected function migrateColumn(?Blueprint $table): bool {
         $run = false;
 
         if ($this->new->explicit) {
@@ -298,17 +351,5 @@ class Property extends Diff
             }
         }
         return $run;
-    }
-
-    protected function beforeMigratingData(?Blueprint $table): bool {
-        throw new NotImplemented($this);
-    }
-
-    protected function migrateData(Query $query = null): bool {
-        throw new NotImplemented($this);
-    }
-
-    protected function afterMigratingData(?Blueprint $table): bool {
-        throw new NotImplemented($this);
     }
 }

@@ -106,7 +106,7 @@ class Formula extends Object_
 
     public function toSql(array &$bindings, array &$from, string $join): string
     {
-        return $this->data_type->castToSql($this->formula, $bindings, $from, $join);
+        throw new NotImplemented($this);
     }
 
     public function clone(): Formula {
@@ -156,7 +156,7 @@ class Formula extends Object_
         }
 
         $cast = Formula\Cast::new([
-            'formula' => $this,
+            'expr' => $this,
             'parent' => $this->parent,
             'data_type' => $this->data_types[$dataType],
             'array' => $this->array,

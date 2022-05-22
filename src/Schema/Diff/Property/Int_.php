@@ -34,12 +34,13 @@ class Int_ extends Scalar {
     protected function size(): void {
         $this->attribute('size', function() {
             $this->change(!$this->old ||
+                $this->old->type !== $this->new->type ||
                 $this->old->size !== $this->new->size);
             $newSize = $this->new->data_type->sizes[$this->new->size];
 
             if ($this->new->explicit) {
                 $this->column(fn(?ColumnDefinition $column) =>
-                    $column->type($newSize->sql_type)
+                    $column?->type($newSize->sql_type)
                 );
             }
         });
@@ -48,12 +49,13 @@ class Int_ extends Scalar {
     protected function unsigned(): void {
         $this->attribute('unsigned', function() {
             $this->change(!$this->old ||
+                $this->old->type !== $this->new->type ||
                 $this->old->actually_unsigned !== $this->new->actually_unsigned);
 
             if ($this->new->explicit) {
                 $this->column(fn(?ColumnDefinition $column) =>
                     $this->new->actually_unsigned
-                        ? $column->unsigned()
+                        ? $column?->unsigned()
                         : $column
                 );
             }
@@ -73,7 +75,7 @@ class Int_ extends Scalar {
 
             if ($this->new->explicit && $this->new->auto_increment) {
                 $this->column(fn(?ColumnDefinition $column) =>
-                    $column->autoIncrement()
+                    $column?->autoIncrement()
                 );
             }
         });

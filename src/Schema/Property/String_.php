@@ -91,4 +91,8 @@ class String_ extends Scalar
             case '-': $query->whereNotIn($this->name, $items); break;
         }
     }
+
+    protected function get_default_value(): string {
+        return $this->actually_nullable ? "NULL" : "'-'";
+    }
 }

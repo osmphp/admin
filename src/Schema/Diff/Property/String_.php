@@ -26,6 +26,11 @@ class String_ extends Scalar {
         return $table->text($this->new->name);
     }
 
+    protected function letDbToConvertData(): bool {
+        // Trust MySql to do the data conversion
+        return true;
+    }
+
     protected function size(): void {
         $this->attribute('size', function() {
         });

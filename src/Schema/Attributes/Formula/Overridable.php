@@ -18,6 +18,6 @@ final class Overridable extends Attribute
         $data->overridable = true;
         $data->computed = false;
         $data->virtual = false;
-        $data->formula = $this->formula;
+        $data->value = $this->formula;
     }
 }

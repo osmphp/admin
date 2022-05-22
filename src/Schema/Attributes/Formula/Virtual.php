@@ -18,6 +18,6 @@ final class Virtual extends Attribute
         $data->virtual = true;
         $data->computed = false;
         $data->overridable = false;
-        $data->formula = $this->formula;
+        $data->value = $this->formula;
     }
 }

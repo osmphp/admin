@@ -6,6 +6,7 @@ use Illuminate\Database\Schema\ColumnDefinition;
 use Osm\Admin\Schema\Diff\Migration;
 use Osm\Admin\Schema\Diff\Property;
 use Osm\Admin\Schema\Exceptions\InvalidChange;
+use Osm\Admin\Schema\Hints\IntSize;
 use Osm\Admin\Schema\Hints\StringSize;
 use Osm\Core\Exceptions\NotImplemented;
 use Osm\Admin\Schema\Property as PropertyObject;
@@ -13,7 +14,7 @@ use function Osm\__;
 
 /**
  * @property Property\Int_ $property
- * @property \stdClass[]|StringSize[] $sizes
+ * @property \stdClass[]|IntSize[] $sizes
  */
 class Int_ extends Migration
 {

@@ -18,6 +18,6 @@ final class Computed extends Attribute
         $data->computed = true;
         $data->overridable = false;
         $data->virtual = false;
-        $data->formula = $this->formula;
+        $data->value = $this->formula;
     }
 }

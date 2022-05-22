@@ -27,17 +27,71 @@ class Property extends Diff
     public const CONVERT = 'convert';
     public const POST_ALTER = 'post_alter';
 
-    protected ?string $attribute_name = null;
-    protected bool $create_column = false;
-    protected bool $drop_column = false;
-    protected bool $create_json = false;
-    protected bool $drop_json = false;
     /**
-     * @var callable[]
+     * During `diff()`, specifies the attribute currently being processed.
+     *
+     * @var string|null
+     */
+    protected ?string $attribute_name = null;
+
+    /**
+     * Specifies whether an explicit column for this property should be created
+     *
+     * @var bool[]
+     */
+    protected array $create_column = [];
+
+    /**
+     * Specifies whether the explicit column should be dropped
+     *
+     * @var bool[]
+     */
+    protected array $drop_column = [];
+
+    /**
+     * Specifies whether an implicit property storage should be created and
+     * initialized in the `_data` column.
+     *
+     * @var bool[]
+     */
+    protected array $create_json = [];
+
+    /**
+     * Specifies whether an implicit property storage should be removed from the
+     * `_data` column.
+     *
+     * @var bool[]
+     */
+    protected array $drop_json = [];
+
+    /**
+     * Specifies whether existing explicit column should be renamed to `old__x`
+     * before data conversion, and dropped afterwards.
+     *
+     * @var bool[]
+     */
+    protected array $rename_old_column = [];
+
+    /**
+     * Specifies whether property (be it explicit or not) definition has changed.
+     *
+     * @var bool[]
+     */
+    protected array $change = [];
+
+    /**
+     * Specifies whether data conversion is required, and if so,
+     * data conversion formula
+     *
+     * @var callable[]|bool[]
      */
     protected array $convert = [];
+
     /**
-     * @var callable[]
+     * If an explicit column should be created or altered, specified the
+     * exact definition
+     *
+     * @var callable[]|bool[]
      */
     protected array $column = [];
 
@@ -65,6 +119,14 @@ class Property extends Diff
     protected function get_migration_class_name(): string {
         return str_replace('\\Property\\', '\\Migration\\',
             $this->__class->name);
+    }
+
+    protected function define(Blueprint $table): ColumnDefinition {
+        throw new NotImplemented($this);
+    }
+
+    protected function letDbToConvertData(): bool {
+        return false;
     }
 
     public function diff(): void {
@@ -116,11 +178,46 @@ class Property extends Diff
 
     protected function type(): void {
         $this->attribute('type', function() {
+            $changed = $this->change($this->old?->type !== $this->new->type);
+
+            // This method adds nothing to the column definition. The
+            // default DB type is already specified after calling the
+            // `define()` method, and it may be adjusted later when
+            // diffing `size` and `length` attributes.
+
+            if (!$changed || !$this->old) {
+                return;
+            }
+
+            if ($this->new->explicit && $this->old->explicit &&
+                $this->letDbToConvertData())
+            {
+                return;
+            }
+
+            if ($this->old->explicit) {
+                $this->renameOldColumn();
+            }
+
+            $this->convert();
         });
     }
 
     protected function nullable(): void {
         $this->attribute('nullable', function() {
+            $changed = $this->change(!$this->old ||
+                $this->old->actually_nullable !== $this->new->actually_nullable);
+
+            if ($this->new->explicit) {
+                $this->column(fn(?ColumnDefinition $column) =>
+                    $column?->nullable($this->new->actually_nullable)
+                );
+            }
+
+            if (!$this->new->actually_nullable && $this->old?->actually_nullable) {
+                $this->convert(fn(string $value) =>
+                    "{$value} ?? {$this->new->default_value}");
+            }
         });
     }
 
@@ -131,27 +228,39 @@ class Property extends Diff
      * @param ?callable $callback
      */
     protected function convert(callable $callback = null): void {
-        $this->convert[$this->attribute_name] = $callback;
+        $this->convert[$this->attribute_name] = $callback ?? true;
+    }
+
+    protected function column(callable $callback = null): void {
+        $this->column[$this->attribute_name] = $callback ?? true;
     }
 
     protected function createColumn(): void {
-        $this->create_column = true;
+        $this->create_column[$this->attribute_name] = true;
     }
 
     protected function dropColumn(): void {
-        $this->drop_column = true;
+        $this->drop_column[$this->attribute_name] = true;
     }
 
     protected function createJson(): void {
-        $this->create_json = true;
+        $this->create_json[$this->attribute_name] = true;
     }
 
     protected function dropJson(): void {
-        $this->drop_json = true;
+        $this->drop_json[$this->attribute_name] = true;
     }
 
-    protected function define(Blueprint $table): ColumnDefinition {
-        throw new NotImplemented($this);
+    protected function change(bool $change): bool {
+        if ($change) {
+            $this->change[$this->attribute_name] = true;
+        }
+
+        return $change;
+    }
+
+    protected function renameOldColumn(): void {
+        $this->rename_old_column[$this->attribute_name] = true;
     }
 
     public function migrate(string $mode, Blueprint $table = null,
@@ -160,18 +269,19 @@ class Property extends Diff
         return match ($mode) {
             static::CREATE =>
                 $this->migrateWithoutData($table),
-            static::PRE_ALTER => empty($this->convert)
+            static::PRE_ALTER => count($this->convert)
                 ? $this->migrateWithoutData($table)
                 : $this->beforeMigratingData($table),
             static::CONVERT =>
-                !empty($this->convert) && $this->migrateData($query),
+                !count($this->convert) && $this->migrateData($query),
             static::POST_ALTER =>
-                !empty($this->convert) && $this->afterMigratingData($table),
+                !count($this->convert) && $this->afterMigratingData($table),
         };
     }
 
     protected function migrateWithoutData(?Blueprint $table): bool {
         $run = false;
+
         if ($this->new->explicit) {
             $column = $table ? $this->define($table): null;
 
@@ -180,10 +290,11 @@ class Property extends Diff
             }
             else {
                 $column?->change();
+                $run = count($this->change) > 0;
             }
 
             foreach ($this->column as $callback) {
-                $run = $run || $callback($column, $table);
+                $callback($column, $table);
             }
         }
         return $run;

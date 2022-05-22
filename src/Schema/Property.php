@@ -30,7 +30,7 @@ use Osm\Framework\Search\Field;
  * @property bool $actually_nullable #[Serialized]
  * @property bool $array #[Serialized]
  * @property bool $explicit #[Serialized]
- * @property ?string $formula #[Serialized]
+ * @property ?string $value #[Serialized]
  * @property string[] $formula_if #[Serialized]
  * @property bool $virtual #[Serialized]
  * @property bool $computed #[Serialized]
@@ -52,6 +52,7 @@ use Osm\Framework\Search\Field;
  * @property ?Control $control #[Serialized]
  * @property ?Facet $facet #[Serialized]
  * @property string $title
+ * @property string $default_value #[Serialized]
  *
  * Dependencies:
  *
@@ -251,5 +252,9 @@ class Property extends Object_
 
     protected function get_actually_nullable(): bool {
         return $this->nullable || !empty($this->if);
+    }
+
+    protected function get_default_value(): string {
+        return "NULL";
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Osm\Admin\Schema\Property;
 use Illuminate\Database\Schema\Blueprint;
+use Osm\Admin\Schema\DataType;
 use Osm\Admin\Ui\Query;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
@@ -14,6 +15,7 @@ use Osm\Framework\Search\Field;
  * @property bool $actually_unsigned #[Serialized]
  * @property string $size #[Serialized]
  * @property bool $auto_increment #[Serialized]
+ * @property DataType\Int_ $data_type
  *
  * @uses Serialized
  */
@@ -87,5 +89,9 @@ class Int_ extends Scalar
 
     protected function get_actually_unsigned(): bool {
         return $this->unsigned || $this->auto_increment;
+    }
+
+    protected function get_default_value(): string {
+        return $this->actually_nullable ? "NULL" : "0";
     }
 }

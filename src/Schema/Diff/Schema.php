@@ -13,6 +13,7 @@ use Osm\Core\Exceptions\NotImplemented;
 use Osm\Core\Exceptions\Required;
 use Symfony\Component\Console\Output\OutputInterface;
 use function Osm\__;
+use Illuminate\Database\Events;
 
 /**
  * @property \stdClass|SchemaObject|null $old
@@ -35,6 +36,8 @@ class Schema extends Diff
      * @var string[]
      */
     protected array $dropped_notification_tables = [];
+
+    protected bool $migrating = false;
 
     protected function get_new(): SchemaObject {
         throw new Required(__METHOD__);
@@ -77,6 +80,17 @@ class Schema extends Diff
     }
 
     public function migrate(): void {
+        $this->migrating = true;
+
+        $this->db->connection->listen(function (Events\QueryExecuted $query) {
+            if ($this->migrating) {
+                $this->log->info($query->sql, [
+                    'bindings' => $query->bindings,
+                    'time' => $query->time,
+                ]);
+            }
+        });
+
         $this->log('---------------------------------------------');
         if ($this->new->fixture_class_name) {
             $this->log(__("Migrating ':namespace' schema fixture", [
@@ -95,6 +109,8 @@ class Schema extends Diff
         foreach ($this->notification_tables as $table) {
             $table->migrate();
         }
+
+        $this->migrating = false;
     }
 
     protected function drop(string $table): void {

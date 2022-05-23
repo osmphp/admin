@@ -82,28 +82,30 @@ class Int_ extends Scalar {
     }
 
     protected function checkRange(): void {
-        if (!$this->old) {
-            return;
-        }
-
-        if (isset($this->change['type']) ||
-            isset($this->change['size']) && $this->becomingSmaller() ||
-            isset($this->change['unsigned']))
-        {
-            $newSize = $this->new->data_type->sizes[$this->new->size];
-
-            if ($this->new->unsigned) {
-                $min = 0;
-                $max = $newSize->unsigned_max;
-            }
-            else {
-                $min = $newSize->min;
-                $max = $newSize->max;
+        $this->attribute('check_range', function() {
+            if (!$this->old) {
+                return;
             }
 
-            $this->convert(fn(string $value) =>
-                "{$value} > $max ? $max : ({$value} < $min ? $min : {$value})");
-        }
+            if (isset($this->change['type']) ||
+                isset($this->change['size']) && $this->becomingSmaller() ||
+                isset($this->change['unsigned']))
+            {
+                $newSize = $this->new->data_type->sizes[$this->new->size];
+
+                if ($this->new->unsigned) {
+                    $min = 0;
+                    $max = $newSize->unsigned_max;
+                }
+                else {
+                    $min = $newSize->min;
+                    $max = $newSize->max;
+                }
+
+                $this->convert(fn(string $value) =>
+                    "{$value} > $max ? $max : ({$value} < $min ? $min : {$value})");
+            }
+        });
     }
 
     protected function becomingSmaller(): bool {

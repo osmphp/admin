@@ -67,22 +67,24 @@ class String_ extends Scalar {
     }
 
     protected function truncate(): void {
-        if (!$this->old) {
-            return;
-        }
+        $this->attribute('truncate', function() {
+            if (!$this->old) {
+                return;
+            }
 
-        if (isset($this->change['type']) ||
-            (
-                isset($this->change['size']) ||
-                isset($this->change['max_length'])
-            ) && $this->becomingShorter())
-        {
-            $maxLength = $this->maxLength($this->new);
+            if (isset($this->change['type']) ||
+                (
+                    isset($this->change['size']) ||
+                    isset($this->change['max_length'])
+                ) && $this->becomingShorter())
+            {
+                $maxLength = $this->maxLength($this->new);
 
-            $this->convert(fn(string $value) =>
-                "LENGTH({$value} ?? '') > $maxLength ? " .
-                "LEFT({$value}, $maxLength) : {$value}");
-        }
+                $this->convert(fn(string $value) =>
+                    "LENGTH({$value} ?? '') > $maxLength ? " .
+                    "LEFT({$value}, $maxLength) : {$value}");
+            }
+        });
     }
 
     protected function maxLength(

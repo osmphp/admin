@@ -22,6 +22,8 @@ use function Osm\__;
  * @property TableObject $new
  * @property bool $alter
  * @property ?string $rename
+ * @property bool $requires_rename `true` if any property diff requires renaming
+ *      existing column
  * @property bool $requires_pre_alter `true` if any property diff contributes
  *      changes to the database table structure in pre-alter phase
  * @property bool $requires_post_alter `true` if any property diff contributes
@@ -105,6 +107,20 @@ class Table extends Diff
         }
     }
 
+    protected function rename(): void {
+        if ($this->requires_rename) {
+            $this->log(__("Renaming ':table' table columns", [
+                'table' => $this->new->table_name,
+            ]));
+
+            $this->db->alter($this->new->table_name, function(Blueprint $table) {
+                foreach ($this->properties as $property) {
+                    $property->migrate(Property::RENAME, table: $table);
+                }
+            });
+        }
+    }
+
     protected function preAlter(): void {
         if ($this->requires_pre_alter) {
             $this->log(__("Pre-altering ':table' table", [
@@ -171,10 +187,21 @@ class Table extends Diff
     }
 
     protected function alter(): void {
+        $this->rename();
         $this->preAlter();
         $this->convert();
         $this->validate();
         $this->postAlter();
+    }
+
+    protected function get_requires_rename(): bool {
+        foreach ($this->properties as $property) {
+            if ($property->migrate(Property::RENAME)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function get_requires_pre_alter(): bool {

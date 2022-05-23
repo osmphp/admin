@@ -98,11 +98,6 @@ class Property extends Diff
      */
     protected array $column = [];
 
-    /**
-     * @var Migration[]
-     */
-    protected array $migrations = [];
-
     protected function get_schema(): Schema {
         throw new Required(__METHOD__);
     }

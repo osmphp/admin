@@ -26,6 +26,23 @@ class Int_ extends Scalar
         throw new NotImplemented($this);
     }
 
+    public function safeCastToSql(Formula $formula, Formula $default,
+        array &$bindings, array &$from, string $join): string
+    {
+        if ($formula->data_type->type === 'string') {
+            return "IF(" .
+                "({$formula->toSql($bindings, $from, $join)}) " .
+                    "REGEXP '^[[:space:]]*[[:digit:]]+[[:space:]]*$', ".
+                "0 + REGEXP_REPLACE({$formula->toSql($bindings, $from, $join)}, " .
+                    "'(^[[:space:]]+|[[:space:]]+$)', ''), " .
+                $default->toSql($bindings, $from, $join) .
+            ")";
+        }
+
+        return parent::safeCastToSql($formula, $default, $bindings,
+            $from, $join);
+    }
+
     protected function get_sizes(): array {
         return [
             Property::TINY => (object)[

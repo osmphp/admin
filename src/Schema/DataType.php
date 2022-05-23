@@ -20,4 +20,10 @@ class DataType extends Object_
     {
         throw new NotImplemented($this);
     }
+
+    public function safeCastToSql(Formula $formula, Formula $default,
+        array &$bindings, array &$from, string $join): string
+    {
+        return $this->castToSql($formula, $bindings, $from, $join);
+    }
 }

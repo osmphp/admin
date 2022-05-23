@@ -8,7 +8,7 @@ use Osm\Admin\Schema\Attributes\Explicit;
 
 /**
  * @property string $description #[Explicit]
- * @property ?string $color #[Explicit]
+ * @property string $color #[Explicit]
  *
  * @uses Explicit
  */

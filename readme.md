@@ -83,6 +83,7 @@ UI *controls* define how different properties behave in grids and forms.
     * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
     * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
     * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
+    * [PHPUnit](https://phpunit.de/) 
     * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
 
 4. Create MySql database, for example `admin`. 
@@ -133,4 +134,16 @@ UI *controls* define how different properties behave in grids and forms.
 
         cd {project_dir}
         gulp watch
-         
+
+### Points Of Interest
+
+After the project is up and running, put the project under debugger, try various operations in the browser, and in the command line, using `osm` command alias.
+
+To better understand what's going on under the hood, put breakpoints in main entry points:
+
+* In the `run()` methods of route (or controller) classes, located in the `src/Ui/Routes/Admin` directory.
+* In the `run()` methods of command line commands, located in the `src/Schema/Commands` directory.
+
+### Read Framework Docs
+
+This project is based on Osm Framework. To better understand how and why this project is written, read [the documentation](https://osm.software/docs/framework/0.15/index.html) of Osm Framework.

@@ -65,3 +65,72 @@ UI *controls* define how different properties behave in grids and forms.
 8. Multi-value properties.
 9. ... and more.
 
+## Contributing
+
+### Installation
+
+1. Fork the project on [GitHub](https://github.com/osmphp/admin).
+2. Clone the project to your machine:
+
+        cd ~/projects
+        git clone git@github.com:{your_github_account}/admin.git admin 
+ 
+3. Install prerequisites:
+
+    * [PHP 8 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
+  extensions
+    * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
+    * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
+    * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
+    * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
+    * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
+
+4. Create MySql database, for example `admin`. 
+5. In the project directory, create `.env.Osm_Admin_Samples` file:
+
+        NAME=admin
+        #PRODUCTION=true
+        
+        MYSQL_DATABASE="${NAME}"
+        MYSQL_USERNAME=...
+        MYSQL_PASSWORD=...
+        
+        SEARCH_INDEX_PREFIX="${NAME}_" 
+        
+6. Install the project:
+
+        cd {project_dir}
+         
+        # install dependencies
+        composer install
+        
+        # compile the applications
+        osmc Osm_App
+        osmc Osm_Project
+        osmc Osm_Tools
+        
+        # collect JS dependencies from all installed modules
+        osmt config:npm
+        
+        # install JS dependencies
+        npm install
+        
+        # build JS, CSS and other assets
+        gulp
+        
+        # make `temp` directory writable
+        find temp -type d -exec chmod 777 {} \;
+        find temp -type f -exec chmod 666 {} \;
+        
+        # create tables in the MySql database
+        osm migrate:up
+        
+7. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.   
+
+8. Open the [product list page](http://admin.local/admin/products/).
+
+9. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed: 
+
+        cd {project_dir}
+        gulp watch
+         

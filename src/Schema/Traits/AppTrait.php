@@ -16,6 +16,8 @@ use Osm\Framework\Cache\Attributes\Cached;
 trait AppTrait
 {
     protected function get_schema(): Schema {
-        return Schema::new()->parse();
+        $this->schema = Schema::new()->parse();
+        $this->schema->migrate();
+        return $this->schema;
     }
 }

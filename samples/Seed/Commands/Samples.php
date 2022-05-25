@@ -19,29 +19,6 @@ class Samples extends Command
 
     public function run(): void
     {
-        $relatedId = $this->db->table('related_items')->insertGetId([]);
-
-        $this->db->table('items')->insert([
-            'record_id' => $relatedId,
-            '_data' => json_encode((object)[
-                'int' => 5,
-                'float' => 10.0,
-                'string' => 'Lorem ipsum',
-                'bool' => true,
-                'datetime' => Carbon::now(),
-                'mixed' => 'Hello, world!',
-                'object' => (object)[
-                    'int' => 3,
-                    'string' => 'One more string!',
-                    'struct' => (object)[
-                        'int' => 7,
-                        'string' => 'Another string',
-                    ],
-                ],
-                'int_array' => [1, 2, 3,],
-            ]),
-        ]);
-
         query(Product::class)->insert([
             'title' => 'Pink Bag',
             'color' => Color::PINK,

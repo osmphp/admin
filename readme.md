@@ -77,7 +77,7 @@ UI *controls* define how different properties behave in grids and forms.
  
 3. Install prerequisites:
 
-    * [PHP 8 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
+    * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
   extensions
     * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
     * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)

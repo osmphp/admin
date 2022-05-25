@@ -57,10 +57,11 @@ UI *controls* define how different properties behave in grids and forms.
 
 1. Effortless changes of data structure while preserving existing data.
 2. Faceted navigation and full-text search in every table.
-3. Unlimited number of properties.
-4. Table class definition and data input validation.
-5. Computed and overridable properties.
-6. Table relations.
-7. Multi-value properties.
-8. ... and more.
+3. Multi-record editing.
+4. Unlimited number of properties.
+5. Table class definition and data input validation.
+6. Computed and overridable properties.
+7. Table relations.
+8. Multi-value properties.
+9. ... and more.
 

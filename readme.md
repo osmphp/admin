@@ -124,16 +124,21 @@ UI *controls* define how different properties behave in grids and forms.
         find temp -type f -exec chmod 666 {} \;
         
         # create tables in the MySql database
-        osm migrate:up
+        php bin/run.php migrate:up
         
 7. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.   
 
 8. Open the [product list page](http://admin.local/admin/products/).
 
-9. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed: 
+9. Instead of `osm` command-line alias, use `php bin/run.php`, for example:
 
-        cd {project_dir}
-        gulp watch
+        php bin/run.php refresh
+        php bin/run.php migrate:up --fresh 
+ 
+10. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed: 
+
+         cd {project_dir}
+         gulp && gulp watch
 
 ### Points Of Interest
 
@@ -148,6 +153,6 @@ To better understand what's going on under the hood, put breakpoints in main ent
 
 This project is based on Osm Framework. To better understand how and why this project is written, read [the documentation](https://osm.software/docs/framework/0.15/index.html) of Osm Framework.
 
-### Join Chat
+### Join Chats
 
 Finally, with all the questions and ideas, join the chats on [Discord](https://discord.gg/EfW4nXPj).

@@ -147,3 +147,7 @@ To better understand what's going on under the hood, put breakpoints in main ent
 ### Read Framework Docs
 
 This project is based on Osm Framework. To better understand how and why this project is written, read [the documentation](https://osm.software/docs/framework/0.15/index.html) of Osm Framework.
+
+### Join Chat
+
+Finally, with all the questions and ideas, join the chats on [Discord](https://discord.gg/EfW4nXPj).

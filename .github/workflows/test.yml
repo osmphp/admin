@@ -1,0 +1,83 @@
+name: tests
+on:
+    push:
+    pull_request:
+    schedule:
+        -   cron: '0 0 * * *'
+
+jobs:
+    ubuntu:
+        runs-on: ubuntu-latest
+
+        name: ubuntu-latest, PHP 8.0, MySql, ElasticSearch
+        env:
+            NAME: "admin_${{ github.run_number }}"
+            MYSQL_USERNAME: root
+            MYSQL_PASSWORD: root
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v2
+
+            -   name: Configure sysctl limits for ElasticSearch
+                run: |
+                    sudo swapoff -a
+                    sudo sysctl -w vm.swappiness=1
+                    sudo sysctl -w fs.file-max=262144
+                    sudo sysctl -w vm.max_map_count=262144
+
+            -   name: Install ElasticSearch
+                uses: getong/elasticsearch-action@v1.2
+                with:
+                    elasticsearch version: '7.6.1'
+                    host port: 9200
+                    container port: 9200
+                    host node port: 9300
+                    node port: 9300
+                    discovery type: 'single-node'
+
+            -   name: Start MySql and create the database
+                run: |
+                    sudo systemctl start mysql.service
+                    mysql -u root -proot -e "CREATE DATABASE ${{ env.NAME }};"
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.0
+                    extensions: mbstring, pdo, sqlite, pdo_sqlite
+                    ini-values: variables_order=EGPCS
+                    tools: composer:v2
+                    coverage: none
+                env:
+                    COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            -   name: Setup problem matchers
+                run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+            -   name: Install dependencies
+                run: composer update --prefer-dist --no-interaction --no-progress
+
+            -   name: Compile applications
+                run: |
+                    php vendor/osmphp/core/bin/compile.php Osm_Admin_Samples
+                    php vendor/osmphp/core/bin/compile.php Osm_Tools
+                    php vendor/osmphp/core/bin/compile.php Osm_Project
+
+            -   name: Collect JS dependencies
+                run: php bin/tools.php config:npm
+
+            -   name: Install Node modules
+                run: npm install
+
+            -   name: Run Gulp
+                run: gulp
+
+            -   name: Execute migration tests
+                run: vendor/bin/phpunit --configuration phpunit_migrations.xml
+                env:
+                    #SETTINGS: tests/settings/${{ matrix.db }}__${{ matrix.search }}.php
+                    MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+                    MYSQL_DATABASE: ${{ env.NAME }}
+                    SEARCH_INDEX_PREFIX: "${{ env.NAME }}_"
+

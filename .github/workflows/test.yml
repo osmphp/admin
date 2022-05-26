@@ -13,10 +13,10 @@ jobs:
         env:
             NAME: "admin_${{ github.run_number }}"
             MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-            MYSQL_DATABASE: ${{ env.NAME }}
+            MYSQL_DATABASE: "admin_${{ github.run_number }}"
             MYSQL_USERNAME: root
             MYSQL_PASSWORD: root
-            SEARCH_INDEX_PREFIX: "${{ env.NAME }}_"
+            SEARCH_INDEX_PREFIX: "admin_${{ github.run_number }}_"
 
         steps:
             -   name: Checkout code
@@ -87,4 +87,3 @@ jobs:
 
             -   name: Execute main test suite
                 run: vendor/bin/phpunit
-                #qq

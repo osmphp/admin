@@ -65,13 +65,16 @@ jobs:
                     php vendor/osmphp/core/bin/compile.php Osm_Project
 
             -   name: Collect JS dependencies
-                run: php bin/tools.php config:npm
+                run: php vendor/osmphp/framework/bin/tools.php config:npm
 
             -   name: Install Node modules
                 run: npm install
 
             -   name: Run Gulp
                 run: gulp
+
+            -   name: Create System DB Tables
+                run: php vendor/osmphp/framework/bin/console.php migrate:up
 
             -   name: Execute migration tests
                 run: vendor/bin/phpunit --configuration phpunit_migrations.xml

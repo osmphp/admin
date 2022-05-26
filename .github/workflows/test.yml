@@ -9,7 +9,7 @@ jobs:
     ubuntu:
         runs-on: ubuntu-latest
 
-        name: ubuntu-latest, PHP 8.0, MySql, ElasticSearch
+        name: ubuntu-latest, PHP 8.1, MySql, ElasticSearch
         env:
             NAME: "admin_${{ github.run_number }}"
             MYSQL_USERNAME: root
@@ -44,7 +44,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: 8.0
+                    php-version: 8.1
                     extensions: mbstring, pdo, sqlite, pdo_sqlite
                     ini-values: variables_order=EGPCS
                     tools: composer:v2

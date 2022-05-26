@@ -12,8 +12,11 @@ jobs:
         name: ubuntu-latest, PHP 8.1, MySql, ElasticSearch
         env:
             NAME: "admin_${{ github.run_number }}"
+            MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+            MYSQL_DATABASE: ${{ env.NAME }}
             MYSQL_USERNAME: root
             MYSQL_PASSWORD: root
+            SEARCH_INDEX_PREFIX: "${{ env.NAME }}_"
 
         steps:
             -   name: Checkout code
@@ -78,9 +81,9 @@ jobs:
 
             -   name: Execute migration tests
                 run: vendor/bin/phpunit --configuration phpunit_migrations.xml
-                env:
-                    #SETTINGS: tests/settings/${{ matrix.db }}__${{ matrix.search }}.php
-                    MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-                    MYSQL_DATABASE: ${{ env.NAME }}
-                    SEARCH_INDEX_PREFIX: "${{ env.NAME }}_"
 
+            -   name: Execute query tests
+                run: vendor/bin/phpunit --configuration phpunit_queries.xml
+
+            -   name: Execute main test suite
+                run: vendor/bin/phpunit

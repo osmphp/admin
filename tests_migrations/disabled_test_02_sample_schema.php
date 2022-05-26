@@ -8,7 +8,7 @@ use Osm\Admin\Samples\Generics\Item;
 use Osm\Admin\Samples\Generics\Related;
 use Osm\Framework\TestCase;
 
-class test_02_sample_schema extends TestCase
+class disabled_test_02_sample_schema extends TestCase
 {
     public string $app_class_name = \Osm\Admin\Samples\App::class;
 

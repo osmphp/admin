@@ -7,8 +7,8 @@ namespace Osm\Admin\TestsMigrations;
 use Osm\Admin\Schema\Struct;
 use Osm\Admin\Schema\Property;
 use Osm\Admin\Schema\Schema;
+use Osm\Admin\Schema\TestCase;
 use Osm\Core\Object_;
-use Osm\Framework\TestCase;
 use function Osm\dehydrate;
 use function Osm\hydrate;
 
@@ -18,7 +18,9 @@ class test_01_schema_hydration extends TestCase
 
     public function test_hydration() {
         // GIVEN a schema reflected from PHP classes
-        $schema = $this->app->schema;
+        // `$this->app->schema` can't be used here, as it's use
+        // triggers migration
+        $schema = $this->loadSchema();
 
         // WHEN you dehydrate it and then hydrate it back again
         $dehydrated = dehydrate($schema);
@@ -30,7 +32,9 @@ class test_01_schema_hydration extends TestCase
 
     public function test_serialization() {
         // GIVEN a schema reflected from PHP classes
-        $schema = $this->app->schema;
+        // `$this->app->schema` can't be used here, as it's use
+        // triggers migration
+        $schema = $this->loadSchema();
 
         // WHEN you serialize it and then unserialize it back again
         $serialized = serialize($schema);

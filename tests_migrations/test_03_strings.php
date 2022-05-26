@@ -18,7 +18,7 @@ class test_03_strings extends TestCase
         $this->assertFalse($this->app->db->exists('products'));
 
         // WHEN you run `V1` migration
-        $this->loadSchema(Product::class);
+        $this->loadSchemaFixture(Product::class);
         $this->app->schema->migrate();
 
         // THEN initial product table is created
@@ -32,7 +32,7 @@ class test_03_strings extends TestCase
         ]);
 
         // WHEN you run `V2` migration
-        $this->loadSchema(Product::class, 2);
+        $this->loadSchemaFixture(Product::class, 2);
         $this->app->schema->migrate();
 
         // THEN new nullable column is added
@@ -52,7 +52,7 @@ class test_03_strings extends TestCase
             ->value("id");
 
         // WHEN you run `V3` migration
-        $this->loadSchema(Product::class, 3);
+        $this->loadSchemaFixture(Product::class, 3);
         $this->app->schema->migrate();
 
         // THEN NULL values are converted to falsy values
@@ -63,7 +63,7 @@ class test_03_strings extends TestCase
 
     public function test_conversion_from_int() {
         // GIVEN database with `V4` schema and some data
-        $this->loadSchema(Product::class, 4);
+        $this->loadSchemaFixture(Product::class, 4);
         $this->app->schema->migrate();
 
         $id = query(Product::class)
@@ -75,7 +75,7 @@ class test_03_strings extends TestCase
             ->update(['color' => 0xFFFFFF]);
 
         // WHEN you run `V5` migration
-        $this->loadSchema(Product::class, 5);
+        $this->loadSchemaFixture(Product::class, 5);
         $this->app->schema->migrate();
 
         // THEN `color` is converted from int
@@ -97,7 +97,7 @@ class test_03_strings extends TestCase
         ]);
 
         // WHEN you run `V6` migration
-        $this->loadSchema(Product::class, 6);
+        $this->loadSchemaFixture(Product::class, 6);
         $this->app->schema->migrate();
 
         // THEN `color` is converted to int

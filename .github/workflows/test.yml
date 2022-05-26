@@ -74,7 +74,7 @@ jobs:
                 run: gulp
 
             -   name: Create System DB Tables
-                run: php vendor/osmphp/framework/bin/console.php migrate:up
+                run: php bin/run.php migrate:up
 
             -   name: Execute migration tests
                 run: vendor/bin/phpunit --configuration phpunit_migrations.xml

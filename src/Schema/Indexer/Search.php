@@ -6,6 +6,7 @@ use Osm\Admin\Queries\Query;
 use Osm\Admin\Schema\Indexer;
 use Osm\Core\App;
 use Osm\Core\Exceptions\NotImplemented;
+use Osm\Framework\Search\Blueprint;
 use Osm\Framework\Search\Query as SearchQuery;
 use Osm\Framework\Search\Search as SearchEngine;
 use function Osm\query;
@@ -40,7 +41,37 @@ class Search extends Indexer
     }
 
     protected function fullReindex(): void {
-        $this->searchQuery()->deleteAll();
+        if ($this->search->exists($this->table->table_name)) {
+            $this->search->drop($this->table->table_name);
+        }
+
+        $this->search->create($this->table->table_name, function(Blueprint $index) {
+            foreach ($this->table->properties as $property) {
+                if ($property->name === 'id') {
+                    continue;
+                }
+
+                if ($property->index) {
+                    $field = $property->createIndex($index);
+
+                    if ($property->index_filterable) {
+                        $field->filterable();
+                    }
+
+                    if ($property->index_sortable) {
+                        $field->sortable();
+                    }
+
+                    if ($property->index_searchable) {
+                        $field->searchable();
+                    }
+
+                    if ($property->index_faceted) {
+                        $field->faceted();
+                    }
+                }
+            }
+        });
 
         // TODO: implement and use `chunk()` method, and insert in bulks
         foreach ($this->query()->get() as $item) {

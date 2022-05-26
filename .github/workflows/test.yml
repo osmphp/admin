@@ -12,11 +12,11 @@ jobs:
         name: ubuntu-latest, PHP 8.1, MySql, ElasticSearch
         env:
             NAME: "admin_${{ github.run_number }}"
-            MYSQL_PORT: "${{ job.services.mysql.ports[3306] }}"
-            MYSQL_DATABASE: "admin_${{ github.run_number }}"
             MYSQL_USERNAME: root
             MYSQL_PASSWORD: root
-            SEARCH_INDEX_PREFIX: "admin_${{ github.run_number }}_"
+#            MYSQL_PORT: "${{ job.services.mysql.ports[3306] }}"
+#            MYSQL_DATABASE: "admin_${{ github.run_number }}"
+#            SEARCH_INDEX_PREFIX: "admin_${{ github.run_number }}_"
 
         steps:
             -   name: Checkout code

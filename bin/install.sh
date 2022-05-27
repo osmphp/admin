@@ -9,6 +9,9 @@ OSMC="php vendor/osmphp/core/bin/compile.php"
 OSMT="php vendor/osmphp/framework/bin/tools.php"
 OSM="php bin/run.php"
 
+# install PHP dependencies
+composer install
+
 # compile the applications
 $OSMC Osm_App
 $OSMC Osm_Project
@@ -27,3 +30,5 @@ gulp
 find temp -type d -exec chmod 777 {} \;
 find temp -type f -exec chmod 666 {} \;
 
+# create tables in the MySql database
+$OSM migrate:up --fresh

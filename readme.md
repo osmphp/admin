@@ -98,7 +98,7 @@ UI *controls* define how different properties behave in grids and forms.
         
         SEARCH_INDEX_PREFIX="${NAME}_" 
         
-6. Install the project:
+6. Install the project. On Linux, run `bin/install.sh`. On other platforms, run the following commands:
 
         cd {project_dir}
          
@@ -124,7 +124,7 @@ UI *controls* define how different properties behave in grids and forms.
         find temp -type f -exec chmod 666 {} \;
         
         # create tables in the MySql database
-        php bin/run.php migrate:up
+        php bin/run.php migrate:up --fresh
         
 7. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.   
 

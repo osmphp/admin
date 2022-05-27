@@ -7,6 +7,7 @@ set -e
 # The following variables are used instead of these Bash aliases
 OSMC="php vendor/osmphp/core/bin/compile.php"
 OSMT="php vendor/osmphp/framework/bin/tools.php"
+OSM="php bin/run.php"
 
 # compile the applications
 $OSMC Osm_App

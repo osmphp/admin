@@ -87,9 +87,9 @@ UI *controls* define how different properties behave in grids and forms.
     * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
 
 4. Create MySql database, for example `admin`. 
-5. In the project directory, create `.env.Osm_Admin_Samples` file:
+5. In the project directory, create `.env.Osm_Admin_Samples` file. On Linux, use `bin/create-env.sh` command to create it from a template:
 
-        NAME=admin
+        NAME=... # same as MySql database name
         #PRODUCTION=true
         
         MYSQL_DATABASE="${NAME}"

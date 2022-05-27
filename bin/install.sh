@@ -32,5 +32,3 @@ find temp -type f -exec chmod 666 {} \;
 
 # create tables in the MySql database
 $OSM migrate:up --fresh
-
-# the end

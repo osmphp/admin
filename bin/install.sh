@@ -13,7 +13,7 @@ OSM="php bin/run.php"
 composer install
 
 # compile the applications
-$OSMC Osm_App
+$OSMC Osm_Admin_Samples
 $OSMC Osm_Project
 $OSMC Osm_Tools
 

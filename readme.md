@@ -98,7 +98,7 @@ UI *controls* define how different properties behave in grids and forms.
         
         SEARCH_INDEX_PREFIX="${NAME}_" 
         
-6. Install the project. On Linux, run `bin/install.sh`. On other platforms, run the following commands:
+6. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
 
         cd {project_dir}
          
@@ -106,7 +106,7 @@ UI *controls* define how different properties behave in grids and forms.
         composer install
         
         # compile the applications
-        osmc Osm_App
+        osmc Osm_Admin_Samples
         osmc Osm_Project
         osmc Osm_Tools
         

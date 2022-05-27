@@ -4,6 +4,6 @@
 set -e
 
 # create .env file if it doesn't exist
-if [ ! -f .env.My_Admin_Samples ]; then
-    cp src/.env.Osm_Admin_Samples.template .env.My_Admin_Samples
+if [ ! -f .env.Osm_Admin_Samples ]; then
+    cp src/.env.Osm_Admin_Samples.template .env.Osm_Admin_Samples
 fi

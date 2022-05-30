@@ -32,8 +32,8 @@ Currently, it's in active development. The rest of the document is written in pr
 
 ## How It Works
 
-PHP attributes in table definitions are used to specify how properties are stored, validated, computed as well as to define their UI behavior. 
- 
+PHP attributes in table definitions are used to specify how properties are stored, validated, computed as well as to define their UI behavior.
+
 Table definitions (PHP classes) are parsed into *schema* - a set of PHP objects having all the information about tables and properties.
 
 Schema changes are detected using a *diff algorithm* and applied to the database, automatically.
@@ -42,14 +42,14 @@ The `query()` function retrieves/modifies table data in bulks using SQL-like *fo
 
 When data is modified, computed properties and search indexes that depend on it are *re-indexed*.
 
-The `ui_query()` function adds faceted/search queries on the top of what the `query()` function does. 
+The `ui_query()` function adds faceted/search queries on the top of what the `query()` function does.
 
-Based on table definitions, UI *grids* and *forms* are created, automatically. These views: 
+Based on table definitions, UI *grids* and *forms* are created, automatically. These views:
 
 * provide HTTP routes for every table;
 * register themselves in the main menu;
 * are rendered using Laravel Blade templates and Tailwind CSS;
-* attach client-size behavior to HTML elements, written in vanilla JS. 
+* attach client-size behavior to HTML elements, written in vanilla JS.
 
 UI *controls* define how different properties behave in grids and forms.
 
@@ -69,25 +69,24 @@ UI *controls* define how different properties behave in grids and forms.
 
 ### Installation
 
-1. Fork the project on [GitHub](https://github.com/osmphp/admin).
-2. Clone the project to your machine:
+1. Clone the project to your machine. If you don't have write access to the `osmphp/admin` repository, fork the project on [GitHub](https://github.com/osmphp/admin) to your account, and use your account name instead of `osmphp` in the following command:
 
         cd ~/projects
-        git clone git@github.com:{your_github_account}/admin.git admin 
- 
-3. Install prerequisites:
+        git clone git@github.com:osmphp/admin.git admin 
+
+2. Install prerequisites:
 
     * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
-  extensions
+      extensions
     * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
     * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
     * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
     * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
-    * [PHPUnit](https://phpunit.de/) 
+    * [PHPUnit](https://phpunit.de/)
     * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
 
-4. Create MySql database, for example `admin`. Avoid `_` and `-` symbols in the name.
-5. In the project directory, create `.env.Osm_Admin_Samples` file. On Linux, use `bin/create-env.sh` command to create it from a template:
+3. Create MySql database, for example `admin`. Avoid `_` and `-` symbols in the name.
+4. In the project directory, create `.env.Osm_Admin_Samples` file. On Linux, use `bin/create-env.sh` command to create it from a template:
 
         NAME=... # same as MySql database name
         #PRODUCTION=true
@@ -97,10 +96,11 @@ UI *controls* define how different properties behave in grids and forms.
         MYSQL_PASSWORD=...
         
         SEARCH_INDEX_PREFIX="${NAME}_" 
-        
-6. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
 
-        cd {project_dir}
+5. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
+
+        # go to project directory
+        cd admin
          
         # install dependencies
         composer install
@@ -125,17 +125,21 @@ UI *controls* define how different properties behave in grids and forms.
         
         # create tables in the MySql database
         php bin/run.php migrate:up --fresh
-        
-7. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.   
 
-8. Open the [product list page](http://admin.local/admin/products/).
+6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.
 
-9. Instead of `osm` command-line alias, use `php bin/run.php`, for example:
+       osmt config:nginx --app=Osm_Admin_Samples
+       sudo osmt config:host --app=Osm_Admin_Samples
+       sudo osmt install:nginx --app=Osm_Admin_Samples
+
+7. Open the product list page, <http://admin.local/admin/products/>.
+
+8. Instead of `osm` command-line alias, use `php bin/run.php`, for example:
 
         php bin/run.php refresh
         php bin/run.php migrate:up --fresh 
- 
-10. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed: 
+
+9. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed:
 
          cd {project_dir}
          gulp && gulp watch

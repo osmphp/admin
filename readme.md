@@ -28,7 +28,12 @@ Currently, it's in active development. The rest of the document is written in pr
        sudo php vendor/osmphp/framework/bin/tools.php config:host
        sudo php vendor/osmphp/framework/bin/tools.php install:nginx
 
-3. Define a data class:
+3. In a separate command line window, keep Gulp running, it will clear the cache and rebuild assets as needed:
+
+         cd {project_dir}
+         gulp && gulp watch
+ 
+4. Define a data class:
 
         /**
          * @property string $sku
@@ -38,11 +43,11 @@ Currently, it's in active development. The rest of the document is written in pr
         {
         }
 
-4. Open the application in the browser:
+5. Open the application in the browser:
 
         http://project1.local/
 
-5. Open the `Products` menu, it should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
+6. Open the `Products` menu, it should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
 
 ## How It Works
 
@@ -144,7 +149,7 @@ UI *controls* define how different properties behave in grids and forms.
         php bin/run.php refresh
         php bin/run.php migrate:up --fresh 
 
-8. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed:
+8. In a separate command line window, keep Gulp running, it will clear the cache and rebuild assets as needed:
 
          cd {project_dir}
          gulp && gulp watch

@@ -126,9 +126,9 @@ UI *controls* define how different properties behave in grids and forms.
         # create tables in the MySql database
         php bin/run.php migrate:up --fresh
 
-6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`. Use these commands:
+6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`. Use the commands below. In the `osmt config:nginx` command, consider adding the `--prevent_network_access` flag to make the website only available on your computer, but not the surrounding ones:
 
-       osmt config:nginx --app=Osm_Admin_Samples
+       osmt config:nginx --app=Osm_Admin_Samples --prevent_network_access
        sudo php vendor/osmphp/framework/bin/tools.php \
            config:host --app=Osm_Admin_Samples
        sudo php vendor/osmphp/framework/bin/tools.php \

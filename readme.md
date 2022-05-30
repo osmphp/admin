@@ -14,6 +14,10 @@ Currently, it's in active development. The rest of the document is written in pr
 
 2. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `project1.local`.
 
+       osmt config:nginx --prevent_network_access
+       sudo php vendor/osmphp/framework/bin/tools.php config:host
+       sudo php vendor/osmphp/framework/bin/tools.php install:nginx
+
 3. Define a data class:
 
         /**

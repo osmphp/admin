@@ -126,11 +126,13 @@ UI *controls* define how different properties behave in grids and forms.
         # create tables in the MySql database
         php bin/run.php migrate:up --fresh
 
-6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`.
+6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`. Use these commands:
 
        osmt config:nginx --app=Osm_Admin_Samples
-       sudo osmt config:host --app=Osm_Admin_Samples
-       sudo osmt install:nginx --app=Osm_Admin_Samples
+       sudo php vendor/osmphp/framework/bin/tools.php \
+           config:host --app=Osm_Admin_Samples
+       sudo php vendor/osmphp/framework/bin/tools.php \
+           install:nginx --app=Osm_Admin_Samples
 
 7. Open the product list page, <http://admin.local/admin/products/>.
 

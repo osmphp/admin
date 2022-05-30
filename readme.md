@@ -6,14 +6,13 @@ Currently, it's in active development. The rest of the document is written in pr
 
 ## Prerequisites
 
- * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
+* [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
    extensions
- * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
- * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
- * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
- * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
- * [PHPUnit](https://phpunit.de/)
- * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
+* [MySql 8.0 or later](https://dev.mysql.com/downloads/)
+* [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
+* [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
+* [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
+* [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
 
 ## Getting Started
 

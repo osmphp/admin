@@ -4,6 +4,17 @@ The ultimate goal to is for you to stop worrying about all the admin panel detai
 
 Currently, it's in active development. The rest of the document is written in present tense, but most of it is yet to be implemented.
 
+## Prerequisites
+
+ * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
+   extensions
+ * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
+ * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
+ * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
+ * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
+ * [PHPUnit](https://phpunit.de/)
+ * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
+
 ## Getting Started
 
 1. Create an application:
@@ -78,19 +89,8 @@ UI *controls* define how different properties behave in grids and forms.
         cd ~/projects
         git clone git@github.com:osmphp/admin.git admin 
 
-2. Install prerequisites:
-
-    * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
-      extensions
-    * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
-    * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
-    * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
-    * [ElasticSearch 7.14 or later](https://www.elastic.co/downloads/elasticsearch)
-    * [PHPUnit](https://phpunit.de/)
-    * [Osm Framework command line aliases](https://osm.software/blog/21/08/framework-command-line-aliases.html)
-
-3. Create MySql database, for example `admin`. Avoid `_` and `-` symbols in the name.
-4. In the project directory, create `.env.Osm_Admin_Samples` file. On Linux, use `bin/create-env.sh` command to create it from a template:
+2. Create MySql database, for example `admin`. Avoid `_` and `-` symbols in the name.
+3. In the project directory, create `.env.Osm_Admin_Samples` file. On Linux, use `bin/create-env.sh` command to create it from a template:
 
         NAME=... # same as MySql database name
         #PRODUCTION=true
@@ -101,7 +101,7 @@ UI *controls* define how different properties behave in grids and forms.
         
         SEARCH_INDEX_PREFIX="${NAME}_" 
 
-5. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
+4. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
 
         # go to project directory
         cd admin
@@ -130,7 +130,7 @@ UI *controls* define how different properties behave in grids and forms.
         # create tables in the MySql database
         php bin/run.php migrate:up --fresh
 
-6. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`. Use the commands below. In the `osmt config:nginx` command, consider adding the `--prevent_network_access` flag to make the website only available on your computer, but not the surrounding ones:
+5. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `admin.local`. Use the commands below. In the `osmt config:nginx` command, consider adding the `--prevent_network_access` flag to make the website only available on your computer, but not the surrounding ones:
 
        osmt config:nginx --app=Osm_Admin_Samples --prevent_network_access
        sudo php vendor/osmphp/framework/bin/tools.php \
@@ -138,14 +138,14 @@ UI *controls* define how different properties behave in grids and forms.
        sudo php vendor/osmphp/framework/bin/tools.php \
            install:nginx --app=Osm_Admin_Samples
 
-7. Open the product list page, <http://admin.local/admin/products/>.
+6. Open the product list page, <http://admin.local/admin/products/>.
 
-8. Instead of `osm` command-line alias, use `php bin/run.php`, for example:
+7. Instead of `osm` command-line alias, use `php bin/run.php`, for example:
 
         php bin/run.php refresh
         php bin/run.php migrate:up --fresh 
 
-9. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed:
+8. In the command line, keep Gulp running, it will clear the cache and rebuild assets as needed:
 
          cd {project_dir}
          gulp && gulp watch

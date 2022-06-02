@@ -88,9 +88,9 @@ Currently, it's in active development. The rest of the document is written in pr
 
 8. Open the application in the browser:
 
-        http://project1.local/
+        http://project1.local/admin/products/
 
-10. Open the `Products` menu, it should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
+9. It should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
 
 ## How It Works
 

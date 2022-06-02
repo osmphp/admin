@@ -7,7 +7,7 @@ Currently, it's in active development. The rest of the document is written in pr
 ## Prerequisites
 
 * [PHP 8.1 or later](https://www.php.net/manual/en/install.php), and enable `curl`, `fileinfo`, `intl`, `mbstring`, `openssl`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`
-   extensions
+  extensions
 * [MySql 8.0 or later](https://dev.mysql.com/downloads/)
 * [Node.js, the latest LTS version](https://nodejs.org/en/download/current/)
 * [Gulp 4 command line utility](https://gulpjs.com/docs/en/getting-started/quick-start#install-the-gulp-command-line-utility)
@@ -16,38 +16,81 @@ Currently, it's in active development. The rest of the document is written in pr
 
 ## Getting Started
 
-1. Create an application:
+1. Create a project:
 
         composer create-project osmphp/admin-project project1
-        cd project1
-        bin/install.sh
 
-2. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `project1.local`.
+2. Create MySql database, for example `project1`. Avoid `_` and `-` symbols in the name.
+3. In the project directory, create `.env.Osm_App` file. On Linux, use `bin/create-env.sh` command to create it from a template:
+
+        NAME=... # same as MySql database name
+        #PRODUCTION=true
+        
+        MYSQL_DATABASE="${NAME}"
+        MYSQL_USERNAME=...
+        MYSQL_PASSWORD=...
+        
+        SEARCH_INDEX_PREFIX="${NAME}_" 
+
+4. Install the project. On Linux, run `bin/install.sh` in the project directory. On other platforms, run the following commands:
+
+        # go to project directory
+        cd project1
+         
+        # compile the applications
+        osmc Osm_Admin_Samples
+        osmc Osm_Project
+        osmc Osm_Tools
+        
+        # collect JS dependencies from all installed modules
+        osmt config:npm
+        
+        # install JS dependencies
+        npm install
+        
+        # build JS, CSS and other assets
+        gulp
+        
+        # make `temp` directory writable
+        find temp -type d -exec chmod 777 {} \;
+        find temp -type f -exec chmod 666 {} \;
+        
+        # create tables in the MySql database
+        osm migrate:up --fresh
+
+5. Create and enable a [Nginx virtual host](https://osm.software/docs/framework/0.15/getting-started/web-server.html#nginx), for example, `project1.local`.
 
        osmt config:nginx --prevent_network_access
        sudo php vendor/osmphp/framework/bin/tools.php config:host
        sudo php vendor/osmphp/framework/bin/tools.php install:nginx
 
-3. In a separate command line window, keep Gulp running, it will clear the cache and rebuild assets as needed:
+6. In a separate command line window, keep Gulp running, it will clear the cache and rebuild assets as needed:
 
-         cd {project_dir}
+         cd project1
          gulp && gulp watch
- 
-4. Define a data class:
 
+7. Define a data class:
+
+        # src/Welcome/Product.php
+        <?php
+        
+        namespace My\Welcome;
+        
+        use Osm\Admin\Schema\Record;
+        
         /**
          * @property string $sku
-         * @property float $qty
+         * @property string $description
          */
         class Product extends Record
         {
         }
 
-5. Open the application in the browser:
+8. Open the application in the browser:
 
         http://project1.local/
 
-6. Open the `Products` menu, it should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
+10. Open the `Products` menu, it should work as shown in [this video](https://www.youtube.com/watch?v=SrxXZa5SeMk).
 
 ## How It Works
 

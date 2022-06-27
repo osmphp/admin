@@ -7,6 +7,8 @@ use Osm\Admin\Schema\Attributes\Fixture;
 use Osm\Admin\Schema\Exceptions\InvalidFixture;
 use Osm\Admin\Schema\Exceptions\InvalidChange;
 use Osm\Admin\Schema\Hints\Indexer\Status;
+use Osm\Admin\Ui\Menu;
+use Osm\Admin\Ui\MenuItem;
 use Osm\Core\App;
 use Osm\Core\Attributes\Serialized;
 use Osm\Core\Attributes\Type;
@@ -39,6 +41,7 @@ use function Osm\sort_by_dependency;
  * @property Db $db
  * @property Descendants $descendants
  * @property array $listener_names #[Serialized]
+ * @property Menu $menu #[Serialized]
  *
  * @uses Serialized
  */
@@ -492,5 +495,17 @@ class Schema extends Object_
         ]);
 
         $tables[$notificationTable->name] = $notificationTable;
+    }
+
+    protected function get_menu(): Menu {
+        $items = [];
+
+        foreach ($this->tables as $table) {
+            $items[] = MenuItem\Table::new([
+                'table_name' => $table->name,
+            ]);
+        }
+
+        return Menu::new(['items' => $items]);
     }
 }
